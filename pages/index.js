@@ -1,18 +1,19 @@
 import Head from 'next/head'
-import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import CreateProject from '../components/createProject';
 import Modal from '../lib/modal';
-import Header from './../components/header';
-import Button from './../components/button';
-import Stats from './stats';
-import AllProjects from './allProjects';
-import Activity from './activity';
+import Header from '../components/header';
+import Button from '../components/button';
+import Stats from '../components/stats';
+import Activity from '../components/activity';
 
-export default function Home() {
+export default function Home({ children }) {
   const [open, setOpen] = useState(false);
 
-  const handleModalState = () => {
+  useEffect(() => {
+  }, [])
+
+  const toggleModal = () => {
     setOpen(open = !open);
   }
 
@@ -29,13 +30,13 @@ export default function Home() {
           <Header />
 
           <div className="space-y-10">
-            <Button styles={`btn btn-sm btn-outline`} handleClick={handleModalState} value={`+ new project`} />
+            <Button styles={`btn btn-sm btn-outline`} clickEvent={toggleModal} value={`+ new project`} />
           </div>
 
           <div className='space-y-10'>
             <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-9">
               <Stats />
-              <AllProjects />
+              {children}
               <Activity />
             </div>
           </div>
@@ -44,7 +45,7 @@ export default function Home() {
 
       {open &&
         <Modal>
-          <CreateProject setModalState={handleModalState} />
+          <CreateProject toggle={toggleModal} />
         </Modal>
       }
 

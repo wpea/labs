@@ -3,14 +3,14 @@ import { createProject, post } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
 import { get } from "../lib/api";
 
-export default function CreateProject({ toggle }) {
+export default function CreateMilestone({ toggle }) {
   const [sharedState, setSharedState] = useAppContext();
   const initialValues = {
-    title: "",
-    description: "",
-    lead: "",
+    proj_id: "",
+    milestone: "",
     start_date: "",
     end_date: "",
+    status: "",
   };
 
   // console.log(sharedState);

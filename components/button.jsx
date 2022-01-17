@@ -1,7 +1,7 @@
-export default function Button({ value, styles, handleClick }) {
+export default function Button({ value, styles, clickEvent }) {
   return (
     <div>
-      <button onClick={handleClick} className={styles}>
+      <button onClick={clickEvent} className={styles}>
         {value}
       </button>
     </div>
