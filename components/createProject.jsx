@@ -1,11 +1,11 @@
-import { useState, useEffect, useContext } from "react";
-import { createProject, post } from "../lib/api";
+import { useState, useEffect } from "react";
+import { post } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
 import { get } from "../lib/api";
 
 export default function CreateProject({ toggle }) {
-  const [sharedState, setSharedState] = useAppContext();
   const initialValues = {
+    id: Date.now(),
     title: "",
     description: "",
     lead: "",
@@ -14,15 +14,10 @@ export default function CreateProject({ toggle }) {
   };
 
   // console.log(sharedState);
-
+  const [sharedState, setSharedState] = useAppContext();
   const [canSubmit, setCanSubmit] = useState(false);
   const [formValues, setFormValues] = useState(initialValues);
   const [errors, setErrors] = useState({});
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues({ ...formValues, [name]: value });
-  };
 
   useEffect(() => {
     if (Object.keys(errors).length === 0 && canSubmit) {
@@ -33,6 +28,11 @@ export default function CreateProject({ toggle }) {
       toggle();
     }
   }, [errors]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
 
   // get and set the global state
   const getData = async () => {
@@ -55,6 +55,8 @@ export default function CreateProject({ toggle }) {
 
     if (!values.description) {
       errors.description = "Project description is required.";
+    } else if (values.description.length <= 40) {
+      errors.description = "Description should be more than 40 chars.";
     }
 
     if (!values.lead) {

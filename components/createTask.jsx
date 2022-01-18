@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import { findMilestone, postMilestone } from "../lib/api";
+import { getTasks, postTask } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
-import { v4 as uuidv4 } from "uuid";
 
-export default function CreateMilestone({ toggle, projectId }) {
+export default function CreateTask({ toggle, milestoneId }) {
   const initialValues = {
     id: Date.now(),
-    proj_id: projectId,
-    milestone: "",
+    mile_id: milestoneId,
+    task: "",
     start_date: "",
     end_date: "",
     status: "ongoing",
@@ -19,17 +18,10 @@ export default function CreateMilestone({ toggle, projectId }) {
   const [errors, setErrors] = useState({});
   const [sharedState, updateSharedState] = useAppContext();
 
+  // Send tasks to api endpoint
   useEffect(() => {
     if (Object.keys(errors).length === 0 && canSubmit) {
-      postMilestone(formValues);
-
-      //
-
-      // updateSharedState({
-      //   ...sharedState,
-      //   milestones: [...sharedState.milestones, data],
-      // });
-
+      postTask(formValues);
       getData();
       toggle();
     }
@@ -42,11 +34,9 @@ export default function CreateMilestone({ toggle, projectId }) {
 
   // get and set the global state
   const getData = async () => {
-    const data = await findMilestone();
-    //add the data to the form and update it later
     updateSharedState({
       ...sharedState,
-      milestones: [...sharedState.milestones, formValues],
+      tasks: [...sharedState.tasks, formValues],
       refresh: !sharedState.refresh,
     });
   };
@@ -55,17 +45,16 @@ export default function CreateMilestone({ toggle, projectId }) {
   const validate = (values) => {
     const errors = {};
     // const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-
-    if (!values.milestone) {
-      errors.milestone = "Project milestone is required.";
+    if (!values.task) {
+      errors.task = "Milestone task is required.";
     }
 
     if (!values.start_date) {
-      errors.start_date = "Project start date is required.";
+      errors.start_date = "Task start date is required.";
     }
 
     if (!values.end_date) {
-      errors.end_date = "Project end date is required.";
+      errors.end_date = "Task end date is required.";
     }
 
     return errors;
@@ -101,7 +90,7 @@ export default function CreateMilestone({ toggle, projectId }) {
                 className="text-lg leading-6 font-bold text-gray-900"
                 id="modal-title"
               >
-                Milestone
+                Task
               </h3>
               <svg
                 onClick={toggle}
@@ -125,19 +114,19 @@ export default function CreateMilestone({ toggle, projectId }) {
                     <div className="grid grid-cols-6 gap-6">
                       <div className="col-span-6">
                         <label className="block text-sm font-medium text-gray-700">
-                          Project Milestone
+                          Milestone task
                         </label>
                         <input
                           type="text"
-                          name="milestone"
-                          value={formValues.milestone}
+                          name="task"
+                          value={formValues.task}
                           onChange={handleChange}
                           autoComplete="given-name"
                           className="mt-1 focus:ring-gray-500 focus:border-gray-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         />
-                        {errors.milestone && (
+                        {errors.task && (
                           <span className="block text-2xs py-1 text-red-700">
-                            {errors.milestone}
+                            {errors.task}
                           </span>
                         )}
                       </div>

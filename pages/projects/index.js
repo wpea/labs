@@ -2,31 +2,28 @@ import Home from "..";
 import Button from "../../components/button";
 import { useRouter } from "next/router";
 // import md5 from "md5";
-import { useEffect, useState } from 'react';
-import { get, getActivity } from "../../lib/api";
+import { useEffect } from "react";
+import { get } from "../../lib/api";
 import { useAppContext } from "../../lib/contexts/globalState";
 
 export default function AllProjects() {
   const router = useRouter();
   // const [projects, setProjects] = useState([]);
-  const [sharedState, setSharedState] = useAppContext();
-  const { projects, refresh } = sharedState;
+  const [sharedState] = useAppContext();
+  const { projects } = sharedState;
 
-  const completed = 'bg-green-600 hover:bg-green-800';
-  const ongoing = 'bg-yellow-600 hover:bg-yellow-800';
-  const defaultStyle = 'grid grid-cols-2 p-3 px-4 rounded-md cursor-pointer ';
+  const completed = "bg-green-600 hover:bg-green-800";
+  const ongoing = "bg-yellow-600 hover:bg-yellow-800";
+  const defaultStyle = "grid grid-cols-2 p-3 px-4 rounded-md cursor-pointer ";
 
-  useEffect(() => {
-    getData();
+  // useEffect(() => {
+  //   getData();
+  // }, [sharedState.refresh]);
 
-  }, [sharedState.refresh])
-
-  const getData = async () => {
-    const data = await get();
-    //get and set activity
-    const activity = await getActivity();
-    setSharedState({ ...sharedState, projects: data, activity: activity });
-  }
+  // const getData = async () => {
+  //   const projects = await get();
+  //   updateSharedState({ ...sharedState, projects });
+  // };
 
   return (
     <Home>
@@ -37,15 +34,21 @@ export default function AllProjects() {
           </div>
         </div>
         <div className="p-4 space-y-6 border-t rounded-bl-md rounded-br-md bg-gray-100">
-
-          {projects.length === 0 ?
+          {projects.length === 0 ? (
             <div className="grid p-3 px-4">
-              <div className="text-center text-xs text-gray-600">Create a project.</div>
+              <div className="text-center text-xs text-gray-600">
+                Create a project.
+              </div>
             </div>
-            :
-            projects.map((project) =>
-              <div key={project.id} onClick={() => router.push(`projects/${project.id}`)}
-                className={`${defaultStyle} ${project.status === 'completed' ? completed : ongoing}`}>
+          ) : (
+            projects.map((project) => (
+              <div
+                key={project.id}
+                onClick={() => router.push(`projects/${project.id}`)}
+                className={`${defaultStyle} ${
+                  project.status === "completed" ? completed : ongoing
+                }`}
+              >
                 <div className="text-white tracking-tight font-medium">
                   {project.title}
                 </div>
@@ -62,16 +65,15 @@ export default function AllProjects() {
                   />
                 </svg>
               </div>
-            )}
+            ))
+          )}
 
-
-
-          {!projects.length === 0 &&
+          {!projects.length === 0 && (
             <Button
               styles={`text-sm btn btn-sm btn-outline`}
               value={`view more`}
             />
-          }
+          )}
         </div>
       </div>
     </Home>

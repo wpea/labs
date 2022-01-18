@@ -1,12 +1,12 @@
-import '../styles/globals.css'
-import { AppWrapper } from './../lib/contexts/globalState';
+import "../styles/globals.css";
+import { AppWrapper } from "./../lib/contexts/globalState";
 
 function MyApp({ Component, pageProps }) {
   return (
     <AppWrapper>
-      <Component {...pageProps} />)
+      <Component {...pageProps} />
     </AppWrapper>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;

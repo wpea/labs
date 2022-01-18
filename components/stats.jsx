@@ -1,9 +1,8 @@
 import ActiveLink from "./activeLink";
 import { useAppContext } from "../lib/contexts/globalState";
-import { useEffect, useState } from "react";
 
 export default function Stats() {
-  const [sharedState, setSharedState] = useAppContext();
+  const [sharedState] = useAppContext();
   const { projects } = sharedState;
 
   const resOngoing = projects.filter((project) => project.status === "ongoing");

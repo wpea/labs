@@ -1,19 +1,30 @@
 import Link from "next/link";
+import { getActivity } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
+import { useEffect, useState } from "react";
 
 export default function Activity() {
-  const [sharedState] = useAppContext();
-  const { activity } = sharedState;
+  const [activity, setActivity] = useState([]);
+  const [sharedState, updateSharedState] = useAppContext();
 
-  // useEffect(() => {
-  //   getActivities();
-  //   console.log(activity);
-  // }, []);
+  /**
+   * What's happening here is, everytime this component mounts,
+   * it checks to see if the global state is not empty and then tries
+   * to retrieve the data from there, if it is empty, it makes
+   * one api request to get the new data, and also updates the global
+   * state
+   */
+  useEffect(() => {
+    sharedState.activity.length === 0
+      ? getData()
+      : setActivity(sharedState.activity);
+  }, [sharedState.refresh]);
 
-  // const getActivities = async () => {
-  //   const data = await getActivity();
-  //   setSharedState({ ...sharedState, activity: data });
-  // };
+  const getData = async () => {
+    const activity = await getActivity();
+    setActivity(activity);
+    updateSharedState({ ...sharedState, activity });
+  };
 
   const truncateTitle = (str, num) => {
     return str.length > num ? str.slice(0, num) + "..." : str;
@@ -40,13 +51,13 @@ export default function Activity() {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-3 w-3 mt-1 fill-current text-blue-700"
+        className="h-3 w-3 mt-1 fill-current text-cyan-500"
         viewBox="0 0 20 20"
         fill="currentColor"
       >
         <path
           fillRule="evenodd"
-          d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+          d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
           clipRule="evenodd"
         />
       </svg>
@@ -102,7 +113,7 @@ export default function Activity() {
     </svg>;
   };
 
-  const Project = (title, type, id, date) => {
+  const Project = (title, type, proj_id, id, date) => {
     return (
       <div key={`${id}`} className="flex space-x-3 justify-between">
         <div className="flex space-x-3">
@@ -112,7 +123,7 @@ export default function Activity() {
           {type === "complete_milestone" && compMileStoneSVG()}
           {type === "complete_project" && compProjectSVG()}
           <div>
-            <Link href={`/projects/${id}`}>
+            <Link href={`/projects/${proj_id}`}>
               <div className="justify-self-end text-2xs cursor-pointer hover:text-gray-800 text-gray-500 font-bold">
                 {truncateTitle(title, 20)}
               </div>
@@ -135,7 +146,13 @@ export default function Activity() {
           <div className="text-2xs text-gray-600 text-center">No activity</div>
         ) : (
           activity.map((item) =>
-            Project(item.title, item.type, item.proj_id, new Date(item.date))
+            Project(
+              item.title,
+              item.type,
+              item.proj_id,
+              item.id,
+              new Date(item.date)
+            )
           )
         )}
       </div>
