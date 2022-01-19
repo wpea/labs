@@ -71,7 +71,10 @@ export default function Milestones() {
             </div>
 
             {tasks.map((task) => (
-              <div className="grid md:grid-cols-2 bg-stone-600 p-3 pb-4 px-4 rounded-md hover:bg-blue-stone space-y-4 md:space-y-0">
+              <div
+                key={task.id}
+                className="grid md:grid-cols-2 bg-stone-600 p-3 pb-4 px-4 rounded-md hover:bg-blue-stone space-y-4 md:space-y-0"
+              >
                 <div className="self-start place-self-start grid space-y-4">
                   <div className="text-white leading-5 text-md">
                     {task.task}
