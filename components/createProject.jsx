@@ -192,6 +192,7 @@ export default function CreateProject({ toggle }) {
                           <option>Habib</option>
                           <option>Hafsah</option>
                           <option>Alex</option>
+                          <option>Maryam</option>
                         </select>
                         {errors.lead && (
                           <span className="block text-2xs py-1 text-red-700">
