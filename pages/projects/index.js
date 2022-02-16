@@ -8,22 +8,13 @@ import { useAppContext } from "../../lib/contexts/globalState";
 
 export default function AllProjects() {
   const router = useRouter();
-  // const [projects, setProjects] = useState([]);
+
   const [sharedState] = useAppContext();
   const { projects } = sharedState;
 
   const completed = "bg-green-600 hover:bg-green-800";
   const ongoing = "bg-yellow-600 hover:bg-yellow-800";
   const defaultStyle = "grid grid-cols-2 p-3 px-4 rounded-md cursor-pointer ";
-
-  // useEffect(() => {
-  //   getData();
-  // }, [sharedState.refresh]);
-
-  // const getData = async () => {
-  //   const projects = await get();
-  //   updateSharedState({ ...sharedState, projects });
-  // };
 
   return (
     <Home>

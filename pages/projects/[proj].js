@@ -5,8 +5,15 @@ import { useAppContext } from "../../lib/contexts/globalState";
 import Modal from "../../lib/modal";
 import CreateMilestone from "./../../components/createMilestone";
 import { useEffect } from "react";
-import { findMilestone } from "../../lib/api";
+import {
+  completeMilestone,
+  del,
+  findMilestone,
+  getMilestones,
+  update,
+} from "../../lib/api";
 import moment from "moment";
+import MarkAsCompleted from "./../../components/MarkAsCompleted";
 
 export default function Project() {
   const router = useRouter();
@@ -43,6 +50,41 @@ export default function Project() {
     );
   };
 
+  // Complete milestone
+  const handleComplete = (data) => {
+    update("milestone", data.id, { status: "completed" });
+
+    const m = milestones.map((milestone) => {
+      if (milestone.id === data.id) {
+        return { ...milestone, status: "completed" };
+      }
+      return milestone;
+    });
+
+    setMilestones(m);
+  };
+
+  const handleDelete = (id) => {
+    del("milestone", id);
+
+    const m = milestones.filter((milestone) => milestone.id !== id);
+
+    setMilestones(m);
+  };
+
+  const completeProject = (df) => {
+    update("projects", df.id, { status: "completed" });
+
+    const p = defaultProject.map((project) => {
+      if (project.id === df.id) {
+        return { ...project, status: "completed" };
+      }
+      return project;
+    });
+
+    setDefaultProject(p);
+  };
+
   return (
     <Home>
       {defaultProject.map((df) => (
@@ -59,8 +101,23 @@ export default function Project() {
                   )
                 </div>
 
-                <div className="text-2xs items-center cursor-pointer bg-yellow-600 hover:border-none space-x-1 flex rounded-md px-2 py-1 text-white font-medium uppercase">
-                  <div>Ongoing</div>
+                {df.status === "ongoing" && (
+                  <MarkAsCompleted
+                    onComplete={() => {
+                      completeProject(df);
+                    }}
+                    textColor={`text-black`}
+                    color={`gray`}
+                    hover={`stone`}
+                  />
+                )}
+
+                <div
+                  className={`text-2xs items-center cursor-pointer ${
+                    df.status === "ongoing" ? `bg-yellow-600` : `bg-green-600`
+                  } hover:border-none space-x-1 flex rounded-md px-2 py-1 text-white font-medium uppercase`}
+                >
+                  <div className="capitalize">{df.status}</div>
                 </div>
               </div>
             </div>
@@ -96,18 +153,20 @@ export default function Project() {
 
               {milestones.length === 0 ? (
                 <div className="grid place-items-center text-sm tracking-tight text-gray-400 p-3 px-4 rounded-md hover:bg-blue-cyan cursor-pointer">
-                  Add a milestone
+                  Create a milestone.
                 </div>
               ) : (
                 milestones.map((milestone) => (
                   <div
                     key={milestone.id}
-                    onClick={() =>
-                      router.push(`/projects/milestone/${milestone.id}`)
-                    }
                     className="grid md:grid-cols-2 space-y-4 md:space-y-0 bg-cyan-600 hover:bg-cyan-700 p-3 px-4 rounded-md hover:bg-blue-cyan cursor-pointer"
                   >
-                    <div className="self-start place-self-start grid space-y-4">
+                    <div
+                      onClick={() =>
+                        router.push(`/projects/milestone/${milestone.id}`)
+                      }
+                      className="self-start place-self-start grid space-y-4"
+                    >
                       <div className="text-white leading-5">
                         {milestone.milestone}
                       </div>
@@ -132,31 +191,26 @@ export default function Project() {
                     </div>
                     <div className="md:justify-self-end justify-self-start self-start flex items-center space-x-2">
                       {milestone.status === "ongoing" ? (
-                        <div className="text-2xs border items-center cursor-pointer hover:bg-cyan-800 hover:border-none space-x-1 flex border-cyan-500 rounded-md px-2 py-1 text-white font-medium uppercase">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-3 w-3"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-
-                          <div>Mark as completed</div>
-                        </div>
+                        <MarkAsCompleted
+                          onComplete={() => {
+                            handleComplete(milestone);
+                          }}
+                          textColor={`text-white`}
+                          color={`cyan`}
+                          hover={`cyan`}
+                        />
                       ) : (
                         <div className="text-2xs items-center cursor-pointer bg-cyan-800 hover:border-none space-x-1 flex rounded-md px-2 py-1 text-white font-medium uppercase">
                           <div>Completed</div>
                         </div>
                       )}
 
-                      <div className="bg-rose-500 p-0.5 cursor-pointer hover:bg-rose-700 rounded">
+                      <div
+                        onClick={() => {
+                          handleDelete(milestone.id);
+                        }}
+                        className="bg-rose-500 p-0.5 cursor-pointer hover:bg-rose-700 rounded"
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-4 w-4 stroke-current text-rose-100 hover:text-rose-200"

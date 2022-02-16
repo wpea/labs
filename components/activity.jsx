@@ -143,7 +143,9 @@ export default function Activity() {
 
       <div className="p-4 space-y-4">
         {activity.length === 0 ? (
-          <div className="text-2xs text-gray-600 text-center">No activity</div>
+          <div className="text-2xs text-gray-600 text-center">
+            No activity yet.
+          </div>
         ) : (
           activity.map((item) =>
             Project(
