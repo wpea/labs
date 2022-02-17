@@ -69,8 +69,6 @@ export default function Home({ children }) {
         </div>
       </div>
 
-      {console.log(process.env.NEXT_PUBLIC_HOSTNAME)}
-
       {open && (
         <Modal>
           <CreateProject toggle={toggleModal} />
