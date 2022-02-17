@@ -1,9 +1,13 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Login() {
   const [token, setToken] = useState();
-  const [device] = useState(navigator.userAgent);
+  const [device, setDevice] = useState();
+
+useEffect(() => {
+  setDevice(window.navigator.userAgent);
+}, []);
 
   return (
     <>
