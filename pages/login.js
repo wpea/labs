@@ -36,12 +36,18 @@ export default function Login() {
     const res = await loginAuth(data);
 
     // check for errors
-    if (res.errors) {
+    if (res.errors || !res.token) {
       setLoading(false);
       return setErrorBox({ info: "Invalid Credentials", status: true });
     } else {
       saveToken(res.token, res.user);
       router.push("/home");
+      console.log(res.token);
+
+      // } else {
+
+      // }
+      // router.push("/home");
     }
 
     updateSharedState({ ...sharedState, token: res.token });
