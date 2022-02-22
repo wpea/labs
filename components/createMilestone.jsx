@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { findMilestone, postMilestone } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
 import { v4 as uuidv4 } from "uuid";
+import { useAuth2, getToken } from "./../lib/hooks/useAuth2";
 
 export default function CreateMilestone({ toggle, projectId }) {
   const initialValues = {
@@ -21,7 +22,7 @@ export default function CreateMilestone({ toggle, projectId }) {
 
   useEffect(() => {
     if (Object.keys(errors).length === 0 && canSubmit) {
-      postMilestone(formValues);
+      postMilestone(formValues, getToken());
 
       //
 
@@ -42,7 +43,6 @@ export default function CreateMilestone({ toggle, projectId }) {
 
   // get and set the global state
   const getData = async () => {
-    const data = await findMilestone();
     //add the data to the form and update it later
     updateSharedState({
       ...sharedState,

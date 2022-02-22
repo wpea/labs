@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getTasks, postTask } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
+import { getToken } from "../lib/hooks/useAuth2";
 
 export default function CreateTask({ toggle, milestoneId }) {
   const initialValues = {
@@ -21,7 +22,7 @@ export default function CreateTask({ toggle, milestoneId }) {
   // Send tasks to api endpoint
   useEffect(() => {
     if (Object.keys(errors).length === 0 && canSubmit) {
-      postTask(formValues);
+      postTask(formValues, getToken());
       getData();
       toggle();
     }

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { post } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
 import { get } from "../lib/api";
+import { getToken } from "../lib/hooks/useAuth2";
 
 export default function CreateProject({ toggle }) {
   const initialValues = {
@@ -23,7 +24,7 @@ export default function CreateProject({ toggle }) {
     if (Object.keys(errors).length === 0 && canSubmit) {
       //
       // console.log(JSON.stringify(formValues));
-      post(formValues);
+      post(formValues, getToken());
       getData();
       toggle();
     }
@@ -36,7 +37,7 @@ export default function CreateProject({ toggle }) {
 
   // get and set the global state
   const getData = async () => {
-    const data = await get();
+    const data = await get(getToken());
     setSharedState({
       ...sharedState,
       projects: data,

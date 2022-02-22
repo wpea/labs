@@ -6,6 +6,7 @@ import CreateTask from "./../../../components/createTask";
 import { useAppContext } from "../../../lib/contexts/globalState";
 import moment from "moment";
 import { del, update } from "../../../lib/api";
+import { getToken } from "../../../lib/hooks/useAuth2";
 
 export default function Milestones() {
   const router = useRouter();
@@ -30,11 +31,6 @@ export default function Milestones() {
     );
   }, [sharedState.refresh]);
 
-  // const getData = async () => {
-  //   const getMilestones = await findMilestone(proj);
-  //   // setMilestones(getMilestones);
-  // };
-
   // Get project details
   const getMilestone = () => {
     return sharedState.milestones.filter(
@@ -43,24 +39,20 @@ export default function Milestones() {
   };
 
   const handleComplete = (data) => {
-    update("task", data.id, { status: "completed" });
-
+    update("task", data.id, { status: "completed" }, getToken());
     const t = tasks.map((task) => {
       if (task.id === data.id) {
         return { ...task, status: "completed" };
       }
       return task;
     });
-
     setTasks(t);
     // console.log(data);
   };
 
   const handleDelete = (id) => {
-    del("task", id);
-
+    del("task", id, getToken());
     const m = tasks.filter((task) => task.id !== id);
-
     setTasks(m);
   };
 

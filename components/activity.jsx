@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getActivity } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
 import { useEffect, useState } from "react";
+import { getToken } from "./../lib/hooks/useAuth2";
 
 export default function Activity() {
   const [activity, setActivity] = useState([]);
@@ -16,12 +17,12 @@ export default function Activity() {
    */
   useEffect(() => {
     sharedState.activity.length === 0
-      ? getData()
+      ? getData(getToken())
       : setActivity(sharedState.activity);
   }, [sharedState.refresh]);
 
-  const getData = async () => {
-    const activity = await getActivity();
+  const getData = async (token) => {
+    const activity = await getActivity(token);
     setActivity(activity);
     updateSharedState({ ...sharedState, activity });
   };

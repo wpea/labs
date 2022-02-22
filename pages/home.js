@@ -1,20 +1,14 @@
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import AppLayout from "./../components/Layouts/AppLayout";
+import { useAuth2 } from "./../lib/hooks/useAuth2";
 import { useRouter } from "next/router";
-import Spinner from "../components/spinner";
+import Header from "./../components/header";
 
-export default function Home() {
-  const [token, setToken] = useState();
+export default function HomeCards() {
   const router = useRouter();
 
-  useEffect(() => {
-    if (!token) {
-      router.push("/login");
-    }
-  }, [token]);
-
-  return token ? (
-    <>
+  return (
+    <AppLayout>
       <Head>
         <title>home &mdash; wplabs</title>
         <meta
@@ -26,21 +20,15 @@ export default function Home() {
 
       <div className="w-full grid">
         <div className="md:px-20 p-10 space-y-10 grid">
-          <div className="grid grid-cols-2">
-            <div>
-              <img
-                className="w-36"
-                src="https://ik.imagekit.io/et8vxrzxxdj/wp/wplabs_fnNIZEWBNs.svg"
-                alt="wplabs"
-              />
-            </div>
-            <div className="text-xs self-center justify-self-end">
-              Innovating the family office.
-            </div>
-          </div>
+          <Header />
 
           <div className="grid grid-cols-4 gap-8">
-            <div className="bg-gray-50 hover:border-gray-400 border border-gray-200 cursor-pointer rounded-md p-8 space-y-4 grid">
+            <div
+              onClick={() => {
+                router.push("/projects");
+              }}
+              className="bg-gray-50 hover:border-gray-400 border border-gray-200 cursor-pointer rounded-md p-8 space-y-4 grid"
+            >
               <div className="bg-blue-200 place-self-start rounded-full justify-self-start p-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -69,7 +57,12 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="bg-gray-50 hover:border-gray-400 border  border-gray-200 cursor-pointer rounded-md p-8 space-y-4 grid">
+            <div
+              onClick={() => {
+                router.push("https://onboard.wealthparadigm.org/");
+              }}
+              className="bg-gray-50 hover:border-gray-400 border  border-gray-200 cursor-pointer rounded-md p-8 space-y-4 grid"
+            >
               <div className="bg-blue-200 place-self-start rounded-full justify-self-start p-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -119,8 +112,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </>
-  ) : (
-    <Spinner />
+    </AppLayout>
   );
 }

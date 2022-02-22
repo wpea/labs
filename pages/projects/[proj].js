@@ -5,21 +5,16 @@ import { useAppContext } from "../../lib/contexts/globalState";
 import Modal from "../../lib/modal";
 import CreateMilestone from "./../../components/createMilestone";
 import { useEffect } from "react";
-import {
-  completeMilestone,
-  del,
-  findMilestone,
-  getMilestones,
-  update,
-} from "../../lib/api";
+import { del, findMilestone, update } from "../../lib/api";
 import moment from "moment";
 import MarkAsCompleted from "./../../components/MarkAsCompleted";
+import { getToken } from "./../../lib/hooks/useAuth2";
 
 export default function Project() {
   const router = useRouter();
   const { proj } = router.query;
   const [open, setOpen] = useState(false);
-  const [sharedState, updateSharedState] = useAppContext();
+  const [sharedState] = useAppContext();
   const [defaultProject, setDefaultProject] = useState(["hey"]);
   const [milestones, setMilestones] = useState([]);
 
@@ -28,9 +23,7 @@ export default function Project() {
   };
 
   useEffect(() => {
-    // getData();
     setDefaultProject(getProject(proj));
-
     setMilestones(
       sharedState.milestones.filter(
         (milestone) => parseInt(milestone.proj_id) === parseInt(proj)
@@ -38,10 +31,9 @@ export default function Project() {
     );
   }, [sharedState.refresh]);
 
-  const getData = async () => {
-    const getMilestones = await findMilestone(proj);
-    // setMilestones(getMilestones);
-  };
+  // const getData = async () => {
+  //   const getMilestones = await findMilestone(proj);
+  // };
 
   // Get project details
   const getProject = () => {
@@ -52,7 +44,7 @@ export default function Project() {
 
   // Complete milestone
   const handleComplete = (data) => {
-    update("milestone", data.id, { status: "completed" });
+    update("milestone", data.id, { status: "completed" }, getToken());
 
     const m = milestones.map((milestone) => {
       if (milestone.id === data.id) {
@@ -65,7 +57,7 @@ export default function Project() {
   };
 
   const handleDelete = (id) => {
-    del("milestone", id);
+    del("milestone", id, getToken());
 
     const m = milestones.filter((milestone) => milestone.id !== id);
 
@@ -73,7 +65,7 @@ export default function Project() {
   };
 
   const completeProject = (df) => {
-    update("projects", df.id, { status: "completed" });
+    update("projects", df.id, { status: "completed" }, getToken());
 
     const p = defaultProject.map((project) => {
       if (project.id === df.id) {

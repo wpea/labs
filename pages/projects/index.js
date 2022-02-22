@@ -3,7 +3,6 @@ import Button from "../../components/button";
 import { useRouter } from "next/router";
 // import md5 from "md5";
 import { useEffect } from "react";
-import { get } from "../../lib/api";
 import { useAppContext } from "../../lib/contexts/globalState";
 
 export default function AllProjects() {
@@ -11,6 +10,8 @@ export default function AllProjects() {
 
   const [sharedState] = useAppContext();
   const { projects } = sharedState;
+
+  useEffect(() => {}, []);
 
   const completed = "bg-green-600 hover:bg-green-800";
   const ongoing = "bg-yellow-600 hover:bg-yellow-800";
