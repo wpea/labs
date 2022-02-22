@@ -19,7 +19,7 @@ export default function Login() {
   const [data, setData] = useState({
     email: "",
     password: "",
-    device_name: "iPhone X",
+    device_name: "",
   });
 
   // Get tokens
@@ -53,16 +53,10 @@ export default function Login() {
     setData({ ...data, [name]: value });
   };
 
-  // Test Delete Token
-  const deleteToken = () => {
-    localStorage.removeItem("token");
-    setToken(getToken());
-  };
-
   // Get device after browser loads
   useEffect(() => {
     if (getToken()) router.push("/home");
-    // setData({ ...data, device_name: "iPhone X" });
+    setData({ ...data, device_name: window.navigator.userAgent });
   }, []);
 
   const hideError = () => {
