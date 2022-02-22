@@ -18,6 +18,7 @@ export default function Home({ children }) {
   // on component mount
   useEffect(() => {
     getData(getToken());
+    console.log(getToken());
   }, [sharedState.refresh]);
 
   // get and store data in global state
