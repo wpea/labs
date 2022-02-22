@@ -19,7 +19,7 @@ export default function Login() {
   const [data, setData] = useState({
     email: "",
     password: "",
-    device_name: "",
+    device_name: "iPhone X",
   });
 
   // Get tokens
@@ -62,7 +62,7 @@ export default function Login() {
   // Get device after browser loads
   useEffect(() => {
     if (getToken()) router.push("/home");
-    setData({ ...data, device_name: window.navigator.userAgent });
+    // setData({ ...data, device_name: "iPhone X" });
   }, []);
 
   const hideError = () => {
