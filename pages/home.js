@@ -48,7 +48,7 @@ export default function HomeCards() {
 
               <div className="space-y-2">
                 <div className="text-xl tracking-tight font-bold text-gray-700">
-                  Projects
+                  Taskinator
                 </div>
                 <div className="text-2xs tracking-tight">
                   Create and manage projects, milestones and tasks all from one
