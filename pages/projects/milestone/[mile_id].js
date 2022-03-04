@@ -7,6 +7,7 @@ import { useAppContext } from "../../../lib/contexts/globalState";
 import moment from "moment";
 import { del, update } from "../../../lib/api";
 import { getToken } from "../../../lib/hooks/useAuth2";
+import _ from "lodash";
 
 export default function Milestones() {
   const router = useRouter();
@@ -24,11 +25,16 @@ export default function Milestones() {
     // getData();
     setDefaultMilestone(getMilestone());
 
-    setTasks(
-      sharedState.tasks.filter(
-        (task) => parseInt(task.mile_id) === parseInt(mile_id)
-      )
+    //filter
+    const filteredTasks = sharedState.tasks.filter(
+      (task) => parseInt(task.mile_id) === parseInt(mile_id)
     );
+
+    //sort
+    const sortedTasks = _.orderBy(filteredTasks, "end_date", "asc");
+
+    //set
+    setTasks(sortedTasks);
   }, [sharedState.refresh]);
 
   // Get project details

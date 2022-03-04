@@ -2,16 +2,23 @@ import Home from "..";
 import Button from "../../components/button";
 import { useRouter } from "next/router";
 // import md5 from "md5";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppContext } from "../../lib/contexts/globalState";
+import _ from "lodash";
 
 export default function AllProjects() {
   const router = useRouter();
+  const [prods, setProds] = useState([]);
 
   const [sharedState] = useAppContext();
-  const { projects } = sharedState;
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    //get and sort
+    const sortedProjects = _.orderBy(sharedState.projects, "end_date", "asc");
+
+    //set
+    setProds(sortedProjects);
+  }, [sharedState.projects]);
 
   const completed = "bg-green-600 hover:bg-green-800";
   const ongoing = "bg-yellow-600 hover:bg-yellow-800";
@@ -26,14 +33,14 @@ export default function AllProjects() {
           </div>
         </div>
         <div className="p-4 space-y-6 border-t rounded-bl-md rounded-br-md bg-gray-100">
-          {projects.length === 0 ? (
+          {prods.length === 0 ? (
             <div className="grid p-3 px-4">
               <div className="text-center text-xs text-gray-600">
                 Create a project.
               </div>
             </div>
           ) : (
-            projects.map((project) => (
+            prods.map((project) => (
               <div
                 key={project.id}
                 onClick={() => router.push(`projects/${project.id}`)}
@@ -60,7 +67,7 @@ export default function AllProjects() {
             ))
           )}
 
-          {!projects.length === 0 && (
+          {!prods.length === 0 && (
             <Button
               styles={`text-sm btn btn-sm btn-outline`}
               value={`view more`}

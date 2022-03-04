@@ -3,6 +3,7 @@ import { getActivity } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
 import { useEffect, useState } from "react";
 import { getToken } from "./../lib/hooks/useAuth2";
+import _ from "lodash";
 
 export default function Activity() {
   const [activity, setActivity] = useState([]);
@@ -18,7 +19,7 @@ export default function Activity() {
   useEffect(() => {
     sharedState.activity.length === 0
       ? getData(getToken())
-      : setActivity(sharedState.activity);
+      : setActivity(_.orderBy(sharedState.activity, "date", "desc"));
   }, [sharedState.refresh]);
 
   const getData = async (token) => {

@@ -9,6 +9,7 @@ import { del, findMilestone, update } from "../../lib/api";
 import moment from "moment";
 import MarkAsCompleted from "./../../components/MarkAsCompleted";
 import { getToken } from "./../../lib/hooks/useAuth2";
+import _ from "lodash";
 
 export default function Project() {
   const router = useRouter();
@@ -24,16 +25,18 @@ export default function Project() {
 
   useEffect(() => {
     setDefaultProject(getProject(proj));
-    setMilestones(
-      sharedState.milestones.filter(
-        (milestone) => parseInt(milestone.proj_id) === parseInt(proj)
-      )
-    );
-  }, [sharedState.refresh]);
 
-  // const getData = async () => {
-  //   const getMilestones = await findMilestone(proj);
-  // };
+    //get + filter
+    const mstones = sharedState.milestones.filter(
+      (milestone) => parseInt(milestone.proj_id) === parseInt(proj)
+    );
+
+    //sort
+    const sortedMilestones = _.orderBy(mstones, ["end_date"], ["asc"]);
+
+    //set
+    setMilestones(sortedMilestones);
+  }, [sharedState.refresh]);
 
   // Get project details
   const getProject = () => {
