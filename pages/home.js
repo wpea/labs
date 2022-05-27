@@ -70,7 +70,7 @@ export default function HomeCards() {
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
-                  <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                  <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" />
                 </svg>
               </div>
               <div className="space-y-2">
@@ -80,6 +80,56 @@ export default function HomeCards() {
                 <div className="text-2xs tracking-tight">
                   Family office individual onboarding form.
                 </div>
+              </div>
+            </div>
+
+            <div
+              onClick={() => {
+                router.push("/club/interest");
+              }}
+              className="bg-gray-50 hover:border-gray-400 border  border-gray-200 cursor-pointer rounded-md p-8 space-y-4 grid"
+            >
+              <div className="bg-blue-200 place-self-start rounded-full justify-self-start p-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="fill-current text-blue-500 h-8 w-8"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                </svg>
+              </div>
+              <div className="space-y-2">
+                <div className="text-xl tracking-tight font-bold text-gray-700">
+                  Clubs
+                </div>
+                <div className="text-2xs tracking-tight">
+                  Investment club short survey form & responses.
+                </div>
+              </div>
+            </div>
+
+            <div onClick={() => router.push('/stocks')} className="bg-gray-50 hover:border-gray-400 border  border-gray-200 cursor-pointer rounded-md p-8 space-y-4 grid">
+              <div className="bg-blue-200 rounded-full place-self-start justify-self-start p-2">
+               
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="fill-current text-blue-500 h-8 w-8"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="space-y-2">
+                <div className="text-xl tracking-tight font-bold text-gray-700">
+                  Stocks
+                </div>
+                <div className="text-2xs tracking-tight">View stocks data.</div>
               </div>
             </div>
 
