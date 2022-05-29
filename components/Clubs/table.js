@@ -18,7 +18,7 @@ export default function Table({ th, tr }) {
         <thead className="text-2xs capitalize font-normal text-gray-700 uppercase bg-gray-50">
           <tr>
             {th.map((title) => (
-              <th scope="col" className="px-6 py-3">
+              <th key={title} scope="col" className="px-6 py-3">
                 {title}
               </th>
             ))}
