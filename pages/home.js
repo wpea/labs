@@ -114,7 +114,7 @@ export default function HomeCards() {
                
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="fill-current text-blue-500 h-8 w-8"
+                  className="fill-current text-blue-500 h-8 w-8"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
