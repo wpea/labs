@@ -27,7 +27,7 @@ export default function Table({ th, tr }) {
         <tbody>
           <tr className="bg-white border-b">
             {tr.map((data) => (
-              <td className="px-6 py-4">{data}</td>
+              <td key={data} className="px-6 py-4">{data}</td>
             ))}
           </tr>
         </tbody>
