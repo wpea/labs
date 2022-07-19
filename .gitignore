@@ -32,3 +32,6 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# files
+/components/addStock[old].jsx

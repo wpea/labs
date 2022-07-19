@@ -76,7 +76,7 @@ export default function AddStock({ toggleAdd, status, data, button }) {
                                 name="symbol"
                                 value={data.symbol}
                                 onChange={data}
-                                autocomplete="given-name"
+                                autoComplete="given-name"
                                 className="mt-1 uppercase block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
                               />
                             </div>
@@ -91,7 +91,7 @@ export default function AddStock({ toggleAdd, status, data, button }) {
                                   name="buy_price"
                                   value={data.buy_price}
                                   onChange={data}
-                                  autocomplete="given-name"
+                                  autoComplete="given-name"
                                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
                                 />
                               </div>
@@ -105,7 +105,7 @@ export default function AddStock({ toggleAdd, status, data, button }) {
                                   name="shares"
                                   value={data.shares}
                                   onChange={data}
-                                  autocomplete="given-name"
+                                  autoComplete="given-name"
                                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
                                 />
                               </div>
