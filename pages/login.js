@@ -33,7 +33,7 @@ export default function Login() {
     }
 
     // await server response
-    const res = await loginAuth(data);
+    const res = await loginAuth(JSON.stringify(data));
 
     // check for errors
     if (res.errors || !res.token) {
@@ -44,10 +44,6 @@ export default function Login() {
       router.push("/home");
       console.log(res.token);
 
-      // } else {
-
-      // }
-      // router.push("/home");
     }
 
     updateSharedState({ ...sharedState, token: res.token });
