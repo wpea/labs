@@ -7,8 +7,8 @@ export default function Spin() {
         id="L9"
         x="0px"
         y="0px"
-        height="70px"
-        width="70px"
+        height="50px"
+        width="50px"
         viewBox="0 0 100 100"
         enableBackground="new 0 0 0 0"
       >

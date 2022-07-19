@@ -6,13 +6,18 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter']
-      }
+        sans: ["Inter"],
+      },
     },
   },
-  plugins: [require('daisyui'), require('@tailwindcss/forms')],
+  plugins: [
+    require("daisyui"),
+    require("@tailwindcss/forms"),
+    require("tailwind-scrollbar-hide"),
+    require("tailwind-scrollbar"),
+  ],
 
   daisyui: {
     themes: false,
-  }
-}
+  },
+};
