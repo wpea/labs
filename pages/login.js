@@ -42,8 +42,7 @@ export default function Login() {
     } else {
       saveToken(res.token, res.user);
       router.push("/home");
-      console.log(res.token);
-
+      // console.log(res.token);
     }
 
     updateSharedState({ ...sharedState, token: res.token });
@@ -59,6 +58,10 @@ export default function Login() {
   useEffect(() => {
     if (getToken()) router.push("/home");
     setData({ ...data, device_name: window.navigator.userAgent });
+
+    /**
+     * Get client token so we don't have to get it everytime 
+     */
   }, []);
 
   const hideError = () => {

@@ -8,8 +8,10 @@ import currency from "currency.js";
 import AddStock from "./../../components/addStock";
 import axios from "axios";
 import { apiAddress } from "../../lib/api";
+import { useRouter } from 'next/router';
 
 export default function Stocks() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [newStock, setNewStock] = useState({});
   const [stocks, setStocks] = useState([]);
@@ -229,6 +231,9 @@ export default function Stocks() {
     // console.log(newStock, purchased, allStocks);
   };
 
+  /** Bamboo stock reg */
+  const [bModal, setBModal] = useState(false);
+
   return (
     <>
       <AppLayout>
@@ -253,6 +258,21 @@ export default function Stocks() {
                 >
                   Add a stock
                 </button>
+
+                <button
+                  onClick={() => router.push("/stocks/create/step-one")}
+                  className="focus:ring-none inline-flex w-full justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-0 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Create a stock account
+                </button>
+
+                <button
+                  onClick={() => router.push("/stocks/dashboard")}
+                  className="focus:ring-none inline-flex w-full justify-center rounded-md border border-transparent bg-gray-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-0 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  View stock accounts
+                </button>
+
                 {loading && <Spin />}
               </div>
 
@@ -265,6 +285,7 @@ export default function Stocks() {
                 </div>
               </div>
             </div>
+
             <div className="border-t pt-10">
               <div className="grid grid-cols-5 gap-4">
                 {stocks?.length > 0 ? (

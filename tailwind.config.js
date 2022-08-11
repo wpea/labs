@@ -8,6 +8,10 @@ module.exports = {
       fontFamily: {
         sans: ["Inter"],
       },
+      colors: {
+        "wp-blue": "#2D7EC2",
+        "wp-blue-dark": "#27669B",
+      },
     },
   },
   plugins: [
