@@ -3,13 +3,15 @@ import axios from "axios";
 import { apiAddress } from "../../../lib/api";
 import AppLayout from "./../../../components/Layouts/AppLayout";
 import Deposit from "../../../components/Stocks/Depost";
-import Spin from './../../../components/Misc/Spin';
+import Spin from "./../../../components/Misc/Spin";
+import { useRouter } from "next/router";
 
 export default function Account() {
   const [account, setAccount] = useState({});
   const [portOne, setPortOne] = useState({});
   const [portTwo, setPortTwo] = useState({});
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const [showDep, setShowDep] = useState(false);
 
@@ -39,7 +41,7 @@ export default function Account() {
     });
 
     return formatter.format(val);
-  }
+  };
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -136,7 +138,10 @@ export default function Account() {
                 <div className="text-right text-xs">
                   Innovating the family office.
                 </div>
-                <button className="btn btn-outline btn-sm space-x-3 border-white text-white hover:border-white hover:bg-transparent">
+                <button
+                  onClick={() => router.push("/stocks/dashboard")}
+                  className="btn btn-outline btn-sm space-x-3 border-white text-white hover:border-white hover:bg-transparent"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-6 w-6"
