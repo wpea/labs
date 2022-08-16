@@ -4,7 +4,7 @@ import CurrencyInput from "react-currency-input-field";
 import { config } from "../../lib/adapter";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import Spin from './../Misc/Spin';
+import Spin from '../Misc/Spin';
 import { useRouter } from 'next/router';
 
 export default function Deposit({ showDep, toggleAdd }) {

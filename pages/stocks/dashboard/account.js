@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { apiAddress } from "../../../lib/api";
 import AppLayout from "./../../../components/Layouts/AppLayout";
-import Deposit from "../../../components/Stocks/Depost";
+import Deposit from "../../../components/Stocks/Deposit";
 import Spin from "./../../../components/Misc/Spin";
 import { useRouter } from "next/router";
+import Trade from './../../../components/Stocks/Trade';
 
 export default function Account() {
   const [account, setAccount] = useState({});
@@ -14,6 +15,7 @@ export default function Account() {
   const router = useRouter();
 
   const [showDep, setShowDep] = useState(false);
+  const [showTr, setShowTr] = useState(false);
 
   const config = (method, url, auth) => {
     return {
@@ -283,7 +285,10 @@ export default function Account() {
             </div>
 
             <div className="flex space-x-4 place-self-start justify-self-end">
-              <button className="btn flex w-36 justify-between place-self-end border-none bg-[#2D7EC2] capitalize hover:bg-[#27669B]">
+              <button
+                onClick={() => setShowTr(!showTr)}
+                className="btn flex w-36 justify-between place-self-end border-none bg-[#2D7EC2] capitalize hover:bg-[#27669B]"
+              >
                 <div>Trade</div>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -414,6 +419,10 @@ export default function Account() {
 
       <>
         <Deposit showDep={showDep} toggleAdd={() => setShowDep(!showDep)} />
+      </>
+
+      <>
+        <Trade showDep={showTr} toggleAdd={() => setShowTr(!showTr)} />
       </>
     </AppLayout>
   );
