@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAppContext } from "../../../lib/contexts/globalState";
 import Spin from "./../../../components/Misc/Spin";
 import { toast } from "react-hot-toast";
-import { b_header_one } from "../../../lib/api";
+import { apiAddress, b_header_one } from "../../../lib/api";
 
 export default function StepOne({ close }) {
   const [sharedState, updateSharedState] = useAppContext();
@@ -26,13 +26,21 @@ export default function StepOne({ close }) {
     //set data
     Object.keys(sharedState.reg.step_one.res).length > 0 &&
       setData(sharedState.reg.step_one.info);
-    
-      //set the admin token
-    localStorage.setItem(
-      "x-client-token",
-      "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikx6aTZoUVRwc2gtS21BNjdzbXdCWiJ9.eyJodHRwczovL2V4YW1wbGUuY29tL2NsYWltIjoiYmFyIiwiaXNzIjoiaHR0cHM6Ly9pbnZlc3RiYW1ib28uYXV0aDAuY29tLyIsInN1YiI6ImJlVkdQZjFNRjVXOGRSSXpkbUgyTXR2VXY5OGhvRjNBQGNsaWVudHMiLCJhdWQiOiJodHRwczovL3Bvd2VyZWQtYnktYmFtYm9vLXNhbmRib3guaW52ZXN0YmFtYm9vLmNvbS8iLCJpYXQiOjE2NTk5NTY4MjEsImV4cCI6MTY2MDA0MzIyMSwiYXpwIjoiYmVWR1BmMU1GNVc4ZFJJemRtSDJNdHZVdjk4aG9GM0EiLCJzY29wZSI6InJlYWQ6YmFtYm9vX2RhdGEgZXh0cmEiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMifQ.nXDnU1rAGR9VAJdavGkmsUj7i7Cv-GcIYvdEYHT9Vq1M0z-BYheY6NcxQ81hf6xrjyYXVaSioodHuHOWDhpiVNr9CvGvxdEXZQCHZX7jEXHB1h9OJ6om-Sa02izFE0-Bx5SKmSvIM4jBByJAnWOMvqvDo1EDW7GfODSz8MAAf2P-EkZ9kd3H9qMev1OPwKmQr_NBrCp73h_cYBT4fSy6OIRzcwVvEiOCQfFkAb3akpF6fiyj7Yorp5gQOvHjAdUfsmnz81srEinWHzpyPe9uFPPb0IswbFt1vRMTqz-aS0I8QlgDMIRTN4dGGvzDrpf6MVJkjJu_1w1sIVLoRIwgSA"
-    );
+
+    checkToken();
   }, []);
+
+  const checkToken = async () => {
+    const res = await axios.get(`${apiAddress}/access/token`, {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+    });
+
+    console.log(res.data.admin);
+
+    localStorage.setItem("x-client-token", res.data.admin);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -120,9 +128,20 @@ export default function StepOne({ close }) {
         className="space-y-6 px-4 pt-7 pb-3 w-1/3 sm:px-8"
       >
         <div className="space-y-4 bg-white">
-
-          <svg xmlns="http://www.w3.org/2000/svg" onClick={() => router.push('/stocks')} className="h-10 -ml-1.5 w-10 mb-10 hover:opacity-60 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            onClick={() => router.push("/stocks")}
+            className="h-10 -ml-1.5 w-10 mb-10 hover:opacity-60 cursor-pointer"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={0.5}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"
+            />
           </svg>
 
           <div className="mt-3 flex justify-between text-center sm:mt-1 sm:text-left">

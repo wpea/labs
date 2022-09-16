@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ["Inter"],
+        ibm: ['"IBM Plex Sans Condensed"'],
       },
       colors: {
         "wp-blue": "#2D7EC2",

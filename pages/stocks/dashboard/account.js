@@ -5,17 +5,26 @@ import AppLayout from "./../../../components/Layouts/AppLayout";
 import Deposit from "../../../components/Stocks/Deposit";
 import Spin from "./../../../components/Misc/Spin";
 import { useRouter } from "next/router";
-import Trade from './../../../components/Stocks/Trade';
+import Trade from "./../../../components/Stocks/Trade";
+import StockInfo from "../../../components/Stocks/StockInfo";
+import PendingOrder from "../../../components/Stocks/PendingOrder";
+import Withdraw from "../../../components/Stocks/Withdraw";
 
 export default function Account() {
   const [account, setAccount] = useState({});
   const [portOne, setPortOne] = useState({});
   const [portTwo, setPortTwo] = useState({});
   const [loading, setLoading] = useState(false);
+  const [stocks, setStocks] = useState([]);
+  const [pendingOrders, setPendingOrders] = useState([]);
+
+  const [checkOrder, setCheckOrder] = useState(false);
+
   const router = useRouter();
 
   const [showDep, setShowDep] = useState(false);
   const [showTr, setShowTr] = useState(false);
+  const [showWd, setShowWd] = useState(false);
 
   const config = (method, url, auth) => {
     return {
@@ -56,15 +65,18 @@ export default function Account() {
     const account = JSON.parse(localStorage.getItem("account"));
     getJwt(account);
     /** wait for 3 seconds, why? I don't know for sure yet! but its better so it
-     * fail.
+     *  fail.
      */
     setLoading(true);
     await sleep(3000);
     getPortfolioBreakdown();
     await sleep(3000);
     getPortfolio();
-    // setLoading(false);
-  }, []);
+    await sleep(3000);
+    getAccountStocks();
+    getPendingOrders();
+    setLoading(false);
+  }, [showTr, showDep]);
 
   /**
    *
@@ -109,15 +121,47 @@ export default function Account() {
     setLoading(true);
     const user = JSON.parse(localStorage.getItem("user"));
     /** PORT BRKDWN */
-    const res2 = await axios(
+    const res = await axios(
       config(
         "get",
         "https://powered-by-bamboo-sandbox.investbamboo.com/api/portfolio/breakdown",
         user.jwt
       )
     );
-    console.log(res2);
-    if (res2.status === 200) setPortTwo(res2.data);
+    console.log(res);
+    if (res.status === 200) setPortTwo(res.data);
+    setLoading(false);
+  };
+
+  const getAccountStocks = async () => {
+    setLoading(true);
+    const user = JSON.parse(localStorage.getItem("user"));
+    /** PORT BRKDWN */
+    const res = await axios(
+      config(
+        "get",
+        "https://powered-by-bamboo-sandbox.investbamboo.com/api/my_stocks",
+        user.jwt
+      )
+    );
+    console.log(res);
+    if (res.status === 200) setStocks(res.data.stocks);
+    setLoading(false);
+  };
+
+  const getPendingOrders = async () => {
+    setLoading(true);
+    const user = JSON.parse(localStorage.getItem("user"));
+    /** PORT BRKDWN */
+    const res = await axios(
+      config(
+        "get",
+        "https://powered-by-bamboo-sandbox.investbamboo.com/api/pending_orders",
+        user.jwt
+      )
+    );
+    console.log(res);
+    if (res.status === 200) setPendingOrders(res.data.pending_orders);
     setLoading(false);
   };
 
@@ -125,7 +169,12 @@ export default function Account() {
     <AppLayout>
       <div className="grid w-full">
         <div className="grid space-y-10">
-          <div className="grid h-60 space-y-10 py-10 bg-[#2D7EC2] px-20 text-white">
+          <div
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 40' width='80' height='40'%3E%3Cpath fill='%23ffffff' fill-opacity='0.05' d='M0 40a19.96 19.96 0 0 1 5.9-14.11 20.17 20.17 0 0 1 19.44-5.2A20 20 0 0 1 20.2 40H0zM65.32.75A20.02 20.02 0 0 1 40.8 25.26 20.02 20.02 0 0 1 65.32.76zM.07 0h20.1l-.08.07A20.02 20.02 0 0 1 .75 5.25 20.08 20.08 0 0 1 .07 0zm1.94 40h2.53l4.26-4.24v-9.78A17.96 17.96 0 0 0 2 40zm5.38 0h9.8a17.98 17.98 0 0 0 6.67-16.42L7.4 40zm3.43-15.42v9.17l11.62-11.59c-3.97-.5-8.08.3-11.62 2.42zm32.86-.78A18 18 0 0 0 63.85 3.63L43.68 23.8zm7.2-19.17v9.15L62.43 2.22c-3.96-.5-8.05.3-11.57 2.4zm-3.49 2.72c-4.1 4.1-5.81 9.69-5.13 15.03l6.61-6.6V6.02c-.51.41-1 .85-1.48 1.33zM17.18 0H7.42L3.64 3.78A18 18 0 0 0 17.18 0zM2.08 0c-.01.8.04 1.58.14 2.37L4.59 0H2.07z'%3E%3C/path%3E%3C/svg%3E")`,
+            }}
+            className="grid h-60 space-y-10 py-10 bg-[#2D7EC2] px-20 text-white"
+          >
             <div className="grid grid-cols-2 self-center">
               <div className="self-center font-bold">
                 <svg
@@ -166,10 +215,12 @@ export default function Account() {
             <div>
               <div className="grid grid-cols-2">
                 <div className="space-y-1 self-center">
-                  <div className="text-2xs uppercase tracking-widest">
-                    total aum
+                  <div className="text-4xl font-ibm">
+                    {currVal(portTwo?.total_aum ?? 0)}
                   </div>
-                  <div className="text-4xl">{currVal(portTwo?.total_aum)}</div>
+                  <div className="text-2xs uppercase tracking-widest">
+                    total Value
+                  </div>
                 </div>
                 <div className="grid space-y-2 self-center justify-self-end text-xs">
                   {/* <div className="flex cursor-pointer items-center space-x-2 place-self-end hover:text-gray-200">
@@ -224,33 +275,62 @@ export default function Account() {
           {JSON.stringify(portTwo, null, 2)} */}
 
           <div className="grid h-48 grid-cols-2 p-10 md:px-20">
-            <div className="flex space-x-16">
+            <div className="flex space-x-12">
               <div className="space-y-1">
                 <div className="text-[10px] uppercase tracking-widest text-gray-500">
                   total invested
                 </div>
-                <div className="text-2xl font-medium">
+                <div className="text-2xl font-ibm font-medium">
                   {currVal(portTwo?.total_invested ?? 0)}
                 </div>
 
                 <div className="flex items-center space-x-1">
-                  <div className="place-self-start rounded-md bg-green-500 text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 rotate-45"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="1"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M7 11l5-5m0 0l5 5m-5-5v12"
-                      />
-                    </svg>
+                  <div
+                    className={`place-self-start rounded-md ${
+                      portTwo?.total_percent_change > 0
+                        ? `text-green-600`
+                        : `text-red-600`
+                    }`}
+                  >
+                    {portTwo?.total_percent_change > 0 ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6 -rotate-45"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15 11.25l-3-3m0 0l-3 3m3-3v7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6 rotate-45"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    )}
                   </div>
-                  <div className="text-sm text-green-500">
+                  <div
+                    className={`"text-sm font-ibm ${
+                      portTwo?.total_percent_change > 0
+                        ? `text-green-600`
+                        : `text-red-600`
+                    }`}
+                  >
                     {portTwo?.total_percent_change}%
                   </div>
                 </div>
@@ -258,9 +338,15 @@ export default function Account() {
 
               <div className="space-y-1">
                 <div className="text-[10px] uppercase tracking-widest text-gray-500">
-                  total returns
+                  returns
                 </div>
-                <div className="text-2xl font-medium">
+                <div
+                  className={`${
+                    portTwo?.total_return > 0
+                      ? `text-green-600`
+                      : `text-red-600`
+                  } text-2xl font-ibm font-medium`}
+                >
                   {currVal(portTwo?.total_return ?? 0)}
                 </div>
               </div>
@@ -269,7 +355,7 @@ export default function Account() {
                 <div className="text-[10px] uppercase tracking-widest text-gray-500">
                   equity value
                 </div>
-                <div className="text-2xl font-medium">
+                <div className="text-2xl font-ibm font-medium">
                   {currVal(portTwo?.equity_value ?? 0)}
                 </div>
               </div>
@@ -278,8 +364,17 @@ export default function Account() {
                 <div className="text-[10px] uppercase tracking-widest text-gray-500">
                   available to invest
                 </div>
-                <div className="text-2xl font-medium">
+                <div className="text-2xl font-ibm font-medium">
                   {currVal(portTwo?.available_to_invest ?? 0)}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-[10px] uppercase tracking-widest text-gray-500">
+                  withdrawable
+                </div>
+                <div className="text-2xl font-ibm font-medium">
+                  {currVal(portTwo?.withdrawal_cash ?? 0)}
                 </div>
               </div>
             </div>
@@ -361,6 +456,7 @@ export default function Account() {
               </button>
 
               <button
+                onClick={() => setShowWd(!showWd)}
                 type="submit"
                 className="btn flex w-36 justify-between place-self-end border-none bg-gray-700 capitalize hover:bg-gray-900"
               >
@@ -415,6 +511,124 @@ export default function Account() {
             </div>
           </div>
         </div>
+
+        {/** Select active stocks or pending orders. */}
+        <div className="grid grid-cols-4 px-20">
+          <div
+            onClick={() => setCheckOrder(false)}
+            className={`${
+              !checkOrder && `bg-gray-800 text-white`
+            } flex cursor-pointer items-center justify-between rounded-tl-2xl border-t border-r border-l bg-gray-50 py-4 px-7 pt-5`}
+          >
+            <div className="flex items-center space-x-2 text-xs font-bold uppercase">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-green-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="1"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
+                />
+              </svg>
+              <div>stock portfolio</div>
+            </div>
+
+            <div className="font-ibm text-xl font-normal text-green-400">
+              {stocks.length}
+            </div>
+          </div>
+
+          <div
+            onClick={() => setCheckOrder(true)}
+            className={`${
+              checkOrder && `bg-gray-800 text-white`
+            } flex cursor-pointer items-center justify-between rounded-tr-2xl border-t border-r border-l bg-gray-50 py-4 px-7 pt-5`}
+          >
+            <div className="flex items-center space-x-2 text-xs font-bold uppercase">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1}
+                stroke="currentColor"
+                className="h-6 w-6 text-red-500"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                />
+              </svg>
+
+              <div>pending orders</div>
+            </div>
+
+            <div className="font-ibm text-xl font-normal text-red-500">
+              {pendingOrders.length}
+            </div>
+          </div>
+        </div>
+
+        {!checkOrder ? (
+          stocks.length > 0 && (
+            <>
+              {stocks.map((s) => (
+                <StockInfo
+                  key={s?.symbol}
+                  bg={s?.background_color}
+                  name={s?.name}
+                  symbol={s?.symbol}
+                  perc_change={Math.ceil(s?.percent_change * 100) / 100}
+                  price={Math.ceil(s?.price * 100) / 100}
+                  quantity={Math.ceil(s?.quantity * 100) / 100}
+                  total_return={Math.ceil(s?.total_return * 100) / 100}
+                  value_change={Math.ceil(s?.value_change * 100) / 100}
+                  equity={Math.ceil(s?.user_equity * 100) / 100}
+                  logo={s?.logo}
+                />
+              ))}
+            </>
+          )
+        ) : (
+          <div>
+            {pendingOrders.length > 0 ? (
+              pendingOrders.map((p) => (
+                <PendingOrder
+                  key={p?.symbol}
+                  name={p?.name}
+                  symbol={p?.symbol}
+                  status={p?.status}
+                  side={p?.side}
+                  fee={Math.ceil(p?.fee * 100) / 100}
+                  pps={Math.ceil(p?.price_per_share * 100) / 100}
+                  price={Math.ceil(p?.order_price * 100) / 100}
+                  quantity={Math.ceil(p?.quantity * 100) / 100}
+                  logo={p?.logo}
+                />
+              ))
+            ) : (
+              <div className="grid place-items-center border-t text-gray-400 uppercase text-xs font-medium tracking-wide py-12">
+                <div> No pending orders.</div>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="text-xs py-20 px-20">
+          <div className="self-center flex items-center justify-between text-xs">
+            <div>&copy; 2022 WPEA Labs</div>
+          </div>
+        </div>
       </div>
 
       <>
@@ -423,6 +637,10 @@ export default function Account() {
 
       <>
         <Trade showDep={showTr} toggleAdd={() => setShowTr(!showTr)} />
+      </>
+
+      <>
+        <Withdraw showDep={showWd} toggleAdd={() => setShowWd(!showWd)} />
       </>
     </AppLayout>
   );

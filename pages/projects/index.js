@@ -13,10 +13,10 @@ export default function AllProjects() {
   const [sharedState] = useAppContext();
 
   useEffect(() => {
-    //get and sort
+    // get and sort
     const sortedProjects = _.orderBy(sharedState.projects, "end_date", "asc");
 
-    //set
+    // set
     setProds(sortedProjects);
   }, [sharedState.projects]);
 
