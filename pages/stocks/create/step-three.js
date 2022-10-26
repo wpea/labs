@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useAppContext } from "../../../lib/contexts/globalState";
 import { useState, useEffect } from "react";
-import { b_header_two } from "../../../lib/api";
+import { bambooLive, b_header_two } from "../../../lib/api";
 import Spin from "./../../../components/Misc/Spin";
 import { toast } from "react-hot-toast";
 
@@ -24,7 +24,7 @@ export default function StepThree() {
     setLoading(true);
 
     fetch(
-      "https://powered-by-bamboo-sandbox.investbamboo.com/api/verify_identity_identifier",
+      `${bambooLive}/api/verify_identity_identifier`,
       {
         method: "POST",
         /**
@@ -33,7 +33,7 @@ export default function StepThree() {
         headers: b_header_two(
           localStorage.getItem("x-client-token"),
           sharedState.reg.step_one.res.jwt,
-          `wealth-paradigm-sandbox`
+          `wealth-paradigm`
         ),
         body: JSON.stringify(data),
       }
@@ -175,7 +175,7 @@ export default function StepThree() {
         <div className="grid">
           <div className="flex justify-between">
             <button
-              onClick={() => router.push("/stocks/create/step-two")}
+              onClick={() => router.push("/stocks/create/step-one")}
               type="submit"
               className="btn flex w-36 justify-between place-self-end border-none bg-gray-500 capitalize hover:bg-gray-700"
             >

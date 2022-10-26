@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { apiAddress } from "../../../lib/api";
+import { apiAddress, bambooLive } from "../../../lib/api";
 import AppLayout from "./../../../components/Layouts/AppLayout";
 import Deposit from "../../../components/Stocks/Deposit";
 import Spin from "./../../../components/Misc/Spin";
@@ -76,7 +76,9 @@ export default function Account() {
     getAccountStocks();
     getPendingOrders();
     setLoading(false);
-  }, [showTr, showDep]);
+  }, []);
+  // When trades and deposits are complete
+  // showTr, showDep;
 
   /**
    *
@@ -108,7 +110,7 @@ export default function Account() {
     const res = await axios(
       config(
         "get",
-        "https://powered-by-bamboo-sandbox.investbamboo.com/api/portfolio",
+        `${bambooLive}/api/portfolio`,
         user.jwt
       )
     );
@@ -124,7 +126,7 @@ export default function Account() {
     const res = await axios(
       config(
         "get",
-        "https://powered-by-bamboo-sandbox.investbamboo.com/api/portfolio/breakdown",
+        `${bambooLive}/api/portfolio/breakdown`,
         user.jwt
       )
     );
@@ -140,7 +142,7 @@ export default function Account() {
     const res = await axios(
       config(
         "get",
-        "https://powered-by-bamboo-sandbox.investbamboo.com/api/my_stocks",
+        `${bambooLive}/api/my_stocks`,
         user.jwt
       )
     );
@@ -156,7 +158,7 @@ export default function Account() {
     const res = await axios(
       config(
         "get",
-        "https://powered-by-bamboo-sandbox.investbamboo.com/api/pending_orders",
+        `${bambooLive}/api/pending_orders`,
         user.jwt
       )
     );
@@ -167,7 +169,7 @@ export default function Account() {
 
   return (
     <AppLayout>
-      <div className="grid w-full">
+      <div className="grid w-full space-y-12">
         <div className="grid space-y-10">
           <div
             style={{
@@ -275,7 +277,7 @@ export default function Account() {
           {JSON.stringify(portTwo, null, 2)} */}
 
           <div className="grid h-48 grid-cols-2 p-10 md:px-20">
-            <div className="flex space-x-12">
+            <div className="grid grid-cols-4 gap-6">
               <div className="space-y-1">
                 <div className="text-[10px] uppercase tracking-widest text-gray-500">
                   total invested
@@ -366,6 +368,24 @@ export default function Account() {
                 </div>
                 <div className="text-2xl font-ibm font-medium">
                   {currVal(portTwo?.available_to_invest ?? 0)}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-[10px] uppercase tracking-widest text-gray-500">
+                  pending deposit
+                </div>
+                <div className="text-2xl font-ibm font-medium">
+                  {currVal(portOne?.pending_deposit ?? 0)}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-[10px] uppercase tracking-widest text-gray-500">
+                  usd to ngn
+                </div>
+                <div className="text-2xl font-ibm text-gray-400 font-medium">
+                  {currVal(portOne?.usd_to_naira ?? 0)}
                 </div>
               </div>
 

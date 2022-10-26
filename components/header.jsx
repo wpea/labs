@@ -14,7 +14,7 @@ export default function Header() {
       >
         <img
           className="w-36"
-          src="https://ik.imagekit.io/et8vxrzxxdj/wp/wplabs_fnNIZEWBNs.svg"
+          src="https://res.cloudinary.com/dtdavvoo3/image/upload/v1664449278/labs/wplabs_w17n4z.svg"
           alt="wplabs"
         />
       </div>

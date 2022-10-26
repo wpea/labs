@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAppContext } from "../../../lib/contexts/globalState";
 import Spin from "./../../../components/Misc/Spin";
 import { toast } from "react-hot-toast";
-import { apiAddress, b_header_one } from "../../../lib/api";
+import { apiAddress, bambooLive, b_header_one } from "../../../lib/api";
 
 export default function StepOne({ close }) {
   const [sharedState, updateSharedState] = useAppContext();
@@ -51,12 +51,12 @@ export default function StepOne({ close }) {
     e.preventDefault();
 
     if (Object.keys(sharedState.reg.step_one.res).length > 0)
-      return router.push("/stocks/create/step-two");
+      return router.push("/stocks/create/step-three");
 
     setLoading(true);
 
     const res = await fetch(
-      "https://powered-by-bamboo-sandbox.investbamboo.com/api/register",
+      `${bambooLive}/api/register`,
       {
         method: "POST", // or 'PUT'
         /**
@@ -68,6 +68,13 @@ export default function StepOne({ close }) {
     );
 
     if (res.status === 401) {
+      setLoading(false);
+      // invalid client token
+      const text = await res.text();
+      return toast.error(text);
+    }
+
+    if (res.status === 409) {
       setLoading(false);
       // invalid client token
       const text = await res.text();
@@ -91,7 +98,7 @@ export default function StepOne({ close }) {
         },
       });
 
-      router.push(`/stocks/create/step-two`);
+      router.push(`/stocks/create/step-three`);
     }
 
     // console.log(data);

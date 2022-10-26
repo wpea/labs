@@ -6,6 +6,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import Spin from '../Misc/Spin';
 import { useRouter } from 'next/router';
+import { bambooLive } from "../../lib/api";
 
 export default function Deposit({ showDep, toggleAdd }) {
   const [amount, setAmount] = useState(0);
@@ -52,7 +53,7 @@ export default function Deposit({ showDep, toggleAdd }) {
     const res = await axios(
       config(
         "get",
-        `https://powered-by-bamboo-sandbox.investbamboo.com/api/deposit/payment_methods?amount=${amount}.00`,
+        `${bambooLive}/api/deposit/payment_methods?amount=${amount}.00`,
         user.jwt
       )
     );
@@ -83,7 +84,7 @@ export default function Deposit({ showDep, toggleAdd }) {
     const res = await axios(
       config(
         "post",
-        `https://powered-by-bamboo-sandbox.investbamboo.com/api/deposit`,
+        `${bambooLive}/api/deposit`,
         user.jwt,
         data
       )
@@ -254,7 +255,7 @@ export default function Deposit({ showDep, toggleAdd }) {
                                         </div>
                                       </div>
 
-                                      <div className="flex justify-between grid-cols-4">
+                                      <div className="flex space-x-12 grid-cols-4">
                                         <div>
                                           <div className="text-[8px] uppercase tracking-widest">
                                             amount
@@ -273,14 +274,14 @@ export default function Deposit({ showDep, toggleAdd }) {
                                           </div>
                                         </div>
 
-                                        <div>
+                                        {/* <div>
                                           <div className="text-[8px] uppercase tracking-widest">
                                             DM. Fee
                                           </div>
                                           <div className="text-sm font-medium">
                                             {`${m?.currency_symbol}${m?.deposit_method_fee}`}
                                           </div>
-                                        </div>
+                                        </div> */}
 
                                         {m.exchange_rate && (
                                           <div>

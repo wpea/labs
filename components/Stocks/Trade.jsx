@@ -6,6 +6,7 @@ import Spin from "../Misc/Spin";
 import { config } from "../../lib/adapter";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { bambooLive } from "../../lib/api";
 
 export default function Deposit({ showDep, toggleAdd }) {
   const [query, setQuery] = useState("");
@@ -36,7 +37,7 @@ export default function Deposit({ showDep, toggleAdd }) {
     const res = await axios(
       config(
         "get",
-        "https://powered-by-bamboo-sandbox.investbamboo.com/api/stocks?limit=180",
+        `${bambooLive}/api/stocks?limit=1000`,
         user.jwt
       )
     );
@@ -68,7 +69,7 @@ export default function Deposit({ showDep, toggleAdd }) {
     const res = await axios(
       config(
         "post",
-        "https://powered-by-bamboo-sandbox.investbamboo.com/api/order/calculate",
+        `${bambooLive}/api/order/calculate`,
         user.jwt,
         data
       )
@@ -105,7 +106,7 @@ export default function Deposit({ showDep, toggleAdd }) {
       const res = await axios(
         config(
           "post",
-          "https://powered-by-bamboo-sandbox.investbamboo.com/api/order",
+          `${bambooLive}/api/order`,
           user.jwt,
           data
         )

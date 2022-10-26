@@ -2,7 +2,12 @@ import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../../../lib/contexts/globalState";
-import { apiAddress, b_header, b_header_two } from "../../../lib/api";
+import {
+  apiAddress,
+  bambooLive,
+  b_header,
+  b_header_two,
+} from "../../../lib/api";
 import Spin from "../../../components/Misc/Spin";
 import axios from "axios";
 
@@ -26,26 +31,67 @@ export default function StepFour() {
   });
 
   const storeUserData = async () => {
+    // var FormData = require("form-data");
+    // var sData = new FormData();
+    // sData.append(
+    //   "surname",
+    //   JSON.stringify(sharedState.reg.step_one.info.surname)
+    // );
+    // sData.append(
+    //   "firstname",
+    //   JSON.stringify(sharedState.reg.step_one.info.name)
+    // );
+    // sData.append(
+    //   "phone",
+    //   JSON.stringify(sharedState.reg.step_one.info.phone_number)
+    // );
+    // sData.append(
+    //   "password",
+    //   JSON.stringify(sharedState.reg.step_one.info.password)
+    // );
+    // sData.append("email", JSON.stringify(sharedState.reg.step_one.info.email));
 
-    const res = await fetch(`${apiAddress}/stocks/account/create`, {
-      body: JSON.stringify({
+    var config = {
+      method: "post",
+      url: `${apiAddress}/stocks/account/create`,
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+      data: {
         surname: sharedState.reg.step_one.info.surname,
-        firstname: sharedState.reg.step_one.info.firstname,
-        phone: sharedState.reg.step_one.info.phone,
+        firstname: sharedState.reg.step_one.info.name,
+        phone: sharedState.reg.step_one.info.phone_number,
         password: sharedState.reg.step_one.info.password,
         email: sharedState.reg.step_one.info.email,
-      }),
-      headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-        Accept: `application/json`
       },
-      method: "POST",
-    });
+    };
 
-    const data = await res.json();
+    axios(config)
+      .then(function (response) {
+        console.log(response.data.message);
+        toast.success(response.data.message);
+      })
+      .catch(function (error) {
+        console.log(error.response.data.message);
+        toast.error(error.response.data.message);
+      });
 
-    console.log(data);
-  }
+    // const res = await fetch(`${apiAddress}/stocks/account/create`, {
+    //   body: JSON.stringify({
+    //     surname: sharedState.reg.step_one.info.surname,
+    //     firstname: sharedState.reg.step_one.info.name,
+    //     phone: sharedState.reg.step_one.info.phone_number,
+    //     password: sharedState.reg.step_one.info.password,
+    //     email: sharedState.reg.step_one.info.email,
+    //   }),
+    //   headers: {
+    //     Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+    //     Accept: `application/json`,
+    //   },
+    //   method: "POST",
+    // });
+  };
 
   useEffect(() => {
     // set data
@@ -56,8 +102,8 @@ export default function StepFour() {
     getProfileDictionary();
   }, []);
 
-  const getProfileDictionary = () => {
-    fetch("https://powered-by-bamboo-sandbox.investbamboo.com/api/dictionary", {
+  const getProfileDictionary = async () => {
+    fetch(`${bambooLive}/api/dictionary`, {
       method: "GET",
       headers: b_header,
     })
@@ -77,6 +123,17 @@ export default function StepFour() {
     setData({ ...data, [name]: value });
   };
 
+  /**
+   *
+   *
+   *
+   * COMPLETE
+   * ACCOUNT
+   * REGISTRATION
+   *
+   *
+   *
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -93,18 +150,17 @@ export default function StepFour() {
       },
     });
 
-    fetch(
-      "https://powered-by-bamboo-sandbox.investbamboo.com/api/investment_profile",
-      {
-        method: "POST", // or 'PUT'
-        headers: b_header_two(
-          localStorage.getItem("x-client-token"),
-          sharedState.reg.step_one.res.jwt,
-          `wealth-paradigm-sandbox`
-        ),
-        body: JSON.stringify(data),
-      }
-    )
+    console.log(localStorage.getItem("x-client-token"), sharedState);
+
+    fetch(`${bambooLive}/api/investment_profile`, {
+      method: "POST", // or 'PUT'
+      headers: b_header_two(
+        localStorage.getItem("x-client-token"),
+        sharedState.reg.step_one.res.jwt,
+        `wealth-paradigm`
+      ),
+      body: JSON.stringify(data),
+    })
       .then((response) => response.json())
       .then((rdata) => {
         if (rdata.errors) {
@@ -119,10 +175,64 @@ export default function StepFour() {
         }
       })
       .catch((error) => {
-        // console.error("Error:", error);
+        console.error("Error:", error);
         setLoading(false);
       });
+
     // console.log(data);
+
+    // update the affiliation as well
+    // fetch(`${bambooLive}/api/affiliations`, {
+    //   method: "POST",
+    //   headers: b_header_two(
+    //     localStorage.getItem("x-client-token"),
+    //     sharedState.reg.step_one.res.jwt,
+    //     `wealth-paradigm`
+    //   ),
+    //   body: JSON.stringify({
+    //     broker: false,
+    //   }),
+    // }).then((res) => console.log(res));
+
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     */
+
+    var config = {
+      method: "post",
+      url: `${bambooLive}/api/affiliations`,
+      headers: {
+        authorization: `Bearer ${sharedState.reg.step_one.res.jwt}`,
+        "x-client-token": localStorage.getItem("x-client-token"),
+        "x-subject-type": "standard",
+      },
+      data: { broker: false },
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     */
   };
 
   /**

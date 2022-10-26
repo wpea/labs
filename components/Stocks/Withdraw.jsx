@@ -6,7 +6,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import Spin from "../Misc/Spin";
 import { useRouter } from "next/router";
-import { apiAddress } from "../../lib/api";
+import { apiAddress, bambooLive } from "../../lib/api";
 
 export default function Withdraw({ showDep, toggleAdd }) {
   const router = useRouter();
@@ -53,7 +53,7 @@ export default function Withdraw({ showDep, toggleAdd }) {
       const res = await axios(
         config(
           "get",
-          "https://powered-by-bamboo-sandbox.investbamboo.com/api/withdraw/withdraw_data",
+          `${bambooLive}/api/withdraw/withdraw_data`,
           user.jwt
         )
       );
