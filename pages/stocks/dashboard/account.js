@@ -220,7 +220,7 @@ export default function Account() {
 
   return (
     <AppLayout>
-      <div className="grid w-full space-y-12">
+      <div className="grid w-full">
         <div className="grid space-y-10">
           <div
             style={{
@@ -584,7 +584,7 @@ export default function Account() {
         </div>
 
         {/** Select active stocks or pending orders. */}
-        <div className="grid grid-cols-4 px-20">
+        <div className="grid grid-cols-4 px-20 pt-16">
           <div
             onClick={() => setCheckOrder(false)}
             className={`${
