@@ -124,7 +124,7 @@ export default function Account() {
         // return console.log(response.data.status);
         if (response.data.status !== 200) {
           toast.error(
-            response.data.message ?? "An error occured. Check your data."
+            response.data.message ?? "An error occured. Kindly refresh this page."
           );
           console.log(response);
           return setLoading(false);
@@ -148,7 +148,8 @@ export default function Account() {
       .then(function (response) {
         if (response.data.status !== 200) {
           toast.error(
-            response.data.message ?? "An error occured. Check your data."
+            response.data.message ??
+              "An error occured. Kindly refresh this page."
           );
           console.log(response);
           return setLoading(false);
@@ -173,7 +174,8 @@ export default function Account() {
         // return console.log(response.data.status);
         if (response.data.status !== 200) {
           toast.error(
-            response.data.message ?? "An error occured. Check your data."
+            response.data.message ??
+              "An error occured. Kindly refresh this page."
           );
           console.log(response);
           return setLoading(false);
@@ -201,7 +203,8 @@ export default function Account() {
         // return console.log(response.data.status);
         if (response.data.status !== 200) {
           toast.error(
-            response.data.message ?? "An error occured. Check your data."
+            response.data.message ??
+              "An error occured. Kindly refresh this page."
           );
           console.log(response);
           return setLoading(false);
