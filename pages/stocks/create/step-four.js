@@ -152,32 +152,73 @@ export default function StepFour() {
 
     console.log(localStorage.getItem("x-client-token"), sharedState);
 
-    fetch(`${bambooLive}/api/investment_profile`, {
-      method: "POST", // or 'PUT'
-      headers: b_header_two(
-        localStorage.getItem("x-client-token"),
-        sharedState.reg.step_one.res.jwt,
-        `wealth-paradigm`
-      ),
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((rdata) => {
-        if (rdata.errors) {
-          setLoading(false);
-          toast.error(rdata.message ?? "An error occured. Check your data.");
-        } else {
+    /** TO WP BACKEND, SUBVERTING WHAT WAS */
+    var config = {
+      method: "post",
+      url: `${apiAddress}/register/step-four`,
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+      data: {...data, jwt: sharedState.reg.step_one.res.data.jwt},
+    };
+
+    axios(config)
+      .then(function (response) {
+        // return console.log(response.data.status);
+        if (response.data.status !== 200) {
+          toast.error(
+            response.data.message ?? "An error occured. Check your data."
+          );
+          console.log(response);
+          return setLoading(false);
+        }
+
+        if (response.data.status === 200) {
           toast.success("Registration complete.");
           setLoading(false);
           //store data for this user
           storeUserData();
-          // router.push('/stocks/dashboard');
+          router.push('/stocks/dashboard');
         }
       })
-      .catch((error) => {
-        console.error("Error:", error);
-        setLoading(false);
+      .catch(function (error) {
+        console.log(error);
+        return setLoading(false);
       });
+
+    /**
+     *
+     * FIRST FETCH
+     *
+     *
+     */
+    // fetch(`${bambooLive}/api/investment_profile`, {
+    //   method: "POST", // or 'PUT'
+    //   headers: b_header_two(
+    //     localStorage.getItem("x-client-token"),
+    //     sharedState.reg.step_one.res.data.jwt,
+    //     `wealth-paradigm`
+    //   ),
+    //   body: JSON.stringify(data),
+    // })
+    //   .then((response) => response.json())
+    //   .then((rdata) => {
+    //     if (rdata.errors) {
+    //       setLoading(false);
+    //       toast.error(rdata.message ?? "An error occured. Check your data.");
+    //     } else {
+    //       toast.success("Registration complete.");
+    //       setLoading(false);
+    //       //store data for this user
+    //       storeUserData();
+    //       // router.push('/stocks/dashboard');
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error:", error);
+    //     setLoading(false);
+    //   });
 
     // console.log(data);
 
@@ -197,31 +238,30 @@ export default function StepFour() {
     /**
      *
      *
-     *
-     *
+     * SECOND FETCH
      *
      *
      *
      */
 
-    var config = {
-      method: "post",
-      url: `${bambooLive}/api/affiliations`,
-      headers: {
-        authorization: `Bearer ${sharedState.reg.step_one.res.jwt}`,
-        "x-client-token": localStorage.getItem("x-client-token"),
-        "x-subject-type": "standard",
-      },
-      data: { broker: false },
-    };
+    // var config = {
+    //   method: "post",
+    //   url: `${bambooLive}/api/affiliations`,
+    //   headers: {
+    //     authorization: `Bearer ${sharedState.reg.step_one.res.data.jwt}`,
+    //     "x-client-token": localStorage.getItem("x-client-token"),
+    //     "x-subject-type": "standard",
+    //   },
+    //   data: { broker: false },
+    // };
 
-    axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    // axios(config)
+    //   .then(function (response) {
+    //     console.log(JSON.stringify(response.data));
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
 
     /**
      *
@@ -312,6 +352,9 @@ export default function StepFour() {
               id="modal-title"
             >
               Investment Profile
+              {/* <span className="text-xs block">
+                {JSON.stringify(sharedState)}
+              </span> */}
             </h3>
 
             {!Object.keys(dictionary).length > 0 && <Spin />}

@@ -6,7 +6,7 @@ import Spin from "../Misc/Spin";
 import { config } from "../../lib/adapter";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { bambooLive } from "../../lib/api";
+import { bambooLive, apiAddress } from "../../lib/api";
 
 export default function Deposit({ showDep, toggleAdd }) {
   const [query, setQuery] = useState("");
@@ -27,6 +27,30 @@ export default function Deposit({ showDep, toggleAdd }) {
     getStocks();
   }, []);
 
+  const config2 = (method, url, jwt) => {
+    return {
+      method: method,
+      url: url,
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+      data: { jwt: jwt },
+    };
+  };
+
+  const config3 = (method, url, data) => {
+    return {
+      method: method,
+      url: url,
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+      data: data,
+    };
+  };
+
   /**
    * GET STOCKS
    */
@@ -34,17 +58,27 @@ export default function Deposit({ showDep, toggleAdd }) {
     // setLoading(true);
     const user = JSON.parse(localStorage.getItem("user"));
 
-    const res = await axios(
-      config(
-        "get",
-        `${bambooLive}/api/stocks?limit=1000`,
-        user.jwt
-      )
-    );
+    // const res = await axios(
+    //   config(
+    //     "get",
+    //     `${bambooLive}/api/stocks?limit=1000`,
+    //     user.jwt
+    //   )
+    // );
 
-    // console.log(res);
-    if (res.status === 200) setStocks(res.data.stocks);
-    // setLoading(false);
+    /**
+     * GET STOCKS
+     */
+    axios(config2(`post`, `${apiAddress}/stock/get/all`, user.jwt))
+      .then(function (response) {
+        if (response.data.status === 200) {
+          console.log(response);
+          setStocks(response.data.data.stocks);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
   /**
@@ -64,27 +98,40 @@ export default function Deposit({ showDep, toggleAdd }) {
       price: JSON.parse(stopPrice),
       order_type: "MARKET",
       amount: JSON.parse(s_amount),
+      jwt: user.jwt,
     };
 
-    const res = await axios(
-      config(
-        "post",
-        `${bambooLive}/api/order/calculate`,
-        user.jwt,
-        data
-      )
-    );
+    // const res = await axios(
+    //   config(
+    //     "post",
+    //     `${bambooLive}/api/order/calculate`,
+    //     user.jwt,
+    //     data
+    //   )
+    // );
 
-    console.log(res);
+    axios(config3(`post`, `${apiAddress}/stock/calculate/order`, data))
+      .then(function (response) {
+        if (response.data.status === 200) {
+          console.log(response);
+          setCalcData(response.data.data);
+          setCompleteButton(true);
+          setLoading(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        setLoading(false);
+      });
 
-    if (res.status === 200) {
-      setCalcData(res.data);
-      setCompleteButton(true);
-    } else {
-      toast.error(res?.message);
-    }
+    // console.log(res);
 
-    setLoading(false);
+    // if (res.status === 200) {
+    //   setCalcData(res.data);
+    //   setCompleteButton(true);
+    // } else {
+    //   toast.error(res?.message);
+    // }
   };
 
   const completeOrder = async () => {
@@ -100,30 +147,55 @@ export default function Deposit({ showDep, toggleAdd }) {
       order_type: "MARKET",
       price_per_share: calcData.price_per_share,
       fee: calcData.fee,
+      jwt: user.jwt
     };
 
-    try {
-      const res = await axios(
-        config(
-          "post",
-          `${bambooLive}/api/order`,
-          user.jwt,
-          data
-        )
-      );
+    axios(config3(`post`, `${apiAddress}/stock/order/complete`, data))
+      .then(function (response) {
+        if (response.data.status === 200) {
+          console.log(response);
+          toast.success(`Order placed successfully. ${res?.data?.data?.order_id}`);
+          setLoadingC(false);
+        }
 
-      if (res.status === 200) {
-        toast.success(`Order placed successfully. ${res?.data?.order_id}`);
-        setCompleteButton(true);
-        toggleAdd();
-      }
-    } catch (e) {
-      // console.log("error", e?.response?.data?.message);
-      toast.error(e?.response?.data?.message);
-      setLoadingC(false);
-    }
+         if (response.data.status !== 200) {
+           toast.error(
+             response.data.message ?? "An error occured."
+           );
+           console.log(response);
+           setLoadingC(false);
+         }
+        
+      })
+      .catch(function (error) {
+        console.log(error);
+        setLoadingC(false);
+      });
 
-    setLoadingC(false);
+
+    // try {
+    //   const res = await axios(
+    //     config3("post", `${apiAddress}/stock/order/complete`, data)
+    //   );
+
+    //   if (res.status === 200) {
+    //     console.log(res?.data);
+    //     // toast.success(`Order placed successfully. ${res?.data?.order_id}`);
+    //     // setCompleteButton(true);
+    //     // toggleAdd();
+    //   }
+
+    //   if (res.status !== 200) {
+    //     toast.error(res.message ?? `An error occured.`);
+    //   }
+
+    // } catch (e) {
+    //   console.log("error", e?.response?.data?.message);
+    //   toast.error(e?.response?.data?.message);
+    //   setLoadingC(false);
+    // }
+
+    // setLoadingC(false);
   };
 
   const Error = () => {

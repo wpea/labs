@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
 import { useAppContext } from "../../../lib/contexts/globalState";
 import { useState, useEffect } from "react";
-import { bambooLive, b_header_two } from "../../../lib/api";
+import { apiAddress, bambooLive, b_header_two } from "../../../lib/api";
 import Spin from "./../../../components/Misc/Spin";
 import { toast } from "react-hot-toast";
+import axios from 'axios';
 
 export default function StepThree() {
   const router = useRouter();
@@ -23,45 +24,91 @@ export default function StepThree() {
 
     setLoading(true);
 
-    fetch(
-      `${bambooLive}/api/verify_identity_identifier`,
-      {
-        method: "POST",
-        /**
-         * find a way to generate and pass in the x-client-token on create new user account
-         * */
-        headers: b_header_two(
-          localStorage.getItem("x-client-token"),
-          sharedState.reg.step_one.res.jwt,
-          `wealth-paradigm`
-        ),
-        body: JSON.stringify(data),
-      }
-    )
-      .then((response) => response.json())
-      .then((rdata) => {
-        console.log(rdata);
+    // fetch(
+    //   `${bambooLive}/api/verify_identity_identifier`,
+    //   {
+    //     method: "POST",
+    //     /**
+    //      * find a way to generate and pass in the x-client-token on create new user account
+    //      * */
+    //     headers: b_header_two(
+    //       localStorage.getItem("x-client-token"),
+    //       sharedState.reg.step_one.res.jwt,
+    //       `wealth-paradigm`
+    //     ),
+    //     body: JSON.stringify(data),
+    //   }
+    // )
+    //   .then((response) => response.json())
+    //   .then((rdata) => {
+    //     console.log(rdata);
 
-        if (rdata.job_status === true) {
-          updateSharedState({
+    //     if (rdata.job_status === true) {
+    //       updateSharedState({
+    //         ...sharedState,
+    //         reg: {
+    //           ...sharedState.reg,
+    //           step_three: { data },
+    //         },
+    //       });
+
+    //       router.push(`/stocks/create/step-four`);
+    //     } else {
+    //       setLoading(false);
+    //       toast.error(
+    //         rdata.message ?? "There's an error with the BVN number provided."
+    //       );
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error:", error);
+    //     setLoading(false);
+    //   });
+
+    console.log(sharedState);
+
+    var config = {
+      method: "post",
+      url: `${apiAddress}/register/step-three-bvn`,
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+      data: {
+        identification_document_type: "BVN",
+        identifier: data.identifier,
+        jwt: sharedState.reg.step_one.res.data.jwt,
+      },
+    };
+
+    axios(config)
+      .then(function (response) {
+        // return console.log(response.data.status);
+
+        if (response.data.status !== 200) {
+          toast.error(
+            response.data.message ?? "An error occured. Check your data."
+          );
+
+          return setLoading(false);
+        }
+
+        if (response.data.status === 200) {
+         updateSharedState({
             ...sharedState,
             reg: {
               ...sharedState.reg,
-              step_three: { data },
+              step_three: { data: response.data },
             },
           });
 
           router.push(`/stocks/create/step-four`);
-        } else {
           setLoading(false);
-          toast.error(
-            rdata.message ?? "There's an error with the BVN number provided."
-          );
         }
       })
-      .catch((error) => {
-        console.error("Error:", error);
-        setLoading(false);
+      .catch(function (error) {
+        console.log(error);
+        return setLoading(false);
       });
   };
 

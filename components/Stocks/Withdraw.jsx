@@ -40,6 +40,23 @@ export default function Withdraw({ showDep, toggleAdd }) {
   }, []);
 
   /**
+   * CONFIG
+   */
+   const config2 = (method, url, jwt) => {
+     return {
+       method: method,
+       url: url,
+       headers: {
+         Accept: "application/json",
+         Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+       },
+       data: {
+        jwt: jwt
+       }
+     };
+   };
+
+  /**
    *
    * GET WDWL METHODS
    *
@@ -51,24 +68,26 @@ export default function Withdraw({ showDep, toggleAdd }) {
 
     try {
       const res = await axios(
-        config(
-          "get",
-          `${bambooLive}/api/withdraw/withdraw_data`,
+        config2(
+          "post",
+          `${apiAddress}/stock/withdraw/methods`,
           user.jwt
         )
       );
-
-      setWData(res.data);
+      console.log(res);
+      setWData(res.data.data);
       setLoading(false);
     } catch (e) {
-      // console.log(e);
+      console.log(e);
       setLoading(false);
     }
   };
 
   /**
    *
-   * STORE ACCOUNT NUMBER
+   * STORE 
+   * ACCOUNT 
+   * NUMBER
    *
    */
   const handleAddAccount = async (e) => {

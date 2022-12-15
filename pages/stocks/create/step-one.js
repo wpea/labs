@@ -11,15 +11,15 @@ export default function StepOne({ close }) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     surname: "",
-    residence_country_code: "",
+    residence_country_code: "NGA",
     phone_number: "",
     password: "",
     name: "",
     gender: "",
     email: "",
     date_of_birth: "",
-    country_code: "",
-    citizenship: "",
+    country_code: "NGA",
+    citizenship: "Nigeria",
   });
 
   useEffect(() => {
@@ -47,82 +47,105 @@ export default function StepOne({ close }) {
     setData({ ...data, [name]: value });
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (Object.keys(sharedState.reg.step_one.res).length > 0)
+  //     return router.push("/stocks/create/step-three");
+
+  //   setLoading(true);
+
+  //   const res = await fetch(`${bambooLive}/api/register`, {
+  //     method: "POST", // or 'PUT'
+  //     /**
+  //      * find a way to generate and pass in the x-client-token on create new user account
+  //      * */
+  //     headers: b_header_one(localStorage.getItem("x-client-token")),
+  //     body: JSON.stringify(data),
+  //   });
+
+  //   if (res.status === 401) {
+  //     setLoading(false);
+  //     // invalid client token
+  //     const text = await res.text();
+  //     return toast.error(text);
+  //   }
+
+  //   if (res.status === 409) {
+  //     setLoading(false);
+  //     // invalid client token
+  //     const text = await res.text();
+  //     return toast.error(text);
+  //   }
+
+  //   const rdata = await res.json();
+
+  //   // validation errors
+  //   if (res.status === 422) {
+  //     setLoading(false);
+  //     return toast.error(rdata.message ?? "An error occured. Check your data.");
+  //   }
+
+  //   if (res.status === 200) {
+  //     updateSharedState({
+  //       ...sharedState,
+  //       reg: {
+  //         ...sharedState.reg,
+  //         step_one: { ...sharedState.reg.step_one, res: rdata, info: data },
+  //       },
+  //     });
+
+  //     router.push(`/stocks/create/step-three`);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (Object.keys(sharedState.reg.step_one.res).length > 0)
-      return router.push("/stocks/create/step-three");
-
     setLoading(true);
 
-    const res = await fetch(
-      `${bambooLive}/api/register`,
-      {
-        method: "POST", // or 'PUT'
-        /**
-         * find a way to generate and pass in the x-client-token on create new user account
-         * */
-        headers: b_header_one(localStorage.getItem("x-client-token")),
-        body: JSON.stringify(data),
-      }
-    );
+    var config = {
+      method: "post",
+      url: `${apiAddress}/register/step-one`,
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+      data: data,
+    };
 
-    if (res.status === 401) {
-      setLoading(false);
-      // invalid client token
-      const text = await res.text();
-      return toast.error(text);
-    }
+    axios(config)
+      .then(function (response) {
+  
+        if (response.data.status !== 200) {
+          toast.error(
+             response.data.message ?? "An error occured. Check your data."
+           );
 
-    if (res.status === 409) {
-      setLoading(false);
-      // invalid client token
-      const text = await res.text();
-      return toast.error(text);
-    }
+          return setLoading(false);
+        }
 
-    const rdata = await res.json();
+        if (response.data.status === 200) {
+          updateSharedState({
+            ...sharedState,
+            reg: {
+              ...sharedState.reg,
+              step_one: {
+                ...sharedState.reg.step_one,
+                res: response.data,
+                info: data,
+              },
+            },
+          });
 
-    // validation errors
-    if (res.status === 422) {
-      setLoading(false);
-      return toast.error(rdata.message ?? "An error occured. Check your data.");
-    }
+          setLoading(false);
 
-    if (res.status === 200) {
-      updateSharedState({
-        ...sharedState,
-        reg: {
-          ...sharedState.reg,
-          step_one: { ...sharedState.reg.step_one, res: rdata, info: data },
-        },
+          router.push(`/stocks/create/step-three`);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-
-      router.push(`/stocks/create/step-three`);
-    }
-
-    // console.log(data);
-
-    // setLoading(false);
-    // .then((response) => response.json())
-    // .then((rdata) => {
-    //   console.log(rdata);
-
-    //   if (rdata.errors) {
-    //     setLoading(false);
-    //     toast.error(rdata.message ?? "An error occured. Check your data.");
-    //   } else {
-    //     updateSharedState({
-    //       ...sharedState,
-    //       reg: { ...sharedState.reg, step_one: { ...sharedState.reg.step_one, res: rdata, info: data} },
-    //     });
-    //     router.push(`/stocks/create/step-two`);
-    //   }
-    // })
-    // .catch((error) => {
-    //   console.error("Error:", error);
-    //   setLoading(false);
-    // });
   };
 
   const [hide, setHide] = useState(false);
@@ -253,7 +276,7 @@ export default function StepOne({ close }) {
                       />
                     </div>
 
-                    <div className="space-y-1.5">
+                    {/* <div className="space-y-1.5">
                       <input
                         type="text"
                         required
@@ -264,9 +287,9 @@ export default function StepOne({ close }) {
                         placeholder="Residence Country code"
                       />
                       <div className="text-2xs uppercase">nga, uk, us</div>
-                    </div>
+                    </div> */}
 
-                    <div className="space-y-1.5">
+                    {/* <div className="space-y-1.5">
                       <input
                         type="text"
                         required
@@ -277,7 +300,7 @@ export default function StepOne({ close }) {
                         placeholder="Country code"
                       />
                       <div className="text-2xs uppercase">nga, uk, us</div>
-                    </div>
+                    </div> */}
 
                     <div className="space-y-1.5">
                       <input
@@ -380,7 +403,7 @@ export default function StepOne({ close }) {
                       />
                     </div>
 
-                    <div className="space-y-1.5">
+                    {/* <div className="space-y-1.5">
                       <input
                         type="text"
                         onChange={handleChange}
@@ -391,7 +414,7 @@ export default function StepOne({ close }) {
                         placeholder="Citizenship"
                       />
                       <div className="text-2xs">Nigeria</div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

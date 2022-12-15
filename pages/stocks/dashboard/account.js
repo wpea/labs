@@ -9,6 +9,7 @@ import Trade from "./../../../components/Stocks/Trade";
 import StockInfo from "../../../components/Stocks/StockInfo";
 import PendingOrder from "../../../components/Stocks/PendingOrder";
 import Withdraw from "../../../components/Stocks/Withdraw";
+import toast from "react-hot-toast";
 
 export default function Account() {
   const [account, setAccount] = useState({});
@@ -37,6 +38,18 @@ export default function Account() {
       },
     };
   };
+
+  const config2 = (method, url, jwt) => {
+    return {
+      method: method,
+      url: url,
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+      data: { jwt: jwt},
+    };
+  }
 
   const currVal = (val) => {
     // return formatValue({
@@ -106,65 +119,103 @@ export default function Account() {
   const getPortfolio = async () => {
     setLoading(true);
     const user = JSON.parse(localStorage.getItem("user"));
-    /** PORT ONE */
-    const res = await axios(
-      config(
-        "get",
-        `${bambooLive}/api/portfolio`,
-        user.jwt
-      )
-    );
-    console.log(res);
-    if (res.status === 200) setPortOne(res.data);
-    setLoading(false);
+    axios(config2(`post`, `${apiAddress}/stock/account/portfolio`, user.jwt))
+      .then(function (response) {
+        // return console.log(response.data.status);
+        if (response.data.status !== 200) {
+          toast.error(
+            response.data.message ?? "An error occured. Check your data."
+          );
+          console.log(response);
+          return setLoading(false);
+        }
+        if (response.data.status === 200) {
+          console.log(response);
+          setPortOne(response.data.data);
+          setLoading(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        return setLoading(false);
+      });
   };
 
   const getPortfolioBreakdown = async () => {
     setLoading(true);
     const user = JSON.parse(localStorage.getItem("user"));
-    /** PORT BRKDWN */
-    const res = await axios(
-      config(
-        "get",
-        `${bambooLive}/api/portfolio/breakdown`,
-        user.jwt
-      )
-    );
-    console.log(res);
-    if (res.status === 200) setPortTwo(res.data);
-    setLoading(false);
+    axios(config2(`post`, `${apiAddress}/stock/account/portfolio/breakdown`, user.jwt))
+      .then(function (response) {
+        if (response.data.status !== 200) {
+          toast.error(
+            response.data.message ?? "An error occured. Check your data."
+          );
+          console.log(response);
+          return setLoading(false);
+        }
+        if (response.data.status === 200) {
+          console.log(response);
+          setPortTwo(response.data.data);
+          setLoading(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        return setLoading(false);
+      });
   };
 
   const getAccountStocks = async () => {
     setLoading(true);
     const user = JSON.parse(localStorage.getItem("user"));
-    /** PORT BRKDWN */
-    const res = await axios(
-      config(
-        "get",
-        `${bambooLive}/api/my_stocks`,
-        user.jwt
-      )
-    );
-    console.log(res);
-    if (res.status === 200) setStocks(res.data.stocks);
-    setLoading(false);
+    axios(config2(`post`, `${apiAddress}/stock/account/stocks`, user.jwt))
+      .then(function (response) {
+        // return console.log(response.data.status);
+        if (response.data.status !== 200) {
+          toast.error(
+            response.data.message ?? "An error occured. Check your data."
+          );
+          console.log(response);
+          return setLoading(false);
+        }
+        if (response.data.status === 200) {
+          console.log(response);
+          // setPortOne(response.data.data);
+          setStocks(response.data.data.stocks);
+          setLoading(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        return setLoading(false);
+      });
   };
 
   const getPendingOrders = async () => {
     setLoading(true);
     const user = JSON.parse(localStorage.getItem("user"));
-    /** PORT BRKDWN */
-    const res = await axios(
-      config(
-        "get",
-        `${bambooLive}/api/pending_orders`,
-        user.jwt
-      )
-    );
-    console.log(res);
-    if (res.status === 200) setPendingOrders(res.data.pending_orders);
-    setLoading(false);
+    axios(
+      config2(`post`, `${apiAddress}/stock/account/pending_orders`, user.jwt)
+    )
+      .then(function (response) {
+        // return console.log(response.data.status);
+        if (response.data.status !== 200) {
+          toast.error(
+            response.data.message ?? "An error occured. Check your data."
+          );
+          console.log(response);
+          return setLoading(false);
+        }
+        if (response.data.status === 200) {
+          console.log(response);
+          setPendingOrders(response.data.data.pending_orders);
+          setLoading(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        return setLoading(false);
+      });
   };
 
   return (
@@ -421,7 +472,7 @@ export default function Account() {
                 </svg>
               </button>
 
-              <button
+              {/* <button
                 onClick={() => setShowDep(!showDep)}
                 className="btn flex w-36 justify-between place-self-end border-none bg-green-600 capitalize hover:bg-green-700"
               >
@@ -473,9 +524,9 @@ export default function Account() {
                     y2="99.34"
                   />
                 </svg>
-              </button>
+              </button> */}
 
-              <button
+              {/* <button
                 onClick={() => setShowWd(!showWd)}
                 type="submit"
                 className="btn flex w-36 justify-between place-self-end border-none bg-gray-700 capitalize hover:bg-gray-900"
@@ -527,7 +578,7 @@ export default function Account() {
                     y2="99.34"
                   />
                 </svg>
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -651,9 +702,9 @@ export default function Account() {
         </div>
       </div>
 
-      <>
+      {/* <>
         <Deposit showDep={showDep} toggleAdd={() => setShowDep(!showDep)} />
-      </>
+      </> */}
 
       <>
         <Trade showDep={showTr} toggleAdd={() => setShowTr(!showTr)} />
