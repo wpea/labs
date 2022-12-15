@@ -84,10 +84,10 @@ export default function HomeCards() {
             </div>
 
             <div
-              onClick={() => {
-                router.push("/club/interest");
-              }}
-              className="bg-gray-50 hover:border-gray-400 border  border-gray-200 cursor-pointer rounded-md p-8 space-y-4 grid"
+              // onClick={() => {
+              //   router.push("/club/interest");
+              // }}
+              className="bg-gray-50 opacity-60 border border-gray-200 rounded-md p-8 space-y-4 grid"
             >
               <div className="bg-blue-200 place-self-start rounded-full justify-self-start p-2">
                 <svg
