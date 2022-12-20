@@ -31,25 +31,10 @@ export default function StepFour() {
   });
 
   const storeUserData = async () => {
-    // var FormData = require("form-data");
-    // var sData = new FormData();
-    // sData.append(
-    //   "surname",
-    //   JSON.stringify(sharedState.reg.step_one.info.surname)
-    // );
-    // sData.append(
-    //   "firstname",
-    //   JSON.stringify(sharedState.reg.step_one.info.name)
-    // );
-    // sData.append(
-    //   "phone",
-    //   JSON.stringify(sharedState.reg.step_one.info.phone_number)
-    // );
-    // sData.append(
-    //   "password",
-    //   JSON.stringify(sharedState.reg.step_one.info.password)
-    // );
-    // sData.append("email", JSON.stringify(sharedState.reg.step_one.info.email));
+
+    const jwtFromOtherLocal = JSON.parse(
+      localStorage.getItem("other_user_data")
+    );
 
     var config = {
       method: "post",
@@ -59,11 +44,11 @@ export default function StepFour() {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
       },
       data: {
-        surname: sharedState.reg.step_one.info.surname,
-        firstname: sharedState.reg.step_one.info.name,
-        phone: sharedState.reg.step_one.info.phone_number,
-        password: sharedState.reg.step_one.info.password,
-        email: sharedState.reg.step_one.info.email,
+        surname: sharedState?.reg?.step_one?.info?.surname ?? "",
+        firstname: sharedState?.reg?.step_one?.info?.name ?? "",
+        phone: jwtFromOtherLocal?.phone_number,
+        password: jwtFromOtherLocal?.password,
+        email: sharedState?.reg?.step_one?.info?.email ?? "",
       },
     };
 
@@ -73,24 +58,9 @@ export default function StepFour() {
         toast.success(response.data.message);
       })
       .catch(function (error) {
-        console.log(error.response.data.message);
+        console.log(error);
         toast.error(error.response.data.message);
       });
-
-    // const res = await fetch(`${apiAddress}/stocks/account/create`, {
-    //   body: JSON.stringify({
-    //     surname: sharedState.reg.step_one.info.surname,
-    //     firstname: sharedState.reg.step_one.info.name,
-    //     phone: sharedState.reg.step_one.info.phone_number,
-    //     password: sharedState.reg.step_one.info.password,
-    //     email: sharedState.reg.step_one.info.email,
-    //   }),
-    //   headers: {
-    //     Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-    //     Accept: `application/json`,
-    //   },
-    //   method: "POST",
-    // });
   };
 
   useEffect(() => {
@@ -103,18 +73,34 @@ export default function StepFour() {
   }, []);
 
   const getProfileDictionary = async () => {
-    fetch(`${bambooLive}/api/dictionary`, {
-      method: "GET",
-      headers: b_header,
-    })
-      .then((response) => response.json())
-      .then((rdata) => {
-        // console.log(rdata);
-        setDictionary(rdata);
+
+    var config = {
+      method: "post",
+      url: `${apiAddress}/register/stock/dictionary`,
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+    };
+
+    axios(config)
+      .then(function (response) {
+        if (response.data.status !== 200) {
+          toast.error(
+            response.data.message ?? "An error occured. Check your data."
+          );
+          console.log(response);
+          return setLoading(false);
+        }
+
+        if (response.data.status === 200) {
+          setLoading(false);
+          setDictionary(response.data.data);
+        }
       })
-      .catch((error) => {
-        // console.error("Error:", error);
-        setLoading(false);
+      .catch(function (error) {
+        console.log(error);
+        return setLoading(false);
       });
   };
 
@@ -152,6 +138,8 @@ export default function StepFour() {
 
     console.log(localStorage.getItem("x-client-token"), sharedState);
 
+    const jwtFromLocal = JSON.parse(localStorage.getItem("other"));
+
     /** TO WP BACKEND, SUBVERTING WHAT WAS */
     var config = {
       method: "post",
@@ -160,7 +148,10 @@ export default function StepFour() {
         Accept: "application/json",
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
       },
-      data: {...data, jwt: sharedState.reg.step_one.res.data.jwt},
+      data: {
+        ...data,
+        jwt: sharedState?.reg?.step_one?.res.data?.jwt ?? jwtFromLocal?.jwt,
+      },
     };
 
     axios(config)
@@ -177,102 +168,15 @@ export default function StepFour() {
         if (response.data.status === 200) {
           toast.success("Registration complete.");
           setLoading(false);
-          //store data for this user
+          console.log(response.data);
           storeUserData();
-          router.push('/stocks/dashboard');
+          router.push("/stocks/dashboard");
         }
       })
       .catch(function (error) {
         console.log(error);
         return setLoading(false);
       });
-
-    /**
-     *
-     * FIRST FETCH
-     *
-     *
-     */
-    // fetch(`${bambooLive}/api/investment_profile`, {
-    //   method: "POST", // or 'PUT'
-    //   headers: b_header_two(
-    //     localStorage.getItem("x-client-token"),
-    //     sharedState.reg.step_one.res.data.jwt,
-    //     `wealth-paradigm`
-    //   ),
-    //   body: JSON.stringify(data),
-    // })
-    //   .then((response) => response.json())
-    //   .then((rdata) => {
-    //     if (rdata.errors) {
-    //       setLoading(false);
-    //       toast.error(rdata.message ?? "An error occured. Check your data.");
-    //     } else {
-    //       toast.success("Registration complete.");
-    //       setLoading(false);
-    //       //store data for this user
-    //       storeUserData();
-    //       // router.push('/stocks/dashboard');
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error:", error);
-    //     setLoading(false);
-    //   });
-
-    // console.log(data);
-
-    // update the affiliation as well
-    // fetch(`${bambooLive}/api/affiliations`, {
-    //   method: "POST",
-    //   headers: b_header_two(
-    //     localStorage.getItem("x-client-token"),
-    //     sharedState.reg.step_one.res.jwt,
-    //     `wealth-paradigm`
-    //   ),
-    //   body: JSON.stringify({
-    //     broker: false,
-    //   }),
-    // }).then((res) => console.log(res));
-
-    /**
-     *
-     *
-     * SECOND FETCH
-     *
-     *
-     *
-     */
-
-    // var config = {
-    //   method: "post",
-    //   url: `${bambooLive}/api/affiliations`,
-    //   headers: {
-    //     authorization: `Bearer ${sharedState.reg.step_one.res.data.jwt}`,
-    //     "x-client-token": localStorage.getItem("x-client-token"),
-    //     "x-subject-type": "standard",
-    //   },
-    //   data: { broker: false },
-    // };
-
-    // axios(config)
-    //   .then(function (response) {
-    //     console.log(JSON.stringify(response.data));
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
-
-    /**
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     */
   };
 
   /**
