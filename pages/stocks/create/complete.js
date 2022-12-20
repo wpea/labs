@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 
 export default function CompleteForStepFour() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const [data, setData] = useState({
     phone_number: "",
@@ -14,7 +15,6 @@ export default function CompleteForStepFour() {
 
   useEffect(() => {}, []);
 
-  const [loading, setLoading] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
     /**
@@ -55,8 +55,6 @@ export default function CompleteForStepFour() {
         toast.error(error?.response?.data?.message ?? "An error occured.");
         return setLoading(false);
       });
-
-    setLoading(false);
   };
 
   return (
@@ -108,7 +106,7 @@ export default function CompleteForStepFour() {
               loading === true ? `loading ` : null
             } btn btn-primary bg-blue-500 border-none hover:bg-blue-700 capitalize text-lg font-normal tracking-wide`}
           >
-            Log in
+            Continue
           </button>
         </form>
       </div>
