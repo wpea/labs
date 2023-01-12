@@ -439,7 +439,7 @@ export default function Deposit({ showDep, toggleAdd }) {
                         {query && (
                           <div className="border-gray-300 max-h-48 overflow-auto rounded-b-xl border-b border-r border-l">
                             {filteredStocks.map((s) => (
-                              <div className=" flex items-center justify-between space-x-3 p-4">
+                              <div key={s?.symbol} className=" flex items-center justify-between space-x-3 p-4">
                                 <div className="flex items-center space-x-3">
                                   <div
                                     className="bg-contain bg-center bg-no-repeat p-4 bg-gray-200 rounded"
