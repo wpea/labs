@@ -89,7 +89,7 @@ export default function Account() {
     getAccountStocks();
     getPendingOrders();
     setLoading(false);
-  }, []);
+  }, [showTr]);
   // When trades and deposits are complete
   // showTr, showDep;
 

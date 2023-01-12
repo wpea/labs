@@ -20,6 +20,7 @@ export default function Deposit({ showDep, toggleAdd }) {
   const [stopPrice, setStopPrice] = useState(0);
   const [error, setError] = useState(false);
   const [completeButton, setCompleteButton] = useState(false);
+  const [selStock, setSelStock] = useState({});
 
   const [toggle, setToggle] = useState(true);
 
@@ -89,7 +90,10 @@ export default function Deposit({ showDep, toggleAdd }) {
     if (Object.keys(selected).length === 0) return setError(true);
     if (s_amount === 0 && stopPrice === 0) return setError(true);
 
-    setLoading(true);
+    setLoading(false);
+
+    // return console.log(selected);
+
     const user = JSON.parse(localStorage.getItem("user"));
 
     const data = {
@@ -147,31 +151,30 @@ export default function Deposit({ showDep, toggleAdd }) {
       order_type: "MARKET",
       price_per_share: calcData.price_per_share,
       fee: calcData.fee,
-      jwt: user.jwt
+      jwt: user.jwt,
     };
 
     axios(config3(`post`, `${apiAddress}/stock/order/complete`, data))
       .then(function (response) {
         if (response.data.status === 200) {
           console.log(response);
-          toast.success(`Order placed successfully. ${res?.data?.data?.order_id}`);
+          toast.success(
+            `Order placed successfully. ${response?.data?.data?.order_id}`
+          );
           setLoadingC(false);
+          toggleAdd();
         }
 
-         if (response.data.status !== 200) {
-           toast.error(
-             response.data.message ?? "An error occured."
-           );
-           console.log(response);
-           setLoadingC(false);
-         }
-        
+        if (response.data.status !== 200) {
+          toast.error(response.data.message ?? "An error occured.");
+          console.log(response);
+          setLoadingC(false);
+        }
       })
       .catch(function (error) {
         console.log(error);
         setLoadingC(false);
       });
-
 
     // try {
     //   const res = await axios(
@@ -230,7 +233,7 @@ export default function Deposit({ showDep, toggleAdd }) {
     query === ""
       ? stocks
       : stocks.filter((s) =>
-          s.name
+          s.symbol
             .toLowerCase()
             .replace(/\s+/g, "")
             .includes(query.toLowerCase().replace(/\s+/g, ""))
@@ -315,7 +318,7 @@ export default function Deposit({ showDep, toggleAdd }) {
 
                     {error && <Error />}
 
-                    <Combobox value={selected} onChange={setSelected}>
+                    {/* <Combobox value={selected} onChange={setSelected}>
                       <div className="relative mt-1">
                         <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-wp-blue sm:text-sm">
                           <Combobox.Input
@@ -397,7 +400,141 @@ export default function Deposit({ showDep, toggleAdd }) {
                           </Combobox.Options>
                         </Transition>
                       </div>
-                    </Combobox>
+                    </Combobox> */}
+
+                    {!Object.keys(selStock).length && (
+                      <div>
+                        {/** Search stocks */}
+                        <div
+                          className={`${
+                            query ? `rounded-t-lg` : `rounded-lg`
+                          } border border-gray-300 px-3`}
+                        >
+                          <div className="flex items-center">
+                            <svg
+                              className="w-6 h-6 stroke-current text-wp-blue"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              // xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M17 17L22 22M19.5 10.75C19.5 15.5825 15.5825 19.5 10.75 19.5C5.91751 19.5 2 15.5825 2 10.75C2 5.91751 5.91751 2 10.75 2C15.5825 2 19.5 5.91751 19.5 10.75Z"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              ></path>
+                            </svg>
+                            <div className="flex w-full items-center justify-between space-x-3">
+                              <input
+                                type="text"
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="SYMBOL (ex. TSLA)"
+                                className="text-md w-full bg-transparent ring-0 outline-none ring-0 border-none focus:outline-none focus:ring-0 placeholder:text-gray-300"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/** Stock list */}
+                        {query && (
+                          <div className="border-gray-300 max-h-48 overflow-auto rounded-b-xl border-b border-r border-l">
+                            {filteredStocks.map((s) => (
+                              <div className=" flex items-center justify-between space-x-3 p-4">
+                                <div className="flex items-center space-x-3">
+                                  <div
+                                    className="bg-contain bg-center bg-no-repeat p-4 bg-gray-200 rounded"
+                                    style={{
+                                      backgroundImage: `url(${s?.logo})`,
+                                    }}
+                                  ></div>
+                                  <div className="text-sm">
+                                    {s?.name} ({s?.symbol})
+                                  </div>
+                                </div>
+                                <div className="flex items-center">
+                                  <input
+                                    type="radio"
+                                    value={s?.symbol}
+                                    onChange={(e) => {
+                                      setSelected(s);
+                                      setSelStock(s);
+                                    }}
+                                    name="stock"
+                                    className="h-6 w-6 border-gray-300 bg-gray-100 text-gray-600 focus:ring-0"
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {Object.keys(selStock).length > 0 && (
+                      <div className="border rounded-lg border-gray-300 px-3 py-1">
+                        <div className="flex items-center space-x-3">
+                          <svg
+                            className="w-6 h-6 stroke-current text-wp-blue"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M17 17L22 22M19.5 10.75C19.5 15.5825 15.5825 19.5 10.75 19.5C5.91751 19.5 2 15.5825 2 10.75C2 5.91751 5.91751 2 10.75 2C15.5825 2 19.5 5.91751 19.5 10.75Z"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            ></path>
+                          </svg>
+                          <div className="flex w-full items-center justify-between space-x-3">
+                            <div className="flex items-center space-x-3">
+                              <div
+                                className="bg-contain bg-center bg-no-repeat bg-gray-200 p-4 text-xl"
+                                style={{
+                                  backgroundImage: `url(${selStock?.logo})`,
+                                }}
+                              ></div>
+                              <div className="text-sm">
+                                {selStock?.name} ({selStock?.symbol})
+                              </div>
+                            </div>
+                            <div
+                              className="cursor-pointer"
+                              onClick={() => {
+                                setSelected("");
+                                setQuery("");
+                                setSelStock({});
+                              }}
+                            >
+                              <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M16 8L12 12M12 12L8 16M12 12L8 8M12 12L16 16"
+                                  stroke="#ED6464F2"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                ></path>
+                                <circle
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="#ED6464F2"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                ></circle>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="space-y-2">
                       <div className="text-xs">Stop Price / Limit Price</div>
@@ -446,10 +583,10 @@ export default function Deposit({ showDep, toggleAdd }) {
                           <div>{calcData?.price_per_share}</div>
                         </div>
 
-                        <div>
+                        {/* <div>
                           <div className="font-semibold uppercase">qty</div>
                           <div>{calcData?.quantity}</div>
-                        </div>
+                        </div> */}
                       </div>
                     )}
                   </div>
