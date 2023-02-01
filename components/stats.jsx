@@ -5,9 +5,11 @@ export default function Stats() {
   const [sharedState] = useAppContext();
   const { projects } = sharedState;
 
-  const resOngoing = projects.filter((project) => project.status === "ongoing");
+  const resOngoing = projects?.filter(
+    (project) => project.status === "ongoing"
+  );
 
-  const resCompleted = projects.filter(
+  const resCompleted = projects?.filter(
     (project) => project.status === "completed"
   );
 
