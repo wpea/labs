@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { post } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
-import { get } from "../lib/api";
+import { get, apiAddress } from "../lib/api";
 import { getToken } from "../lib/hooks/useAuth2";
+import axios from "axios";
 
 export default function CreateProject({ toggle }) {
   const initialValues = {
@@ -22,17 +23,27 @@ export default function CreateProject({ toggle }) {
 
   useEffect(() => {
     if (Object.keys(errors).length === 0 && canSubmit) {
-      //
-      // console.log(JSON.stringify(formValues));
-      post(formValues, getToken());
       getData();
       toggle();
     }
   }, [errors]);
 
+  const createNewProject = async () => {
+    try {
+      const res = await axios.post(`${apiAddress}/projects`, formValues, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
+    // console.log(formValues);
   };
 
   // get and set the global state
@@ -78,6 +89,7 @@ export default function CreateProject({ toggle }) {
   const handleSubmit = () => {
     setErrors(validate(formValues));
     setCanSubmit(true);
+    createNewProject();
   };
 
   return (
