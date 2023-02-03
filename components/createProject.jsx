@@ -4,6 +4,7 @@ import { useAppContext } from "../lib/contexts/globalState";
 import { get, apiAddress } from "../lib/api";
 import { getToken } from "../lib/hooks/useAuth2";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function CreateProject({ toggle }) {
   const initialValues = {
@@ -90,6 +91,7 @@ export default function CreateProject({ toggle }) {
     setErrors(validate(formValues));
     setCanSubmit(true);
     createNewProject();
+    toast.success("Project Successfuly Created");
   };
 
   return (
