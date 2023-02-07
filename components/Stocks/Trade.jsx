@@ -82,14 +82,6 @@ export default function Deposit({ showDep, toggleAdd }) {
     // setLoading(true);
     const user = JSON.parse(localStorage.getItem("user"));
 
-    // const res = await axios(
-    //   config(
-    //     "get",
-    //     `${bambooLive}/api/stocks?limit=1000`,
-    //     user.jwt
-    //   )
-    // );
-
     /**
      * GET STOCKS
      */
@@ -115,8 +107,6 @@ export default function Deposit({ showDep, toggleAdd }) {
 
     setLoading(false);
 
-    // return console.log(selected);
-
     const user = JSON.parse(localStorage.getItem("user"));
 
     const data = {
@@ -127,15 +117,6 @@ export default function Deposit({ showDep, toggleAdd }) {
       amount: JSON.parse(s_amount),
       jwt: user.jwt,
     };
-
-    // const res = await axios(
-    //   config(
-    //     "post",
-    //     `${bambooLive}/api/order/calculate`,
-    //     user.jwt,
-    //     data
-    //   )
-    // );
 
     axios(config3(`post`, `${apiAddress}/stock/calculate/order`, data))
       .then(function (response) {
@@ -150,15 +131,6 @@ export default function Deposit({ showDep, toggleAdd }) {
         console.log(error);
         setLoading(false);
       });
-
-    // console.log(res);
-
-    // if (res.status === 200) {
-    //   setCalcData(res.data);
-    //   setCompleteButton(true);
-    // } else {
-    //   toast.error(res?.message);
-    // }
   };
 
   const completeOrder = async () => {
@@ -198,30 +170,6 @@ export default function Deposit({ showDep, toggleAdd }) {
         console.log(error);
         setLoadingC(false);
       });
-
-    // try {
-    //   const res = await axios(
-    //     config3("post", `${apiAddress}/stock/order/complete`, data)
-    //   );
-
-    //   if (res.status === 200) {
-    //     console.log(res?.data);
-    //     // toast.success(`Order placed successfully. ${res?.data?.order_id}`);
-    //     // setCompleteButton(true);
-    //     // toggleAdd();
-    //   }
-
-    //   if (res.status !== 200) {
-    //     toast.error(res.message ?? `An error occured.`);
-    //   }
-
-    // } catch (e) {
-    //   console.log("error", e?.response?.data?.message);
-    //   toast.error(e?.response?.data?.message);
-    //   setLoadingC(false);
-    // }
-
-    // setLoadingC(false);
   };
 
   const Error = () => {
