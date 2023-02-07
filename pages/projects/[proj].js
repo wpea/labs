@@ -20,6 +20,7 @@ export default function Project() {
   const [sharedState] = useAppContext();
   const [defaultProject, setDefaultProject] = useState(["hey"]);
   const [milestones, setMilestones] = useState([]);
+  const [urlId, setUrlId] = useState();
 
   const toggleModal = () => {
     setOpen((open = !open));
@@ -27,7 +28,7 @@ export default function Project() {
 
   useEffect(() => {
     setDefaultProject(getProject(proj));
-
+    setUrlId(proj);
     //get + filter
     const mstones = sharedState.milestones.filter(
       (milestone) => parseInt(milestone.proj_id) === parseInt(proj)
@@ -85,14 +86,20 @@ export default function Project() {
   const handleDeleteProject = () => {
     const deleteProject = async (proj) => {
       try {
-        const res = await axios.delete(`${apiAddress}/projects/${proj}`, {
+        const res = await axios.delete(`${apiAddress}/projects/${urlId}`, {
           headers: {
             Authorization: `Bearer ${JSON.parse(
               localStorage.getItem("token")
             )}`,
           },
         });
-        await toast.success("Project Deleted");
+        // const response = await fetch(`${apiAddress}/projects/${proj}`);
+        // const result = await response.json();
+        // console.log(result);
+        if (res.status === 200) {
+          toast.success("Project Deleted");
+          router.push("/projects");
+        }
       } catch (e) {
         console.log(e);
       }
