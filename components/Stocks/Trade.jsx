@@ -7,6 +7,7 @@ import { config } from "../../lib/adapter";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { bambooLive, apiAddress } from "../../lib/api";
+import _ from "lodash";
 
 export default function Deposit({ showDep, toggleAdd }) {
   const [query, setQuery] = useState("");
@@ -23,26 +24,33 @@ export default function Deposit({ showDep, toggleAdd }) {
   const [selStock, setSelStock] = useState({});
 
   /******
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
+   *
+   *
+   *
+   *
+   *
+   *
    */
   const [allocStatus, setAllocStatus] = useState(false);
-  const [allocData, setAllocData] = useState({})
+  const [allocData, setAllocData] = useState({});
+  const [rem_allocation, setRem_Allocation] = useState(null);
 
   const handleAllocations = (e) => {
-    const {name, value} = e.target;
-    setAllocData({...allocData, [name]: value});
+    const { name, value } = e.target;
+    const inputValue = { ...allocData, [name]: Number(value) };
+    setAllocData(inputValue);
     console.log(allocData);
-  }
+    const datum = _.reduce(allocData, (acc, n) => {
+      return acc + n;
+    });
+    console.log(datum);
+    setRem_Allocation(datum);
+  };
   /****
-   * 
-   * 
-   * 
-   * 
+   *
+   *
+   *
+   *
    */
 
   const [toggle, setToggle] = useState(true);
@@ -517,7 +525,10 @@ export default function Deposit({ showDep, toggleAdd }) {
                           {/* <p className="pb-3">Re-allocation</p> */}
                           <div id="client_list" className="space-y-4">
                             {[1, 2, 3, 4].map((a) => (
-                              <div key={a} className="flex items-center justify-between">
+                              <div
+                                key={a}
+                                className="flex items-center justify-between"
+                              >
                                 <p className="font-semibold text-sm">
                                   John Mcafee {a}
                                 </p>
@@ -539,7 +550,9 @@ export default function Deposit({ showDep, toggleAdd }) {
                               Remaining Allocation
                             </p>
                             <div className="flex items-center justify-between rounded-md border-none">
-                              <p className="pr-2">70 %</p>
+                              <p className="pr-2">
+                                {100 - `${rem_allocation}`} %
+                              </p>
                             </div>
                           </div>
                         </div>
