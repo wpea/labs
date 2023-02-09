@@ -1,5 +1,5 @@
 import { WPEALogo, Download } from "../../assets/SVGs";
-import { Container } from "./components/Container";
+import Container from "./components/Container";
 import PortfolioValue from "./components/PortfolioValue";
 import Table from "./components/Table";
 
