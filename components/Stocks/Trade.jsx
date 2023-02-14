@@ -7,6 +7,7 @@ import { config } from "../../lib/adapter";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { bambooLive, apiAddress } from "../../lib/api";
+import _ from "lodash";
 
 export default function Deposit({ showDep, toggleAdd }) {
   const [query, setQuery] = useState("");
@@ -21,6 +22,36 @@ export default function Deposit({ showDep, toggleAdd }) {
   const [error, setError] = useState(false);
   const [completeButton, setCompleteButton] = useState(false);
   const [selStock, setSelStock] = useState({});
+
+  /******
+   *
+   *
+   *
+   *
+   *
+   *
+   */
+  const [allocStatus, setAllocStatus] = useState(false);
+  const [allocData, setAllocData] = useState({});
+  const [rem_allocation, setRem_Allocation] = useState(null);
+
+  const handleAllocations = (e) => {
+    const { name, value } = e.target;
+    const inputValue = { ...allocData, [name]: Number(value) };
+    setAllocData(inputValue);
+    console.log(allocData);
+    const datum = _.reduce(allocData, (acc, n) => {
+      return acc + n;
+    });
+    console.log(datum);
+    setRem_Allocation(datum);
+  };
+  /****
+   *
+   *
+   *
+   *
+   */
 
   const [toggle, setToggle] = useState(true);
 
@@ -59,14 +90,6 @@ export default function Deposit({ showDep, toggleAdd }) {
     // setLoading(true);
     const user = JSON.parse(localStorage.getItem("user"));
 
-    // const res = await axios(
-    //   config(
-    //     "get",
-    //     `${bambooLive}/api/stocks?limit=1000`,
-    //     user.jwt
-    //   )
-    // );
-
     /**
      * GET STOCKS
      */
@@ -92,8 +115,6 @@ export default function Deposit({ showDep, toggleAdd }) {
 
     setLoading(false);
 
-    // return console.log(selected);
-
     const user = JSON.parse(localStorage.getItem("user"));
 
     const data = {
@@ -104,15 +125,6 @@ export default function Deposit({ showDep, toggleAdd }) {
       amount: JSON.parse(s_amount),
       jwt: user.jwt,
     };
-
-    // const res = await axios(
-    //   config(
-    //     "post",
-    //     `${bambooLive}/api/order/calculate`,
-    //     user.jwt,
-    //     data
-    //   )
-    // );
 
     axios(config3(`post`, `${apiAddress}/stock/calculate/order`, data))
       .then(function (response) {
@@ -127,15 +139,6 @@ export default function Deposit({ showDep, toggleAdd }) {
         console.log(error);
         setLoading(false);
       });
-
-    // console.log(res);
-
-    // if (res.status === 200) {
-    //   setCalcData(res.data);
-    //   setCompleteButton(true);
-    // } else {
-    //   toast.error(res?.message);
-    // }
   };
 
   const completeOrder = async () => {
@@ -175,30 +178,6 @@ export default function Deposit({ showDep, toggleAdd }) {
         console.log(error);
         setLoadingC(false);
       });
-
-    // try {
-    //   const res = await axios(
-    //     config3("post", `${apiAddress}/stock/order/complete`, data)
-    //   );
-
-    //   if (res.status === 200) {
-    //     console.log(res?.data);
-    //     // toast.success(`Order placed successfully. ${res?.data?.order_id}`);
-    //     // setCompleteButton(true);
-    //     // toggleAdd();
-    //   }
-
-    //   if (res.status !== 200) {
-    //     toast.error(res.message ?? `An error occured.`);
-    //   }
-
-    // } catch (e) {
-    //   console.log("error", e?.response?.data?.message);
-    //   toast.error(e?.response?.data?.message);
-    //   setLoadingC(false);
-    // }
-
-    // setLoadingC(false);
   };
 
   const Error = () => {
@@ -294,272 +273,290 @@ export default function Deposit({ showDep, toggleAdd }) {
                   </div>
 
                   <div className="px-6 space-y-6">
-                    <div className="mt-3 flex justify-between text-center sm:mt-1 sm:text-left">
-                      <h3
-                        className="text-sm font-bold capitalize leading-6 text-gray-900"
-                        id="modal-title"
-                      >
-                        Select a stock
-                      </h3>
-                      <svg
-                        onClick={toggleAdd}
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 cursor-pointer fill-current text-gray-500 hover:text-gray-800"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-
-                    {error && <Error />}
-
-                    {/* <Combobox value={selected} onChange={setSelected}>
-                      <div className="relative mt-1">
-                        <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-wp-blue sm:text-sm">
-                          <Combobox.Input
-                            className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-                            displayValue={(s) => s.name}
-                            onChange={(event) => setQuery(event.target.value)}
-                          />
-                          <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                            <SelectorIcon
-                              className="h-5 w-5 text-gray-400"
-                              aria-hidden="true"
+                    {allocStatus && (
+                      <>
+                        <div className="mt-3 flex justify-between text-center sm:mt-1 sm:text-left">
+                          <h3
+                            className="text-sm font-bold capitalize leading-6 text-gray-900"
+                            id="modal-title"
+                          >
+                            Select a stock
+                          </h3>
+                          <svg
+                            onClick={toggleAdd}
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 cursor-pointer fill-current text-gray-500 hover:text-gray-800"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                              clipRule="evenodd"
                             />
-                          </Combobox.Button>
+                          </svg>
                         </div>
-                        <Transition
-                          as={Fragment}
-                          leave="transition ease-in duration-100"
-                          leaveFrom="opacity-100"
-                          leaveTo="opacity-0"
-                          afterLeave={() => setQuery("")}
-                        >
-                          <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg  ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            {filteredStocks.length === 0 && query !== "" ? (
-                              <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-                                Nothing found.
-                              </div>
-                            ) : (
-                              filteredStocks.map((s) => (
-                                <Combobox.Option
-                                  key={s.symbol}
-                                  className={({ active }) =>
-                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                      active
-                                        ? "bg-wp-blue text-white"
-                                        : "text-gray-900"
-                                    }`
-                                  }
-                                  value={s}
-                                >
-                                  {({ selected, active }) => (
-                                    <>
-                                      <div className="flex items-center space-x-3">
-                                        <span>
-                                          <img
-                                            src={s?.logo}
-                                            className="w-6 h-6"
-                                          />
-                                        </span>
 
-                                        <span
-                                          className={`block truncate ${
-                                            selected
-                                              ? "font-medium"
-                                              : "font-normal"
-                                          }`}
-                                        >
-                                          {s?.name}
-                                        </span>
-                                      </div>
-                                      {selected ? (
-                                        <span
-                                          className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                            active
-                                              ? "text-white"
-                                              : "text-wp-blue"
-                                          }`}
-                                        >
-                                          <CheckIcon
-                                            className="h-5 w-5"
-                                            aria-hidden="true"
-                                          />
-                                        </span>
-                                      ) : null}
-                                    </>
-                                  )}
-                                </Combobox.Option>
-                              ))
-                            )}
-                          </Combobox.Options>
-                        </Transition>
-                      </div>
-                    </Combobox> */}
+                        {error && <Error />}
 
-                    {!Object.keys(selStock).length && (
-                      <div>
-                        {/** Search stocks */}
-                        <div
-                          className={`${
-                            query ? `rounded-t-lg` : `rounded-lg`
-                          } border border-gray-300 px-3`}
-                        >
-                          <div className="flex items-center">
-                            <svg
-                              className="w-6 h-6 stroke-current text-wp-blue"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              // xmlns="http://www.w3.org/2000/svg"
+                        {!Object.keys(selStock).length && (
+                          <div>
+                            {/** Search stocks */}
+                            <div
+                              className={`${
+                                query ? `rounded-t-lg` : `rounded-lg`
+                              } border border-gray-300 px-3`}
                             >
-                              <path
-                                d="M17 17L22 22M19.5 10.75C19.5 15.5825 15.5825 19.5 10.75 19.5C5.91751 19.5 2 15.5825 2 10.75C2 5.91751 5.91751 2 10.75 2C15.5825 2 19.5 5.91751 19.5 10.75Z"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              ></path>
-                            </svg>
-                            <div className="flex w-full items-center justify-between space-x-3">
-                              <input
-                                type="text"
-                                onChange={(e) => setQuery(e.target.value)}
-                                placeholder="SYMBOL (ex. TSLA)"
-                                className="text-md w-full bg-transparent ring-0 outline-none ring-0 border-none focus:outline-none focus:ring-0 placeholder:text-gray-300"
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        {/** Stock list */}
-                        {query && (
-                          <div className="border-gray-300 max-h-48 overflow-auto rounded-b-xl border-b border-r border-l">
-                            {filteredStocks.map((s) => (
-                              <div key={s?.symbol} className=" flex items-center justify-between space-x-3 p-4">
-                                <div className="flex items-center space-x-3">
-                                  <div
-                                    className="bg-contain bg-center bg-no-repeat p-4 bg-gray-200 rounded"
-                                    style={{
-                                      backgroundImage: `url(${s?.logo})`,
-                                    }}
-                                  ></div>
-                                  <div className="text-sm">
-                                    {s?.name} ({s?.symbol})
-                                  </div>
-                                </div>
-                                <div className="flex items-center">
+                              <div className="flex items-center">
+                                <svg
+                                  className="w-6 h-6 stroke-current text-wp-blue"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  // xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M17 17L22 22M19.5 10.75C19.5 15.5825 15.5825 19.5 10.75 19.5C5.91751 19.5 2 15.5825 2 10.75C2 5.91751 5.91751 2 10.75 2C15.5825 2 19.5 5.91751 19.5 10.75Z"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  ></path>
+                                </svg>
+                                <div className="flex w-full items-center justify-between space-x-3">
                                   <input
-                                    type="radio"
-                                    value={s?.symbol}
-                                    onChange={(e) => {
-                                      setSelected(s);
-                                      setSelStock(s);
-                                    }}
-                                    name="stock"
-                                    className="h-6 w-6 border-gray-300 bg-gray-100 text-gray-600 focus:ring-0"
+                                    type="text"
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    placeholder="SYMBOL (ex. TSLA)"
+                                    className="text-md w-full bg-transparent ring-0 outline-none ring-0 border-none focus:outline-none focus:ring-0 placeholder:text-gray-300"
                                   />
                                 </div>
                               </div>
-                            ))}
+                            </div>
+
+                            {/** Stock list */}
+                            {query && (
+                              <div className="border-gray-300 max-h-48 overflow-auto rounded-b-xl border-b border-r border-l">
+                                {filteredStocks.map((s) => (
+                                  <div
+                                    key={s?.symbol}
+                                    className=" flex items-center justify-between space-x-3 p-4"
+                                  >
+                                    <div className="flex items-center space-x-3">
+                                      <div
+                                        className="bg-contain bg-center bg-no-repeat p-4 bg-gray-200 rounded"
+                                        style={{
+                                          backgroundImage: `url(${s?.logo})`,
+                                        }}
+                                      ></div>
+                                      <div className="text-sm">
+                                        {s?.name} ({s?.symbol})
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <input
+                                        type="radio"
+                                        value={s?.symbol}
+                                        onChange={(e) => {
+                                          setSelected(s);
+                                          setSelStock(s);
+                                        }}
+                                        name="stock"
+                                        className="h-6 w-6 border-gray-300 bg-gray-100 text-gray-600 focus:ring-0"
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         )}
-                      </div>
-                    )}
 
-                    {Object.keys(selStock).length > 0 && (
-                      <div className="border rounded-lg border-gray-300 px-3 py-1">
-                        <div className="flex items-center space-x-3">
-                          <svg
-                            className="w-6 h-6 stroke-current text-wp-blue"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M17 17L22 22M19.5 10.75C19.5 15.5825 15.5825 19.5 10.75 19.5C5.91751 19.5 2 15.5825 2 10.75C2 5.91751 5.91751 2 10.75 2C15.5825 2 19.5 5.91751 19.5 10.75Z"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            ></path>
-                          </svg>
-                          <div className="flex w-full items-center justify-between space-x-3">
+                        {Object.keys(selStock).length > 0 && (
+                          <div className="border rounded-lg border-gray-300 px-3 py-1">
                             <div className="flex items-center space-x-3">
-                              <div
-                                className="bg-contain bg-center bg-no-repeat bg-gray-200 p-4 text-xl"
-                                style={{
-                                  backgroundImage: `url(${selStock?.logo})`,
-                                }}
-                              ></div>
-                              <div className="text-sm">
-                                {selStock?.name} ({selStock?.symbol})
-                              </div>
-                            </div>
-                            <div
-                              className="cursor-pointer"
-                              onClick={() => {
-                                setSelected("");
-                                setQuery("");
-                                setSelStock({});
-                              }}
-                            >
                               <svg
-                                width="24"
-                                height="24"
+                                className="w-6 h-6 stroke-current text-wp-blue"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
                               >
                                 <path
-                                  d="M16 8L12 12M12 12L8 16M12 12L8 8M12 12L16 16"
-                                  stroke="#ED6464F2"
+                                  d="M17 17L22 22M19.5 10.75C19.5 15.5825 15.5825 19.5 10.75 19.5C5.91751 19.5 2 15.5825 2 10.75C2 5.91751 5.91751 2 10.75 2C15.5825 2 19.5 5.91751 19.5 10.75Z"
                                   strokeWidth="1.5"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                 ></path>
-                                <circle
-                                  cx="12"
-                                  cy="12"
-                                  r="10"
-                                  stroke="#ED6464F2"
-                                  strokeWidth="1.5"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                ></circle>
                               </svg>
+                              <div className="flex w-full items-center justify-between space-x-3">
+                                <div className="flex items-center space-x-3">
+                                  <div
+                                    className="bg-contain bg-center bg-no-repeat bg-gray-200 p-4 text-xl"
+                                    style={{
+                                      backgroundImage: `url(${selStock?.logo})`,
+                                    }}
+                                  ></div>
+                                  <div className="text-sm">
+                                    {selStock?.name} ({selStock?.symbol})
+                                  </div>
+                                </div>
+                                <div
+                                  className="cursor-pointer"
+                                  onClick={() => {
+                                    setSelected("");
+                                    setQuery("");
+                                    setSelStock({});
+                                  }}
+                                >
+                                  <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M16 8L12 12M12 12L8 16M12 12L8 8M12 12L16 16"
+                                      stroke="#ED6464F2"
+                                      strokeWidth="1.5"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    ></path>
+                                    <circle
+                                      cx="12"
+                                      cy="12"
+                                      r="10"
+                                      stroke="#ED6464F2"
+                                      strokeWidth="1.5"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    ></circle>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="space-y-2">
+                          <div className="text-xs">
+                            Stop Price / Limit Price
+                          </div>
+                          <CurrencyInput
+                            name="stopPrice"
+                            // defaultValue={amount}
+                            placeholder="$"
+                            decimalsLimit={2}
+                            onValueChange={(value, name) => setStopPrice(value)}
+                            required
+                            className="mt-1 uppercase block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="text-xs">Amount</div>
+                          <CurrencyInput
+                            name="s_amount"
+                            // defaultValue={amount}
+                            placeholder="$"
+                            decimalsLimit={2}
+                            onValueChange={(value, name) => setAmount(value)}
+                            required
+                            className="mt-1 uppercase block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {/**
+                     * Allocate
+                     */}
+
+                    {!allocStatus && (
+                      <div className="flex">
+                        <div
+                          onClick={() => setAllocStatus(!allocStatus)}
+                          className="hover:opacity-80 cursor-pointer rounded-full bg-wp-blue p-2 grid place-items-center"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5 text-white"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15.75 19.5L8.25 12l7.5-7.5"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    )}
+                    <div
+                      onClick={() => setAllocStatus(!allocStatus)}
+                      className="flex cursor-pointer hover:opacity-80 items-center justify-between border-b pb-3"
+                    >
+                      <div className="text-xs font-bold text-wp-blue ">
+                        Allocate
+                      </div>
+
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className={`w-4 h-4 ${allocStatus && `rotate-90`}`}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                        />
+                      </svg>
+                    </div>
+
+                    {/** Allocation Data */}
+                    <div className="relative rounded-md">
+                      {/* <h1 className="absolute -top-3 left-3 w-1/3 rounded-md bg-[#D9D9D9] py-1 px-2 text-xs">List of Clients</h1> */}
+                      <div className="">
+                        <div>
+                          {/* <p className="pb-3">Re-allocation</p> */}
+                          <div id="client_list" className="space-y-4">
+                            {[1, 2, 3, 4].map((a) => (
+                              <div
+                                key={a}
+                                className="flex items-center justify-between"
+                              >
+                                <p className="font-semibold text-sm">
+                                  John Mcafee {a}
+                                </p>
+                                <input
+                                  className="mt-1 uppercase block w-20 rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
+                                  type="text"
+                                  onChange={handleAllocations}
+                                  name={a}
+                                  placeholder="%"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div id="rem_allocation" className="rounded pt-8">
+                          <div className="flex items-center justify-between rounded-md bg-[#2D7EC2] px-3 py-2 text-white">
+                            <p className="font-bold text-xs">
+                              Remaining Allocation
+                            </p>
+                            <div className="flex items-center justify-between rounded-md border-none">
+                              <p className="pr-2">
+                                {100 - `${rem_allocation}`} %
+                              </p>
                             </div>
                           </div>
                         </div>
                       </div>
-                    )}
-
-                    <div className="space-y-2">
-                      <div className="text-xs">Stop Price / Limit Price</div>
-                      <CurrencyInput
-                        name="stopPrice"
-                        // defaultValue={amount}
-                        placeholder="$"
-                        decimalsLimit={2}
-                        onValueChange={(value, name) => setStopPrice(value)}
-                        required
-                        className="mt-1 uppercase block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="text-xs">Amount</div>
-                      <CurrencyInput
-                        name="s_amount"
-                        // defaultValue={amount}
-                        placeholder="$"
-                        decimalsLimit={2}
-                        onValueChange={(value, name) => setAmount(value)}
-                        required
-                        className="mt-1 uppercase block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
-                      />
                     </div>
 
                     {Object.keys(calcData).length > 0 && (
