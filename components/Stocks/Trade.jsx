@@ -22,29 +22,69 @@ export default function Deposit({ showDep, toggleAdd }) {
   const [error, setError] = useState(false);
   const [completeButton, setCompleteButton] = useState(false);
   const [selStock, setSelStock] = useState({});
+  const [subAccounts, setSubAccounts] = useState([]);
+  const [allocTotal, setAllocTotal] = useState(0);
+
+  const [toggle, setToggle] = useState(true);
+
+  useEffect(() => {
+    getStocks();
+    /** */
+    getSubAccounts();
+    /** */
+  }, []);
 
   /******
    *
    *
    *
    *
+   */
+  const getSubAccounts = async () => {
+    try {
+      const res = await axios.get(`${apiAddress}/stock/get/subs`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+      });
+
+      setSubAccounts(res?.data?.data);
+    } catch (e) {
+      console.log(e.response);
+    }
+  };
+  /**
+   *
+   *
    *
    *
    */
+
+  useEffect(() => {
+    // calcTotal(allocData);
+    // console.log(allocData)
+  }, [allocData]);
+
   const [allocStatus, setAllocStatus] = useState(false);
   const [allocData, setAllocData] = useState({});
   const [rem_allocation, setRem_Allocation] = useState(null);
 
   const handleAllocations = (e) => {
     const { name, value } = e.target;
-    const inputValue = { ...allocData, [name]: Number(value) };
-    setAllocData(inputValue);
+    // const inputValue = ;
+    setAllocData({ ...allocData, [name]: Number(value) });
     console.log(allocData);
-    const datum = _.reduce(allocData, (acc, n) => {
-      return acc + n;
-    });
-    console.log(datum);
-    setRem_Allocation(datum);
+    // calcTotal();
+  };
+
+  const calcTotal = () => {
+    let sum = 0;
+    for (let key in allocData) {
+      sum += parseInt(allocData[key]);
+    }
+    setAllocTotal(sum);
+    console.log(allocData)
   };
   /****
    *
@@ -52,12 +92,6 @@ export default function Deposit({ showDep, toggleAdd }) {
    *
    *
    */
-
-  const [toggle, setToggle] = useState(true);
-
-  useEffect(() => {
-    getStocks();
-  }, []);
 
   const config2 = (method, url, jwt) => {
     return {
@@ -155,6 +189,7 @@ export default function Deposit({ showDep, toggleAdd }) {
       price_per_share: calcData.price_per_share,
       fee: calcData.fee,
       jwt: user.jwt,
+      data: allocData
     };
 
     axios(config3(`post`, `${apiAddress}/stock/order/complete`, data))
@@ -493,6 +528,7 @@ export default function Deposit({ showDep, toggleAdd }) {
                         </div>
                       </div>
                     )}
+                    
                     <div
                       onClick={() => setAllocStatus(!allocStatus)}
                       className="flex cursor-pointer hover:opacity-80 items-center justify-between border-b pb-3"
@@ -517,26 +553,32 @@ export default function Deposit({ showDep, toggleAdd }) {
                       </svg>
                     </div>
 
-                    {/** Allocation Data */}
+                    {!allocStatus && (
+                    // {/** Allocation Data */}
                     <div className="relative rounded-md">
                       {/* <h1 className="absolute -top-3 left-3 w-1/3 rounded-md bg-[#D9D9D9] py-1 px-2 text-xs">List of Clients</h1> */}
                       <div className="">
                         <div>
                           {/* <p className="pb-3">Re-allocation</p> */}
                           <div id="client_list" className="space-y-4">
-                            {[1, 2, 3, 4].map((a) => (
+                            {subAccounts.map((a) => (
                               <div
-                                key={a}
+                                key={a?.id}
                                 className="flex items-center justify-between"
                               >
                                 <p className="font-semibold text-sm">
-                                  John Mcafee {a}
+                                  {a?.name}
                                 </p>
                                 <input
                                   className="mt-1 uppercase block w-20 rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
                                   type="text"
-                                  onChange={handleAllocations}
-                                  name={a}
+                                  onChange={(e) =>
+                                    setAllocData({
+                                      ...allocData,
+                                      [a?.slug]: e.target.value,
+                                    })
+                                  }
+                                  name={a?.slug}
                                   placeholder="%"
                                 />
                               </div>
@@ -550,14 +592,34 @@ export default function Deposit({ showDep, toggleAdd }) {
                               Remaining Allocation
                             </p>
                             <div className="flex items-center justify-between rounded-md border-none">
-                              <p className="pr-2">
-                                {100 - `${rem_allocation}`} %
-                              </p>
+                              <p className="pr-2">{100 - allocTotal} %</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid place-items-end pt-4">
+                          <div className="py-1 shadow-md hover:opacity-70 text-white flex space-x-1 items-center px-2 bg-[#2D7EC2] border-blue-800 cursor-pointer border rounded-md">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="w-4 h-4"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 4.5c1.215 0 2.417.055 3.604.162a.68.68 0 01.615.597c.124 1.038.208 2.088.25 3.15l-1.689-1.69a.75.75 0 00-1.06 1.061l2.999 3a.75.75 0 001.06 0l3.001-3a.75.75 0 10-1.06-1.06l-1.748 1.747a41.31 41.31 0 00-.264-3.386 2.18 2.18 0 00-1.97-1.913 41.512 41.512 0 00-7.477 0 2.18 2.18 0 00-1.969 1.913 41.16 41.16 0 00-.16 1.61.75.75 0 101.495.12c.041-.52.093-1.038.154-1.552a.68.68 0 01.615-.597A40.012 40.012 0 0110 4.5zM5.281 9.22a.75.75 0 00-1.06 0l-3.001 3a.75.75 0 101.06 1.06l1.748-1.747c.042 1.141.13 2.27.264 3.386a2.18 2.18 0 001.97 1.913 41.533 41.533 0 007.477 0 2.18 2.18 0 001.969-1.913c.064-.534.117-1.071.16-1.61a.75.75 0 10-1.495-.12c-.041.52-.093 1.037-.154 1.552a.68.68 0 01-.615.597 40.013 40.013 0 01-7.208 0 .68.68 0 01-.615-.597 39.785 39.785 0 01-.25-3.15l1.689 1.69a.75.75 0 001.06-1.061l-2.999-3z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+
+                            <div onClick={calcTotal} className=" text-xs">
+                              Calc
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
+                    )}
 
                     {Object.keys(calcData).length > 0 && (
                       <div className="text-2xs flex space-x-3 gap-2">
