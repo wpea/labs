@@ -207,8 +207,8 @@ export default function Stock() {
                 </div>
 
                 {!alloc.length ? (
-                  <div class="grid place-items-center">
-                    <div class="px-4 py-2 text-gray-400">No allocations.</div>
+                  <div className="grid place-items-center">
+                    <div className="px-4 py-2 text-gray-400">No allocations.</div>
                   </div>
                 ) : (
                   <table className="table w-full">
@@ -233,8 +233,8 @@ export default function Stock() {
                         <tr key={a?.id}>
                           <td>
                             {a?.name}
-                            <div class="flex">
-                              <div class="my-1.5 rounded-full border bg-gray-600 px-2 text-[10px] text-white">
+                            <div className="flex">
+                              <div className="my-1.5 rounded-full border bg-gray-600 px-2 text-[10px] text-white">
                                 {a?.created_at}
                               </div>
                             </div>
