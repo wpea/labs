@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { apiAddress, bambooLive } from "../../../lib/api";
-import AppLayout from "./../../../components/Layouts/AppLayout";
-import Deposit from "../../../components/Stocks/Deposit";
-import Spin from "./../../../components/Misc/Spin";
+import { apiAddress, bambooLive } from "../../../../lib/api";
+import Deposit from "../../../../components/Stocks/Deposit";
+import Spin from "./../../../../components/Misc/Spin";
 import { useRouter } from "next/router";
-import Trade from "./../../../components/Stocks/Trade";
-import StockInfo from "../../../components/Stocks/StockInfo";
-import PendingOrder from "../../../components/Stocks/PendingOrder";
-import Withdraw from "../../../components/Stocks/Withdraw";
+import Trade from "./../../../../components/Stocks/Trade";
+import StockInfo from "../../../../components/Stocks/StockInfo";
+import PendingOrder from "../../../../components/Stocks/PendingOrder";
+import Withdraw from "../../../../components/Stocks/Withdraw";
 import toast from "react-hot-toast";
+
+import AppLayout from './../../../../components/Layouts/AppLayout';
 
 export default function Account() {
   const [account, setAccount] = useState({});
@@ -669,6 +670,7 @@ export default function Account() {
                   value_change={Math.ceil(s?.value_change * 100) / 100}
                   equity={Math.ceil(s?.user_equity * 100) / 100}
                   logo={s?.logo}
+                  s_data={s}
                 />
               ))}
             </>
