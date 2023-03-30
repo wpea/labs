@@ -476,7 +476,7 @@ export default function Account() {
                 </svg>
               </button>
 
-              {/* <button
+              <button
                 onClick={() => setShowDep(!showDep)}
                 className="btn flex w-36 justify-between place-self-end border-none bg-green-600 capitalize hover:bg-green-700"
               >
@@ -528,9 +528,9 @@ export default function Account() {
                     y2="99.34"
                   />
                 </svg>
-              </button> */}
+              </button>
 
-              {/* <button
+              <button
                 onClick={() => setShowWd(!showWd)}
                 type="submit"
                 className="btn flex w-36 justify-between place-self-end border-none bg-gray-700 capitalize hover:bg-gray-900"
@@ -582,7 +582,7 @@ export default function Account() {
                     y2="99.34"
                   />
                 </svg>
-              </button> */}
+              </button>
             </div>
           </div>
         </div>
