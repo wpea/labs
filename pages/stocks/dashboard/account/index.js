@@ -588,7 +588,7 @@ export default function Account() {
         </div>
 
         {/** Select active stocks or pending orders. */}
-        <div className="grid grid-cols-4 px-20 pt-16">
+        <div className="grid grid-cols-4 px-20 pt-16"> 
           <div
             onClick={() => setCheckOrder(false)}
             className={`${
