@@ -316,7 +316,7 @@ export default function Withdraw({ showDep, toggleAdd }) {
                       </svg>
                     </div>
 
-                    <div className="text-2xs grid grid-cols-3 gap-4">
+                    {/* <div className="text-2xs grid grid-cols-3 gap-4">
                       <div>
                         <div className="font-semibold uppercase">rate</div>
                         <div>{wData?.exchange_rate}</div>
@@ -345,7 +345,7 @@ export default function Withdraw({ showDep, toggleAdd }) {
                         <div className="font-semibold uppercase">type</div>
                         <div>{wData?.name}</div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="sm:items-start">
                       <div className="overflow-hidden sm:rounded-md">
