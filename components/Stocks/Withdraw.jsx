@@ -251,7 +251,7 @@ export default function Withdraw({ showDep, toggleAdd }) {
       });
 
       console.log(res);
-      toast.success(e?.response?.data?.message);
+      toast.success(e?.response?.data?.message ?? 'Withdrawal in progress.');
       toggleAdd();
     } catch (e) {
       console.log(e);
