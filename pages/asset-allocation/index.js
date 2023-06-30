@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import AppLayout from "../../components/Layouts/AppLayout";
 import Header from "../../components/header";
 import { Button, Label, TextInput, Textarea, Modal } from "flowbite-react";
 import axios from "axios";

@@ -6,7 +6,7 @@ const Card = ({ src, href, name, description }) => {
     <>
       <Link
         passHref
-        href={`/fundmanager/${href}`}
+        href={`asset-allocation/fundmanager/${href}`}
         className="max-w-sm flex items-center justify-center  overflow-hidden  p-6 w-72 h-32 border  rounded-lg shadow bg-[#F4F5F6] dark:border-gray-700"
       >
         <Image

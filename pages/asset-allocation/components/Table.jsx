@@ -1,7 +1,8 @@
-import Buttons from "@/app/fundmanager/[id]/AddTransaction";
-import EditButton from "@/app/fundmanager/[id]/EditTransaction";
-import Button from "./Button";
+// import EditButton from "@/app/fundmanager/[id]/EditTransaction";
+
 import React from "react";
+import Buttons from "./AddTransaction";
+import EditButton from "./EditTransaction";
 // import { Button, Checkbox, Label, TextInput, Textarea } from "flowbite-react";
 
 const Table = ({ transactions }) => {
