@@ -1,13 +1,9 @@
-"use client";
-
 import axios from "axios";
 import { Button, Label, TextInput, Textarea, Modal } from "flowbite-react";
 import React, { useRef, useState } from "react";
 import { useRouter } from "next/router";
-// import { useParams, useRouter  } from "next/navigation";s
 
 export default function Buttons() {
-  // const params = useParams();
   const router = useRouter();
   const { fundmanagerId } = router.query;
 

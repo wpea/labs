@@ -3,8 +3,8 @@ import Header from "../../components/header";
 import { Button, Label, TextInput, Textarea, Modal } from "flowbite-react";
 import axios from "axios";
 
-import Card from "./components/Card";
-import Overview from "./components/Overview";
+import Card from "../../components/asset-allocation/Card";
+import Overview from "../../components/asset-allocation/Overview";
 import { useEffect, useRef, useState } from "react";
 
 const AssetAllocation = () => {

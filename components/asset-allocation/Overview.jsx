@@ -1,5 +1,5 @@
 import React from "react";
-import { PieChart } from "./Pie";
+import PieChart from "./Pie";
 
 const formatCompact = (number) => {
   const formatter = new Intl.NumberFormat("en", {

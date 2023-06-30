@@ -37,7 +37,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 //   ],
 // };
 
-export function PieChart({ datum }) {
+export default function PieChart({ datum }) {
   console.log(datum);
   const value = {
     labels: [],

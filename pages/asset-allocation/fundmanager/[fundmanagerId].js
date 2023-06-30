@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Table from "../components/Table";
+import Table from "../../../components/asset-allocation/Table";
 import Image from "next/image";
 import { FiExternalLink } from "react-icons/fi";
 import axios from "axios";
@@ -12,7 +12,7 @@ const formatCompact = (number) => {
   return formatter.format(number);
 };
 
-const FundManager = ({ params }) => {
+const FundManager = () => {
   const [data, setData] = useState(null);
   const router = useRouter();
   const { fundmanagerId } = router.query;
