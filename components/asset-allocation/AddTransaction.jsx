@@ -40,11 +40,36 @@ export default function Buttons() {
           fundManagers: fundmanagerId,
         }
       );
+      createReminder(formData);
       console.log(response.data);
       onClose();
       router.reload();
     } catch (error) {
       console.log("error submiting form,", error);
+    }
+  };
+
+  const createReminder = async (formData) => {
+    try {
+      const response = await axios.post(
+        "https://client.wealthparadigm.org/api/reminder",
+        {
+          reminder: formData.description,
+          years: 1,
+          freq: 6,
+          init_date: formData.date,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(
+              localStorage.getItem("token")
+            )}`,
+          },
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
     }
   };
 
