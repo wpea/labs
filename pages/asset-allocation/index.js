@@ -7,6 +7,8 @@ import Card from "../../components/asset-allocation/Card";
 import Overview from "../../components/asset-allocation/Overview";
 import { useEffect, useRef, useState } from "react";
 
+const ASSETMANAGERS = process.env.NEXT_PUBLIC_NODE_BACKEND;
+
 const AssetAllocation = () => {
   const [assetManagers, setAssetManagers] = useState([]);
   const [totalCap, setTotalCap] = useState("");
@@ -61,7 +63,7 @@ const AssetAllocation = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          "http://localhost:5001/total-cap/total/alloc-size"
+          `${ASSETMANAGERS}/total-cap/total/alloc-size`
         );
         console.log(response);
         setTopFive(response.data);
@@ -74,7 +76,7 @@ const AssetAllocation = () => {
     const fetchTotalCap = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5001/total-cap");
+        const response = await axios.get(`${ASSETMANAGERS}/total-cap`);
         setTotalCap(response.data.totalRate);
         setLoading(false);
       } catch (error) {}
@@ -83,7 +85,7 @@ const AssetAllocation = () => {
     const fetchFundManagers = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5001/fundManager");
+        const response = await axios.get(`${ASSETMANAGERS}/fundManager`);
 
         // console.log(response);
         setAssetManagers(response.data);
