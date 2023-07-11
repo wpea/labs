@@ -7,7 +7,7 @@ import Card from "../../components/asset-allocation/Card";
 import Overview from "../../components/asset-allocation/Overview";
 import { useEffect, useRef, useState } from "react";
 
-const ASSETMANAGERS = process.env.NEXT_PUBLIC_NODE_BACKEND;
+import { ASSETMANAGERS } from "../../lib/api";
 
 const AssetAllocation = () => {
   const [assetManagers, setAssetManagers] = useState([]);
@@ -40,7 +40,7 @@ const AssetAllocation = () => {
     console.log("submiting");
     try {
       const response = await axios.post(
-        "http://localhost:5001/fundmanager",
+        `${ASSETMANAGERS}/fundmanager`,
         formData
       );
       console.log(response.data);

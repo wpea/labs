@@ -2,6 +2,7 @@ import axios from "axios";
 import { Button, Label, TextInput, Textarea, Modal } from "flowbite-react";
 import React, { useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { ASSETMANAGERS } from "../../lib/api";
 
 export default function Buttons() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function Buttons() {
     try {
       console.log(formData);
       const response = await axios.post(
-        `http://localhost:5001/transactions/${fundmanagerId}`,
+        `${ASSETMANAGERS}/transactions/${fundmanagerId}`,
         {
           amount: formData.amount,
           rate: formData.rate,

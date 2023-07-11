@@ -3,6 +3,7 @@
 import axios from "axios";
 import { Button, Label, TextInput, Textarea, Modal } from "flowbite-react";
 import React, { useRef, useState, useEffect } from "react";
+import { ASSETMANAGERS } from "../../lib/api";
 // @ts-ignore
 // import { useParams, useRouter } from "next/navigation";
 
@@ -41,7 +42,7 @@ export default function EditButton({ transactionId, previousInfo }) {
     try {
       console.log(formData);
       const response = await axios.put(
-        `http://localhost:5001/transactions/${transactionId}`,
+        `${ASSETMANAGERS}/transactions/${transactionId}`,
         {
           amount: formData.amount,
           rate: formData.rate,

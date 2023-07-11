@@ -5,6 +5,7 @@ import { FiExternalLink } from "react-icons/fi";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Header from "../../../components/header";
+import { ASSETMANAGERS } from "../../../lib/api";
 
 const formatCompact = (number) => {
   const formatter = new Intl.NumberFormat("en", {
@@ -12,8 +13,6 @@ const formatCompact = (number) => {
   });
   return formatter.format(number);
 };
-
-const ASSETMANAGERS = process.env.NEXT_PUBLIC_NODE_BACKEND;
 
 const FundManager = () => {
   const [data, setData] = useState(null);
