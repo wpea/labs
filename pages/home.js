@@ -195,7 +195,7 @@ export default function HomeCards() {
             </div>
 
             <div
-              onClick={() => router.push("/asset-allocation")}
+              // onClick={() => router.push("/asset-allocation")}
               className="bg-gray-50 hover:border-gray-400 border  border-gray-200 cursor-pointer rounded-md p-8 space-y-4 grid"
             >
               <div className="flex items-center justify-between">
