@@ -476,7 +476,7 @@ export default function Account() {
                 </svg>
               </button>
 
-              <button
+              {/* <button
                 onClick={() => setShowDep(!showDep)}
                 className="btn flex w-36 justify-between place-self-end border-none bg-green-600 capitalize hover:bg-green-700"
               >
@@ -582,13 +582,13 @@ export default function Account() {
                     y2="99.34"
                   />
                 </svg>
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
 
         {/** Select active stocks or pending orders. */}
-        <div className="grid grid-cols-4 px-20 pt-16"> 
+        <div className="grid grid-cols-4 px-20 pt-16">
           <div
             onClick={() => setCheckOrder(false)}
             className={`${
@@ -702,7 +702,7 @@ export default function Account() {
 
         <div className="text-xs py-20 px-20">
           <div className="self-center flex items-center justify-between text-xs">
-            <div>&copy; 2022 WPEA Labs</div>
+            <div>&copy; 2022 - {new Date().getFullYear()} WPEA Labs</div>
           </div>
         </div>
       </div>
@@ -716,7 +716,7 @@ export default function Account() {
       </>
 
       <>
-        <Withdraw showDep={showWd} toggleAdd={() => setShowWd(!showWd)} />
+        {/* <Withdraw showDep={showWd} toggleAdd={() => setShowWd(!showWd)} /> */}
       </>
     </AppLayout>
   );
