@@ -24,7 +24,8 @@ export default function Deposit({ showDep, toggleAdd }) {
   const [selStock, setSelStock] = useState({});
   const [subAccounts, setSubAccounts] = useState([]);
   const [allocTotal, setAllocTotal] = useState(0);
-  const [price, setPrice] = useState(0);
+  const [currentStockData, setCurrentStockData] = useState({symbol: '', price: 0});
+  const [loadingCurrentStock, setLoadingCurrentStock] = useState(false);
 
   const [toggle, setToggle] = useState(true);
 
@@ -35,22 +36,36 @@ export default function Deposit({ showDep, toggleAdd }) {
     /** */
   }, []);
 
-  const getStockPrice = async () => {
+  useEffect(() => {
+    getStockPrice(selStock.symbol)
+  }, [selStock]);
 
+  const getStockPrice = async (symb) => {
     const user = JSON.parse(localStorage.getItem("user"));
-
     try {
-      const res = await axios.get(`${apiAddress}/stock/price`, {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-        },
-        data: { jwt: user.jwt, symbol: selStock?.symbol },
-      });
-
-      setPrice(res.data.price);
+      // Check if symbol, before making the request to check the price
+          if (symb) {
+            setLoadingCurrentStock(true);
+            const res = await axios.post(
+              `${apiAddress}/stock/price`,
+              { jwt: user.jwt, symbol: symb },
+              {
+                headers: {
+                  Accept: "application/json",
+                  Authorization: `Bearer ${JSON.parse(
+                    localStorage.getItem("token")
+                  )}`,
+                },
+              }
+            );
+            setCurrentStockData({
+              price: res?.data?.data?.price,
+              symbol: res?.data?.data?.symbol,
+            });
+            setLoadingCurrentStock(false);
+          }
     } catch (e) {
-      console.log(e);
+      setLoadingCurrentStock(false);
     }
   }
 
@@ -70,9 +85,7 @@ export default function Deposit({ showDep, toggleAdd }) {
       });
 
       setSubAccounts(res?.data?.data);
-    } catch (e) {
-      console.log(e.response);
-    }
+    } catch (e) {}
   };
   /**
    *
@@ -95,7 +108,6 @@ export default function Deposit({ showDep, toggleAdd }) {
     const { name, value } = e.target;
     // const inputValue = ;
     setAllocData({ ...allocData, [name]: Number(value) });
-    console.log(allocData);
     // calcTotal();
   };
 
@@ -105,7 +117,6 @@ export default function Deposit({ showDep, toggleAdd }) {
       sum += parseInt(allocData[key]);
     }
     setAllocTotal(sum);
-    console.log(allocData);
   };
   /****
    *
@@ -151,12 +162,11 @@ export default function Deposit({ showDep, toggleAdd }) {
     axios(config2(`post`, `${apiAddress}/stock/get/all`, user.jwt))
       .then(function (response) {
         if (response.data.status === 200) {
-          console.log(response);
           setStocks(response.data.data.stocks);
         }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
 
@@ -184,14 +194,12 @@ export default function Deposit({ showDep, toggleAdd }) {
     axios(config3(`post`, `${apiAddress}/stock/calculate/order`, data))
       .then(function (response) {
         if (response.data.status === 200) {
-          console.log(response);
           setCalcData(response.data.data);
           setCompleteButton(true);
           setLoading(false);
         }
       })
       .catch(function (error) {
-        console.log(error);
         setLoading(false);
       });
   };
@@ -216,7 +224,6 @@ export default function Deposit({ showDep, toggleAdd }) {
     axios(config3(`post`, `${apiAddress}/stock/order/complete`, data))
       .then(function (response) {
         if (response.data.status === 200) {
-          console.log(response);
           toast.success(
             `Order placed successfully. ${response?.data?.data?.order_id}`
           );
@@ -226,12 +233,10 @@ export default function Deposit({ showDep, toggleAdd }) {
 
         if (response.data.status !== 200) {
           toast.error(response.data.message ?? "An error occured.");
-          console.log(response);
           setLoadingC(false);
         }
       })
       .catch(function (error) {
-        console.log(error);
         setLoadingC(false);
       });
   };
@@ -501,7 +506,20 @@ export default function Deposit({ showDep, toggleAdd }) {
                         required
                         className="mt-1 uppercase block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
                       />
-                      <div className="text-2xs">Current stock price</div>
+                      <div className="flex items-center justify-between">
+                      {currentStockData?.symbol?.length > 0 && (
+                        <div className="text-2xs">
+                          Current {currentStockData?.symbol} price &rarr;{" "}
+                          <span className="font-bold">
+                            {currentStockData?.price}
+                          </span>
+                        </div>
+                      )}
+
+                      {loadingCurrentStock && 
+                      <div><Spin w={14} h={14} /></div>
+                      }
+                      </div>
                     </div>
 
                     <div className="space-y-2">
