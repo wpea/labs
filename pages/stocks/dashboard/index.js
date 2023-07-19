@@ -33,6 +33,7 @@ export default function Dashboard() {
   };
 
   const goToAccount = (id) => {
+    // router.push("/verify");
     // pass param to the dashboard page
     const account = accounts.filter((a) => a.id === id);
     // set data in localStorage()
@@ -42,6 +43,7 @@ export default function Dashboard() {
         id: account[0].id,
       })
     );
+    
     // pass param as a push to the dashboard page
     router.push("/stocks/dashboard/account");
   };

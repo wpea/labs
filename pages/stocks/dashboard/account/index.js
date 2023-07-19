@@ -356,7 +356,7 @@ export default function Account() {
                         viewBox="0 0 24 24"
                         strokeWidth={1.5}
                         stroke="currentColor"
-                        className="w-6 h-6 -rotate-45"
+                        className="w-6 h-6 rotate-45"
                       >
                         <path
                           strokeLinecap="round"
