@@ -504,21 +504,24 @@ export default function Deposit({ showDep, toggleAdd }) {
                         decimalsLimit={2}
                         onValueChange={(value, name) => setStopPrice(value)}
                         required
+                        value={currentStockData?.price}
                         className="mt-1 uppercase block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
                       />
                       <div className="flex items-center justify-between">
-                      {currentStockData?.symbol?.length > 0 && (
-                        <div className="text-2xs">
-                          Current {currentStockData?.symbol} price &rarr;{" "}
-                          <span className="font-bold">
-                            {currentStockData?.price}
-                          </span>
-                        </div>
-                      )}
+                        {currentStockData?.symbol?.length > 0 && (
+                          <div className="text-2xs">
+                            Current {currentStockData?.symbol} price &rarr;{" "}
+                            <span className="font-bold">
+                              {currentStockData?.price}
+                            </span>
+                          </div>
+                        )}
 
-                      {loadingCurrentStock && 
-                      <div><Spin w={14} h={14} /></div>
-                      }
+                        {loadingCurrentStock && (
+                          <div>
+                            <Spin w={14} h={14} />
+                          </div>
+                        )}
                       </div>
                     </div>
 
