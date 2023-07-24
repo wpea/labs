@@ -185,7 +185,7 @@ export default function Deposit({ showDep, toggleAdd }) {
     const data = {
       symbol: selected.symbol,
       side: "BUY",
-      price: JSON.parse(stopPrice),
+      price: JSON.parse(currentStockData.price),
       order_type: "MARKET",
       amount: JSON.parse(s_amount),
       jwt: user.jwt,
