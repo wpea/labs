@@ -4,6 +4,7 @@ import axios from "axios";
 
 import RolloverTable from "../../../components/asset-allocation/RolloverTable";
 import { useRouter, useParams } from "next/router";
+import { ASSETMANAGERS } from "../../../lib/api";
 
 const index = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -20,7 +21,7 @@ const index = () => {
       try {
         console.log(transaction);
         const result = await axios.get(
-          `http://localhost:5001/rollover/${transaction}`
+          `${ASSETMANAGERS}/rollover/${transaction}`
         );
 
         setRollovers(result.data.data);
