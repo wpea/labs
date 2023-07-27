@@ -3,6 +3,7 @@
 import React from "react";
 import Buttons from "./AddTransaction";
 import EditButton from "./EditTransaction";
+import Link from "next/link";
 // import { Button, Checkbox, Label, TextInput, Textarea } from "flowbite-react";
 
 const Table = ({ transactions }) => {
@@ -33,7 +34,7 @@ const Table = ({ transactions }) => {
 
   const getDate = (input) => {
     const date = new Date(input);
-    console.log(date.toDateString());
+
     return date.toDateString();
   };
 
@@ -62,15 +63,12 @@ const Table = ({ transactions }) => {
         <thead className="text-xs text-gray-500 uppercase   dark:text-gray-400">
           <tr>
             <th scope="col" className="px-6 py-3">
-              Investment Date
-            </th>
-            <th scope="col" className="px-6 py-3">
               Amount
             </th>
             <th scope="col" className="px-6 py-3">
               Description
             </th>
-            <th scope="col" className="px-6 py-3">
+            {/* <th scope="col" className="px-6 py-3">
               Rate (%)
             </th>
             <th scope="col" className="px-6 py-3">
@@ -78,7 +76,7 @@ const Table = ({ transactions }) => {
             </th>
             <th scope="col" className="px-6 py-3">
               Days till Maturity
-            </th>
+            </th> */}
             <th scope="col" className="px-6 py-3">
               <span className="sr-only">Edit</span>
             </th>
@@ -86,67 +84,70 @@ const Table = ({ transactions }) => {
         </thead>
         {transactions?.map((transaction) => {
           return (
-            <tbody key={transaction._id}>
-              <tr className=" border-b  border-gray-700">
-                <td className="px-6 py-4 ">{getDate(transaction.date)}</td>
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium  whitespace-nowrap dark:text-white"
-                >
-                  {formatCompact(transaction.amount)}
-                </th>
+            // eslint-disable-next-line react/jsx-key, @next/next/link-passhref
+            <Link href={`/asset-allocation/transactions/${transaction._id}`}>
+              <tbody key={transaction._id}>
+                <tr className=" border-b  border-gray-700">
+                  {/* <td className="px-6 py-4 ">{getDate(transaction.date)}</td> */}
+                  <th
+                    scope="row"
+                    className="px-6 py-4 font-medium  whitespace-nowrap dark:text-white"
+                  >
+                    {formatCompact(transaction.amount)}
+                  </th>
 
-                <td className="px-6 py-4 ">{transaction.description}</td>
-                <td className="px-6 py-4 ">{transaction.rate}%</td>
-                <td className="px-6 py-4 ">
-                  {getDate(transaction.maturityDate)}
-                </td>
-                <td className="px-6 py-4 ">
-                  {daysLeft(transaction.maturityDate) === "Matured" ? (
-                    <span className="bg-red-100 text-red-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded mr-2 dark:bg-gray-700 dark:text-gray-400 border border-red-400">
-                      <svg
-                        aria-hidden="true"
-                        className="w-3 h-3 mr-1"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                          clipRule="evenodd"
-                        ></path>
-                      </svg>
-                      Matured
-                    </span>
-                  ) : (
-                    <span className="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
-                      <svg
-                        aria-hidden="true"
-                        className="w-3 h-3 mr-1"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                          clipRule="evenodd"
-                        ></path>
-                      </svg>
-                      {daysLeft(transaction.maturityDate)}
-                      {" days left "}
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4 ">
-                  <EditButton
-                    previousInfo={transaction}
-                    transactionId={transaction._id}
-                  />
-                </td>
-              </tr>
-            </tbody>
+                  <td className="px-6 py-4 ">{transaction.description}</td>
+                  {/* <td className="px-6 py-4 ">{transaction.rate}%</td>
+                  <td className="px-6 py-4 ">
+                    {getDate(transaction.maturityDate)}
+                  </td> */}
+                  {/* <td className="px-6 py-4 ">
+                    {daysLeft(transaction.maturityDate) === "Matured" ? (
+                      <span className="bg-red-100 text-red-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded mr-2 dark:bg-gray-700 dark:text-gray-400 border border-red-400">
+                        <svg
+                          aria-hidden="true"
+                          className="w-3 h-3 mr-1"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                            clipRule="evenodd"
+                          ></path>
+                        </svg>
+                        Matured
+                      </span>
+                    ) : (
+                      <span className="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
+                        <svg
+                          aria-hidden="true"
+                          className="w-3 h-3 mr-1"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                            clipRule="evenodd"
+                          ></path>
+                        </svg>
+                        {daysLeft(transaction.maturityDate)}
+                        {" days left "}
+                      </span>
+                    )}
+                  </td> */}
+                  <td className="px-6 py-4 ">
+                    <EditButton
+                      previousInfo={transaction}
+                      transactionId={transaction._id}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </Link>
           );
         })}
       </table>

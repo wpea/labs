@@ -26,7 +26,7 @@ const FundManager = () => {
           `${ASSETMANAGERS}/fundmanager/${fundmanagerId}`
         );
         setData(response.data.data);
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -44,6 +44,30 @@ const FundManager = () => {
     <div className="w-full grid">
       <div className="md:px-20 p-10 space-y-10 grid">
         <Header />
+        <div>
+          <button
+            className="flex gap-2 border px-4 py-2 mb-4"
+            type="button"
+            onClick={() => router.back()}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+              />
+            </svg>
+            <p>Go back</p>
+          </button>
+        </div>
+
         <div className="h-screen ">
           <div className="flex gap-8 justify-between items-start py-12">
             <div className="flex gap-8">

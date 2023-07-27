@@ -15,6 +15,8 @@ const AssetAllocation = () => {
   const [topFive, setTopFive] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [imageFile, setImageFile] = useState(null); // state variable to hold the selected image file
+  const [cloudinaryUrl, setCloudinaryUrl] = useState(""); //state variable to hold the Cloudinary URL
 
   const router = useRouter();
 
@@ -27,6 +29,34 @@ const AssetAllocation = () => {
     maturityDate: "",
     link: "",
   });
+
+  const handleChangeImage = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file);
+    handleImageUpload(file); // Call the handleImageUpload function with the selected file
+  };
+
+  const handleImageUpload = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      formData.append("upload_preset", "ml_default"); // Replace with your Cloudinary upload preset name
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+      console.log(data.secure_url);
+      setCloudinaryUrl(data.secure_url); // Store the Cloudinary URL in the state variable
+    } catch (error) {
+      console.log("Error uploading image:", error);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -38,10 +68,15 @@ const AssetAllocation = () => {
   const submitForm = async (e) => {
     e.preventDefault();
     console.log("submiting");
+    // Update the form data with the Cloudinary URL
+    const updatedFormData = {
+      ...formData,
+      image: cloudinaryUrl,
+    };
     try {
       const response = await axios.post(
         `${ASSETMANAGERS}/fundmanager`,
-        formData
+        updatedFormData
       );
       console.log(response.data);
       onClose();
@@ -85,7 +120,7 @@ const AssetAllocation = () => {
     const fetchFundManagers = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${ASSETMANAGERS}/fundManager`);
+        const response = await axios.get(`${ASSETMANAGERS}/fundmanager`);
 
         // console.log(response);
         setAssetManagers(response.data);
@@ -174,8 +209,8 @@ const AssetAllocation = () => {
                           type="file"
                           name="image"
                           className="hidden"
-                          onChange={handleChange}
-                          value={formData.image}
+                          onChange={handleChangeImage}
+                          // value={formData.image}
                         />
                       </Label>
                     </div>

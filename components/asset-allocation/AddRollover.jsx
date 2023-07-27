@@ -1,20 +1,21 @@
 import axios from "axios";
 import { Button, Label, TextInput, Textarea, Modal } from "flowbite-react";
 import React, { useRef, useState } from "react";
-import { useRouter } from "next/router";
-import { ASSETMANAGERS } from "../../lib/api";
+import { useParams, useRouter } from "next/router";
 
-export default function Buttons() {
+export default function CreateRolloverButton() {
+  //   const params = useParams();
   const router = useRouter();
-  const { fundmanagerId } = router.query;
+  const { transaction } = router.query;
+  console.log(router.query);
 
   const [openModal, setOpenModal] = useState(false);
   const [formData, setFormData] = useState({
     amount: "",
+    rate: "",
+    date: "",
     description: "",
-    // rate: "",
-    // date: "",
-    // maturityDate: "",
+    maturityDate: "",
   });
   const rootRef = useRef(null);
 
@@ -27,21 +28,20 @@ export default function Buttons() {
 
   const submitForm = async (e) => {
     e.preventDefault();
+    console.log(formData);
     console.log("submiting");
+
     try {
-      console.log(formData);
       const response = await axios.post(
-        `${ASSETMANAGERS}/transactions/${fundmanagerId}`,
+        `http://localhost:5001/rollover/create/${transaction}`,
         {
-          amount: formData.amount,
-          // rate: formData.rate,
-          // date: formData.date,
-          // maturityDate: formData.maturityDate,
-          description: formData.description,
-          fundManagers: fundmanagerId,
+          rate: formData.rate,
+          date: formData.date,
+          maturityDate: formData.maturityDate,
+          transactoinId: transaction,
         }
       );
-      createReminder(formData);
+      //   createReminder(formData);
       console.log(response.data);
       onClose();
       router.reload();
@@ -50,29 +50,29 @@ export default function Buttons() {
     }
   };
 
-  const createReminder = async (formData) => {
-    try {
-      const response = await axios.post(
-        "https://client.wealthparadigm.org/api/reminder",
-        {
-          reminder: formData.description,
-          years: 1,
-          freq: 6,
-          init_date: formData.date,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${JSON.parse(
-              localStorage.getItem("token")
-            )}`,
-          },
-        }
-      );
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //   const createReminder = async (formData) => {
+  //     try {
+  //       const response = await axios.post(
+  //         "https://client.wealthparadigm.org/api/reminder",
+  //         {
+  //           reminder: formData.description,
+  //           years: 1,
+  //           freq: 6,
+  //           init_date: formData.date,
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${JSON.parse(
+  //               localStorage.getItem("token")
+  //             )}`,
+  //           },
+  //         }
+  //       );
+  //       console.log(response);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -101,7 +101,7 @@ export default function Buttons() {
         onClick={onClick}
         type="submit"
       >
-        Add Transaction
+        Create Rollover
       </Button>
 
       <div className=" mb-2 flex mx-auto items-center" ref={rootRef}>
@@ -111,25 +111,10 @@ export default function Buttons() {
           dismissible
           root={rootRef.current ?? undefined}
         >
-          <Modal.Header>Add New Transaction</Modal.Header>
+          <Modal.Header>Add a Rollover</Modal.Header>
           <Modal.Body>
             <form className="flex flex-col gap-4">
               <div>
-                <div className="mb-2 block">
-                  <Label htmlFor="amount" value="Amount " />
-                </div>
-                <TextInput
-                  id="amount"
-                  name="amount"
-                  onChange={handleChange}
-                  value={formData.amount}
-                  placeholder="Amount"
-                  required
-                  type="number"
-                  onFocus={(e) => e.stopPropagation()}
-                />
-              </div>
-              {/* <div>
                 <div className="mb-2 block">
                   <Label htmlFor="email1" value="Rate " />
                 </div>
@@ -143,22 +128,9 @@ export default function Buttons() {
                   type="number"
                   onFocus={(e) => e.stopPropagation()}
                 />
-              </div> */}
-              <div>
-                <div className="mb-2 block">
-                  <Label htmlFor="description" value="Description" />
-                </div>
-                <Textarea
-                  id="description"
-                  name="description"
-                  required
-                  type="text"
-                  onChange={handleChange}
-                  onFocus={(e) => e.stopPropagation()}
-                  value={formData.description}
-                />
               </div>
-              {/* <div>
+
+              <div>
                 <div className="mb-2 block">
                   <Label htmlFor="InvestmentDate" value="InvestmentDate" />
                 </div>
@@ -185,7 +157,7 @@ export default function Buttons() {
                   onClick={(e) => e.stopPropagation()}
                   name="maturityDate"
                 />
-              </div> */}
+              </div>
               <Button
                 color={"#2D7EC2"}
                 className="text-white bg-[#2D7EC2]"
