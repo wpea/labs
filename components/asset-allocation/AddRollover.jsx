@@ -1,16 +1,25 @@
 import axios from "axios";
 import { Button, Label, TextInput, Textarea, Modal } from "flowbite-react";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, Fragment } from "react";
 import { useParams, useRouter } from "next/router";
 import { ASSETMANAGERS } from "../../lib/api";
+import { Dialog, Transition } from '@headlessui/react'
 
 export default function CreateRolloverButton() {
-  //   const params = useParams();
+  let [isOpen, setIsOpen] = useState(false)
+
+  function closeModal() {
+    setIsOpen(false)
+  }
+
+  function openModal() {
+    setIsOpen(true)
+  }
   const router = useRouter();
   const { transaction } = router.query;
-  console.log(router.query);
+  
 
-  const [openModal, setOpenModal] = useState(false);
+  
   const [formData, setFormData] = useState({
     amount: "",
     rate: "",
@@ -18,14 +27,9 @@ export default function CreateRolloverButton() {
     description: "",
     maturityDate: "",
   });
-  const rootRef = useRef(null);
+  
 
-  const onClick = () => {
-    setOpenModal(true);
-  };
-  const onClose = () => {
-    setOpenModal(!true);
-  };
+  
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -42,9 +46,9 @@ export default function CreateRolloverButton() {
           transactoinId: transaction,
         }
       );
-      //   createReminder(formData);
+      
       console.log(response.data);
-      onClose();
+      closeModal()
       router.reload();
     } catch (error) {
       console.log("error submiting form,", error);
@@ -82,39 +86,58 @@ export default function CreateRolloverButton() {
       [name]: value,
     }));
   };
-  const clickMe = () => {
-    console.log("clcicked me");
-  };
 
-  const [show, setShow] = useState(false);
-  const handleChanges = (selectedDate) => {
-    console.log(selectedDate);
-  };
-  const handleClose = (state) => {
-    setShow(state);
-  };
+
+  
 
   return (
     <>
       <Button
         color={"#2D7EC2"}
         className="flex items-end bg-[#2D7EC2] text-white"
-        onClick={onClick}
+        onClick={openModal}
         type="submit"
       >
         Create Rollover
       </Button>
 
-      <div className=" mb-2 flex mx-auto items-center" ref={rootRef}>
-        <Modal
-          onClose={onClose}
-          show={openModal}
-          dismissible
-          root={rootRef.current ?? undefined}
-        >
-          <Modal.Header>Add a Rollover</Modal.Header>
-          <Modal.Body>
-            <form className="flex flex-col gap-4">
+      <div className=" mb-2 flex mx-auto items-center" >
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >
+                    Add a Rollover
+                  </Dialog.Title>
+                  
+
+
+                  <form className="flex flex-col gap-4">
               <div>
                 <div className="mb-2 block">
                   <Label htmlFor="email1" value="Rate " />
@@ -159,17 +182,24 @@ export default function CreateRolloverButton() {
                   name="maturityDate"
                 />
               </div>
-              <Button
-                color={"#2D7EC2"}
-                className="text-white bg-[#2D7EC2]"
-                type="submit"
-                onClick={submitForm}
-              >
-                Submit
-              </Button>
-            </form>{" "}
-          </Modal.Body>
-        </Modal>
+  
+            </form>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-[#2D7EC2] px-4 py-2 text-sm font-medium text-white  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={submitForm}
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
       </div>
     </>
   );

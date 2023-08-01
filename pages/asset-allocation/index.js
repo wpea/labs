@@ -2,25 +2,36 @@ import { useRouter } from "next/router";
 import Header from "../../components/header";
 import { Button, Label, TextInput, Textarea, Modal } from "flowbite-react";
 import axios from "axios";
+import { Dialog, Transition } from '@headlessui/react'
 
 import Card from "../../components/asset-allocation/Card";
 import Overview from "../../components/asset-allocation/Overview";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Fragment } from "react";
 
 import { ASSETMANAGERS } from "../../lib/api";
 
 const AssetAllocation = () => {
+
+  let [isOpen, setIsOpen] = useState(false)
+
+  function closeModal() {
+    setIsOpen(false)
+  }
+
+  function openModal() {
+    setIsOpen(true)
+  }
+
   const [assetManagers, setAssetManagers] = useState([]);
   const [totalCap, setTotalCap] = useState("");
   const [topFive, setTopFive] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
+  // const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [imageFile, setImageFile] = useState(null); // state variable to hold the selected image file
   const [cloudinaryUrl, setCloudinaryUrl] = useState(""); //state variable to hold the Cloudinary URL
 
   const router = useRouter();
 
-  const rootRef = useRef(null);
 
   const [formData, setFormData] = useState({
     rate: "",
@@ -79,8 +90,8 @@ const AssetAllocation = () => {
         updatedFormData
       );
       console.log(response.data);
-      onClose();
-      router.refresh();
+      closeModal()
+      router.reload();
     } catch (error) {
       console.log("error submiting form,");
       console.log(error);
@@ -148,15 +159,39 @@ const AssetAllocation = () => {
             />
 
             {/* Modal */}
-            <div className=" mb-2 flex mx-auto items-center" ref={rootRef}>
-              <Modal
-                onClose={onClose}
-                show={openModal}
-                dismissible
-                root={rootRef.current ?? undefined}
+            <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
               >
-                <Modal.Header>Add New Fund Manager</Modal.Header>
-                <Modal.Body>
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900 mb-2"
+                  >
+                  Add New Fund Manager
+                  </Dialog.Title>
+
                   <div className="space-y-6"></div>
                   <div>
                     <div className="mb-2 block">
@@ -242,14 +277,19 @@ const AssetAllocation = () => {
                       value={formData.email}
                     />
                   </div>
-                </Modal.Body>
-                <Modal.Footer>
+                  
+                  <div className="mt-4">
                   <Button className="bg-[#2D7EC2]" onClick={submitForm}>
                     Submit
                   </Button>
-                </Modal.Footer>
-              </Modal>
+                   
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
             </div>
+          </div>
+        </Dialog>
+      </Transition>
 
             <div className="pt-28 mb-12 flex justify-between">
               <h1 className=" font-bold text-2xl rounded-md   ">
@@ -259,7 +299,7 @@ const AssetAllocation = () => {
                 <Button
                   color="#2D7EC2"
                   className="flex items-end bg-[#2D7EC2] text-white"
-                  onClick={onClick}
+                  onClick={openModal}
                 >
                   Add Asset Manager
                 </Button>
