@@ -323,6 +323,7 @@ const AssetAllocation = () => {
                       key={assetManager._id}
                       src={assetManager.image}
                       href={assetManager._id}
+                      name={assetManager.name}
                     />
                   );
                 })}
