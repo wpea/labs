@@ -9,15 +9,7 @@ import { ASSETMANAGERS } from "../../../lib/api";
 
 const formatCompact = (number) => {
 
-  let [isOpen, setIsOpen] = useState(true)
-
-  function closeModal() {
-    setIsOpen(false)
-  }
-
-  function openModal() {
-    setIsOpen(true)
-  }
+  
   const formatter = new Intl.NumberFormat("en", {
     notation: "standard",
   });

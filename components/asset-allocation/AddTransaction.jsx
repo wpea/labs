@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { ASSETMANAGERS } from "../../lib/api";
 
 export default function Buttons() {
-  let [isOpen, setIsOpen] = useState(true)
+  let [isOpen, setIsOpen] = useState(false)
 
   function closeModal() {
     setIsOpen(false)

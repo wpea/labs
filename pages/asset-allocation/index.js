@@ -148,7 +148,7 @@ const AssetAllocation = () => {
   }, []);
   return (
     <>
-      <div className="w-full grid">
+      <div className="w-full grid mb-20">
         <div className="md:px-20 p-10 space-y-10 grid">
           <Header />
           <div className="h-screen  ">
@@ -316,7 +316,7 @@ const AssetAllocation = () => {
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-4 gap-12   m-auto">
+              <div className="grid grid-cols-4 gap-12   m-auto ">
                 {assetManagers?.data?.map((assetManager) => {
                   return (
                     <Card
