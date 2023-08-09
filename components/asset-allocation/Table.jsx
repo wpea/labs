@@ -4,7 +4,6 @@ import React from "react";
 import Buttons from "./AddTransaction";
 import EditButton from "./EditTransaction";
 import Link from "next/link";
-// import { Button, Checkbox, Label, TextInput, Textarea } from "flowbite-react";
 
 const Table = ({ transactions }) => {
   const formatCompact = (number) => {

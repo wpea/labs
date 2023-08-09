@@ -1,19 +1,18 @@
 import axios from "axios";
-import { Button, Label, TextInput, Textarea, Modal } from "flowbite-react";
-import { Dialog, Transition } from '@headlessui/react'
-import React, { useRef, useState, Fragment, } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import React, { useRef, useState, Fragment } from "react";
 import { useRouter } from "next/router";
 import { ASSETMANAGERS } from "../../lib/api";
 
 export default function Buttons() {
-  let [isOpen, setIsOpen] = useState(false)
+  let [isOpen, setIsOpen] = useState(false);
 
   function closeModal() {
-    setIsOpen(false)
+    setIsOpen(false);
   }
 
   function openModal() {
-    setIsOpen(true)
+    setIsOpen(true);
   }
 
   const router = useRouter();
@@ -27,17 +26,14 @@ export default function Buttons() {
     // date: "",
     // maturityDate: "",
   });
-  
 
   function closeModal() {
-    setIsOpen(false)
+    setIsOpen(false);
   }
 
   function openModal() {
-    setIsOpen(true)
+    setIsOpen(true);
   }
-
- 
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -58,7 +54,7 @@ export default function Buttons() {
       createReminder(formData);
       console.log(response.data);
       onClose();
-      closeModal()
+      closeModal();
       router.reload();
     } catch (error) {
       console.log("error submiting form,", error);
@@ -96,22 +92,18 @@ export default function Buttons() {
       [name]: value,
     }));
   };
- 
-
- 
 
   return (
     <>
-      <Button
-        color={"#2D7EC2"}
-        className="flex items-end bg-[#2D7EC2] text-white"
+      <button
+        className="flex items-end bg-[#2D7EC2] text-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center0"
         onClick={openModal}
         type="submit"
       >
         Add Transaction
-      </Button>
+      </button>
 
-       <Transition appear show={isOpen} as={Fragment}>
+      <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
@@ -141,43 +133,48 @@ export default function Buttons() {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 mb-3"
                   >
-                   Add New Transaction
+                    Add New Transaction
                   </Dialog.Title>
-                  
 
                   <form className="flex flex-col gap-4">
-              <div>
-                <div className="mb-2 block">
-                  <Label htmlFor="amount" value="Amount " />
-                </div>
-                <TextInput
-                  id="amount"
-                  name="amount"
-                  onChange={handleChange}
-                  value={formData.amount}
-                  placeholder="Amount"
-                  required
-                  type="number"
-                  onFocus={(e) => e.stopPropagation()}
-                />
-              </div>
-              
-              <div>
-                <div className="mb-2 block">
-                  <Label htmlFor="description" value="Description" />
-                </div>
-                <Textarea
-                  id="description"
-                  name="description"
-                  required
-                  type="text"
-                  onChange={handleChange}
-                  onFocus={(e) => e.stopPropagation()}
-                  value={formData.description}
-                />
-              </div>
-              
-              {/* <Button
+                    <div>
+                      <div className="mb-2 block">
+                        <label htmlFor="amount" value="Amount ">
+                          Amount
+                        </label>
+                      </div>
+                      <input
+                        id="amount"
+                        name="amount"
+                        onChange={handleChange}
+                        value={formData.amount}
+                        placeholder="Amount"
+                        required
+                        type="number"
+                        onFocus={(e) => e.stopPropagation()}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                      />
+                    </div>
+
+                    <div>
+                      <div className="mb-2 block">
+                        <label htmlFor="description" value="Description">
+                          Description
+                        </label>
+                      </div>
+                      <textarea
+                        id="description"
+                        name="description"
+                        required
+                        type="text"
+                        onChange={handleChange}
+                        onFocus={(e) => e.stopPropagation()}
+                        value={formData.description}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                      />
+                    </div>
+
+                    {/* <Button
                 color={"#2D7EC2"}
                 className="text-white bg-[#2D7EC2]"
                 type="submit"
@@ -185,7 +182,7 @@ export default function Buttons() {
               >
                 Submit
               </Button> */}
-            </form>
+                  </form>
                   <div className="mt-4">
                     <button
                       type="button"

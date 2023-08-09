@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
 import Header from "../../components/header";
-import { Button, Label, TextInput, Textarea, Modal } from "flowbite-react";
 import axios from "axios";
-import { Dialog, Transition } from '@headlessui/react'
+import { Dialog, Transition } from "@headlessui/react";
 
 import Card from "../../components/asset-allocation/Card";
 import Overview from "../../components/asset-allocation/Overview";
@@ -11,15 +10,14 @@ import { useEffect, useRef, useState, Fragment } from "react";
 import { ASSETMANAGERS } from "../../lib/api";
 
 const AssetAllocation = () => {
-
-  let [isOpen, setIsOpen] = useState(false)
+  let [isOpen, setIsOpen] = useState(false);
 
   function closeModal() {
-    setIsOpen(false)
+    setIsOpen(false);
   }
 
   function openModal() {
-    setIsOpen(true)
+    setIsOpen(true);
   }
 
   const [assetManagers, setAssetManagers] = useState([]);
@@ -31,7 +29,6 @@ const AssetAllocation = () => {
   const [cloudinaryUrl, setCloudinaryUrl] = useState(""); //state variable to hold the Cloudinary URL
 
   const router = useRouter();
-
 
   const [formData, setFormData] = useState({
     rate: "",
@@ -90,7 +87,7 @@ const AssetAllocation = () => {
         updatedFormData
       );
       console.log(response.data);
-      closeModal()
+      closeModal();
       router.reload();
     } catch (error) {
       console.log("error submiting form,");
@@ -160,149 +157,134 @@ const AssetAllocation = () => {
 
             {/* Modal */}
             <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
-          </Transition.Child>
+              <Dialog as="div" className="relative z-10" onClose={closeModal}>
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <div className="fixed inset-0 bg-black bg-opacity-25" />
+                </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900 mb-2"
-                  >
-                  Add New Fund Manager
-                  </Dialog.Title>
+                <div className="fixed inset-0 overflow-y-auto">
+                  <div className="flex min-h-full items-center justify-center p-4 text-center">
+                    <Transition.Child
+                      as={Fragment}
+                      enter="ease-out duration-300"
+                      enterFrom="opacity-0 scale-95"
+                      enterTo="opacity-100 scale-100"
+                      leave="ease-in duration-200"
+                      leaveFrom="opacity-100 scale-100"
+                      leaveTo="opacity-0 scale-95"
+                    >
+                      <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                        <Dialog.Title
+                          as="h3"
+                          className="text-lg font-medium leading-6 text-gray-900 mb-2"
+                        >
+                          Add New Fund Manager
+                        </Dialog.Title>
 
-                  <div className="space-y-6"></div>
-                  <div>
-                    <div className="mb-2 block">
-                      <Label htmlFor="email" value="Name" />
-                    </div>
-                    <TextInput
-                      id="name"
-                      name="name"
-                      placeholder="Name of Asset Manager"
-                      required
-                      onChange={handleChange}
-                      value={formData.name}
-                    />
-                  </div>
-                  <div>
-                    <div className=" items-center justify-center w-full mb-2">
-                      <Label htmlFor="Image" value="Image" className="mb-2" />
-                      <Label
-                        for="dropzone-file"
-                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-                      >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <svg
-                            aria-hidden="true"
-                            className="w-10 h-10 mb-3 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
+                        <div className="space-y-6"></div>
+                        {/* <div>
+                          <div className="mb-2 block">
+                            <Label htmlFor="email" value="Name" />
+                          </div>
+                          <TextInput
+                            id="name"
+                            name="name"
+                            placeholder="Name of Asset Manager"
+                            required
+                            onChange={handleChange}
+                            value={formData.name}
+                          />
+                        </div> */}
+
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                            htmlFor="username"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                            ></path>
-                          </svg>
-                          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                            <span className="font-semibold">
-                              Click to upload
-                            </span>{" "}
-                            or drag and drop
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            SVG, PNG, JPG or GIF (MAX. 800x400px)
-                          </p>
+                            Name
+                          </label>
+                          <input
+                            className="shadow appearance-none  py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            id="username"
+                            type="text"
+                            placeholder="Name of Asset Manager"
+                            onChange={handleChange}
+                            value={formData.name}
+                          />
                         </div>
-                        <input
-                          id="dropzone-file"
-                          type="file"
-                          name="image"
-                          className="hidden"
-                          onChange={handleChangeImage}
-                          // value={formData.image}
-                        />
-                      </Label>
-                    </div>
+
+                        <div className="mb-4">
+                          <label
+                            className="block text-gray-700 text-sm font-bold mb-2"
+                            htmlFor="username"
+                          >
+                            Google Drive Link
+                          </label>
+                          <input
+                            className="shadow appearance-none  py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            type="text"
+                            id="link"
+                            name="link"
+                            placeholder="Link to Investment Certificates"
+                            required
+                            onChange={handleChange}
+                            value={formData.link}
+                          />
+                        </div>
+
+                        <div>
+                          <div className="mb-2 block">
+                            <label htmlFor="Description" value="Description">
+                              Description
+                            </label>
+                          </div>
+                          <textarea
+                            id="description"
+                            name="description"
+                            required
+                            type=""
+                            placeholder="Brief description of the Asset Manager"
+                            onChange={handleChange}
+                            value={formData.description}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          />
+                        </div>
+
+                        <div className="mt-4">
+                          <button
+                            className="bg-[#2D7EC2] text-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center0"
+                            onClick={submitForm}
+                          >
+                            Submit
+                          </button>
+                        </div>
+                      </Dialog.Panel>
+                    </Transition.Child>
                   </div>
-                  <div>
-                    <div className="mb-2 block">
-                      <Label htmlFor="email" value="Google Drive Link" />
-                    </div>
-                    <TextInput
-                      id="link"
-                      name="link"
-                      placeholder="Link to Investment Certificates"
-                      required
-                      onChange={handleChange}
-                      value={formData.link}
-                    />
-                  </div>
-                  <div>
-                    <div className="mb-2 block">
-                      <Label htmlFor="Description" value="Description" />
-                    </div>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      required
-                      type=""
-                      placeholder="Brief description of the Asset Manager"
-                      onChange={handleChange}
-                      value={formData.email}
-                    />
-                  </div>
-                  
-                  <div className="mt-4">
-                  <Button className="bg-[#2D7EC2]" onClick={submitForm}>
-                    Submit
-                  </Button>
-                   
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
+                </div>
+              </Dialog>
+            </Transition>
 
             <div className="pt-28 mb-12 flex justify-between">
               <h1 className=" font-bold text-2xl rounded-md   ">
                 Fund Managers
               </h1>
               <div className="flex items-center flex-col gap-8">
-                <Button
+                <button
                   color="#2D7EC2"
-                  className="flex items-end bg-[#2D7EC2] text-white"
+                  className="flex items-end bg-[#2D7EC2]  text-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center0"
                   onClick={openModal}
                 >
                   Add Asset Manager
-                </Button>
+                </button>
               </div>
             </div>
 

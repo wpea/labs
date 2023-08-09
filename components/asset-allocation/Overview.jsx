@@ -37,30 +37,46 @@ const Overview = ({ totalAssetManagers, totalCap, topFive }) => {
         </div>
 
         {/* Exposure */}
-       
+
         <div className="my-12">
-      <div className="grid grid-cols-2 items-center border-b  pb-4">
-        <div className="text-sm font-bold">Exposure</div>
-        <div className="grid grid-cols-2 items-center gap-36 ">
-          <div className="capitaliuze bg-gray-100 text-sm font-bold">Top 5 by allocation size</div>
-          <div className="grid grid-cols-3">
-            <div data-tooltip-target="tooltip-default" className="grid h-8 w-8 place-items-center place-self-end rounded-full bg-black">
-              <span className="font-medium text-white">?</span>
-              <div id="tooltip-default" role="tooltip" className="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm dark:bg-gray-700">
-                Tooltip content
-                <div className="tooltip-arrow" data-popper-arrow></div>
+          <div className="grid grid-cols-2 items-center border-b  pb-4">
+            <div className="text-sm font-bold">Exposure</div>
+            <div className="grid grid-cols-2 items-center gap-36 ">
+              <div className="capitaliuze bg-gray-100 text-sm font-bold">
+                Top 5 by allocation size
               </div>
-            </div>
-            <div className="grid h-8 w-8 place-items-center place-self-end rounded-full bg-black">
-              <span className="font-medium text-white">?</span>
-            </div>
-            <div className="grid h-8 w-8 place-items-center place-self-end rounded-full bg-black">
-              <span className="font-medium text-white">?</span>
+              <div className="grid grid-cols-3">
+                <div className="group relative grid h-8 w-8 place-items-center place-self-end rounded-full bg-black">
+                  <span className="font-medium text-white">?</span>
+                  <span
+                    className="group-hover:opacity-100 transition-opacity  bg-gray-300 px-2 w-24 h-8  text-sm text-black rounded-md absolute left-1/2 
+    -translate-x-1/2 translate-y-full opacity-0 m-4 mx-auto"
+                  >
+                    *total-cap
+                  </span>
+                </div>
+                <div className="group relative grid h-8 w-8 place-items-center place-self-end rounded-full bg-black">
+                  <span className="font-medium text-white">?</span>
+                  <span
+                    className="group-hover:opacity-100 transition-opacity  bg-gray-300 px-2 w-28 h-10  text-sm text-black rounded-md absolute left-1/2 
+    -translate-x-1/2 translate-y-full opacity-0 m-4 mx-auto"
+                  >
+                    *percentage of the fund
+                  </span>
+                </div>
+                <div className="group relative grid h-8 w-8 place-items-center place-self-end rounded-full bg-black">
+                  <span className="font-medium text-white">?</span>
+                  <span
+                    className="group-hover:opacity-100 transition-opacity w-20 bg-gray-300 px-2  text-sm text-black rounded-md absolute left-1/2 
+    -translate-x-1/2 translate-y-full opacity-0 m-4 mx-auto"
+                  >
+                    *risk exposure
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
         {/* Pie Chart & Legend */}
         {/* <div className="flex items-center justify-between">
@@ -94,35 +110,40 @@ const Overview = ({ totalAssetManagers, totalCap, topFive }) => {
           </div>
         </div> */}
 
-<div className="grid grid-cols-2  items-center justify-between">
-      <div className="mx-auto grid place-content-center ">
-        <PieChart datum={topFive} />
-      </div>
+        <div className="grid grid-cols-2  items-center justify-between">
+          <div className="mx-auto grid place-content-center ">
+            <PieChart datum={topFive} />
+          </div>
 
-     <div>
-      {topFive?.map((top) => {
+          <div>
+            {topFive?.map((top) => {
               return (
-                <div className=" grid grid-cols-2 gap-36 border-b  py-4" key={top.name}>
+                <div
+                  className=" grid grid-cols-2 gap-36 border-b  py-4"
+                  key={top.name}
+                >
                   <p className="">{top.name}</p>
-        <div className="grid grid-cols-3 items-center ">
-          <p className="place-self-end">{formatCompact(top.total)}</p>
-          <p className="place-self-end">{Math.ceil((parseFloat(top.total) / totalCap) * 100)}%</p>
-          
-          {Math.ceil((parseFloat(top.total) / totalCap) * 100) >
+                  <div className="grid grid-cols-3 items-center ">
+                    <p className="place-self-end">{formatCompact(top.total)}</p>
+                    <p className="place-self-end">
+                      {Math.ceil((parseFloat(top.total) / totalCap) * 100)}%
+                    </p>
+
+                    {Math.ceil((parseFloat(top.total) / totalCap) * 100) >
                     50 ? (
                       <p className="h-3 w-3 justify-self-end rounded-full bg-red-500"></p>
                     ) : (
                       <p className="h-3 w-3 justify-self-end rounded-full bg-green-500"></p>
                     )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-        </div>
-              )})}
-     </div>
-
+      </div>
     </div>
-    </div>
-    </div>
-  )
-}
+  );
+};
 
 export default Overview;
