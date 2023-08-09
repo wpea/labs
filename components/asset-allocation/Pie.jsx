@@ -38,7 +38,6 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 // };
 
 export default function PieChart({ datum }) {
-  console.log(datum);
   const value = {
     labels: [],
     datasets: [
@@ -71,6 +70,16 @@ export default function PieChart({ datum }) {
     value.datasets[0].data.push(parseFloat(obj.total));
   });
 
-  // console.log(value);
-  return <Pie data={value} />;
+  const options = {
+    plugins: {
+      legend: {
+        display: false,
+        position: 'bottom',
+        align: 'left'
+      },
+    responsive: true,
+    },
+  };
+
+  return <Pie data={value} options={options} key={Math.random()} />;
 }

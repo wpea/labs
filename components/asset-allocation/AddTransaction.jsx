@@ -27,13 +27,13 @@ export default function Buttons() {
     // maturityDate: "",
   });
 
-  function closeModal() {
-    setIsOpen(false);
-  }
+  // function closeModal() {
+  //   setIsOpen(false);
+  // }
 
-  function openModal() {
-    setIsOpen(true);
-  }
+  // function openModal() {
+  //   setIsOpen(true);
+  // }
 
   const submitForm = async (e) => {
     e.preventDefault();

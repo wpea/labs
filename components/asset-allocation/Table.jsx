@@ -39,15 +39,16 @@ const Table = ({ transactions }) => {
 
   console.log(transactions);
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg bg-[#F4F5F6] p-16 ">
-      <table className="w-full text-sm text-left  dark:text-gray-400 ">
-        <caption className="p-5 font-semibold text-left   dark:text-white ">
+    <div className="relative overflow-x-auto sm:rounded-lg px-16 pb-16">
+      <div className="p-6 rounded-lg bg-opacity-50 bg-gray-100">
+      <table className="w-full text-sm text-left">
+        <caption className="p-5 font-semibold text-left">
           {/* <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
             This is a list of all the events that have occured with this "fund
             manager"
           </p> */}
           <div className=" flex items-center justify-between">
-            <p>Transactions</p>
+            <div className="font-bold">All Transactions</div>
             <div>
               <Buttons />
             </div>
@@ -59,7 +60,7 @@ const Table = ({ transactions }) => {
             </Button> */}
           </div>
         </caption>
-        <thead className="text-xs text-gray-500 uppercase   dark:text-gray-400">
+        <thead className="text-xs text-gray-500 uppercase">
           <tr>
             <th scope="col" className="px-6 py-3">
               Amount
@@ -86,11 +87,11 @@ const Table = ({ transactions }) => {
             // eslint-disable-next-line react/jsx-key, @next/next/link-passhref
             <Link href={`/asset-allocation/transactions/${transaction._id}`}>
               <tbody key={transaction._id}>
-                <tr className=" border-b  border-gray-700">
+                <tr className="border-b border-gray-200">
                   {/* <td className="px-6 py-4 ">{getDate(transaction.date)}</td> */}
                   <th
                     scope="row"
-                    className="px-6 py-4 font-medium  whitespace-nowrap dark:text-white"
+                    className="px-6 py-4 font-medium whitespace-nowrap"
                   >
                     {formatCompact(transaction.amount)}
                   </th>
@@ -102,7 +103,7 @@ const Table = ({ transactions }) => {
                   </td> */}
                   {/* <td className="px-6 py-4 ">
                     {daysLeft(transaction.maturityDate) === "Matured" ? (
-                      <span className="bg-red-100 text-red-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded mr-2 dark:bg-gray-700 dark:text-gray-400 border border-red-400">
+                      <span className="bg-red-100 text-red-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded mr-2 dark:bg-gray-70border border-red-400">
                         <svg
                           aria-hidden="true"
                           className="w-3 h-3 mr-1"
@@ -138,7 +139,7 @@ const Table = ({ transactions }) => {
                       </span>
                     )}
                   </td> */}
-                  <td className="px-6 py-4 ">
+                  <td className="px-6 py-4">
                     <EditButton
                       previousInfo={transaction}
                       transactionId={transaction._id}
@@ -150,6 +151,7 @@ const Table = ({ transactions }) => {
           );
         })}
       </table>
+      </div>
     </div>
   );
 };

@@ -35,9 +35,9 @@ const RolloverTable = ({ transactions }) => {
 
   console.log(transactions);
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg bg-[#F4F5F6] p-16 ">
-      <table className="w-full text-sm text-left  dark:text-gray-400 ">
-        <caption className="p-5 font-semibold text-left   dark:text-white ">
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg bg-[#F4F5F6] p-6">
+      <table className="w-full text-sm text-left">
+        <caption className="p-5 font-semibold text-left">
           {/* <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
             This is a list of all the events that have occured with this "fund
             manager"
@@ -61,7 +61,7 @@ const RolloverTable = ({ transactions }) => {
           </div>
         </caption>
         {transactions.length > 1 && (
-          <thead className="text-xs text-gray-500 uppercase   dark:text-gray-400">
+          <thead className="text-xs text-gray-500 uppercase">
             <tr>
               <th scope="col" className="px-6 py-3">
                 Investment Date
@@ -82,7 +82,7 @@ const RolloverTable = ({ transactions }) => {
         )}
 
         {transactions.length < 1 ? (
-          <span className="bg-red-100 text-red-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded mr-2 dark:bg-gray-700 dark:text-gray-400 border border-red-400">
+          <span className="bg-red-100 text-red-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded mr-2">
             <svg
               aria-hidden="true"
               className="w-3 h-3 mr-1"
@@ -102,11 +102,11 @@ const RolloverTable = ({ transactions }) => {
         {transactions?.map((transaction) => {
           return (
             <tbody key={transaction._id}>
-              <tr className=" border-b  border-gray-700">
-                <td className="px-6 py-4 ">{getDate(transaction.date)}</td>
+              <tr className=" border-b border-gray-200">
+                <td className="px-6 py-4">{getDate(transaction.date)}</td>
 
-                <td className="px-6 py-4 ">{transaction.rate}%</td>
-                <td className="px-6 py-4 ">
+                <td className="px-6 py-4">{transaction.rate}%</td>
+                <td className="px-6 py-4">
                   {getDate(transaction.maturityDate)}
                 </td>
               </tr>

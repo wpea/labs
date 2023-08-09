@@ -34,29 +34,29 @@ const index = () => {
   }, [transaction]);
 
   return (
-    <div className="h-screen p-10">
+    <div className="h-screen p-20">
       <div></div>
       {/* <Table transactions={response.data.data.transaction} /> */}
       <button
-        className="flex gap-2 border px-4 py-2 mb-4"
+        className="flex gap-2 border rounded-lg px-4 shadow-md hover:opacity-80 py-2 mb-16"
         type="button"
         onClick={() => router.back()}
       >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-6 h-6"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
-          />
-        </svg>
-        <p>Go back</p>
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+              />
+            </svg>
+            <p>Back</p>
       </button>
       <RolloverTable transactions={rollovers} />
     </div>

@@ -21,16 +21,16 @@ const formatTotalCap = (number) => {
 const Overview = ({ totalAssetManagers, totalCap, topFive }) => {
   return (
     <div>
-      <h1 className="mb-8 font-bold text-4xl">Overview</h1>
-      <div className="bg-[#F4F5F6] h-auto rounded p-12">
+      <h1 className="mb-8 font-bold text-2xl">Overview</h1>
+      <div className="bg-[#F4F5F6] rounded p-12">
         <div className="overview flex gap-12">
           <div className="flex flex-col ">
             <p className="text-gray-700">Fund Managers</p>
-            <h2 className="text-6xl font-semibold">{totalAssetManagers}</h2>
+            <h2 className="text-4xl font-bold">{totalAssetManagers}</h2>
           </div>
           <div className="flex flex-col">
             <p className="text-gray-700">Total Cap</p>
-            <h2 className="text-6xl font-semibold">
+            <h2 className="text-4xl font-bold">
               {formatTotalCap(totalCap)}
             </h2>
           </div>
@@ -110,8 +110,8 @@ const Overview = ({ totalAssetManagers, totalCap, topFive }) => {
           </div>
         </div> */}
 
-        <div className="grid grid-cols-2  items-center justify-between">
-          <div className="mx-auto grid place-content-center ">
+        <div className="grid grid-cols-2 justify-between">
+          <div className="pr-20 grid place-self-center">
             <PieChart datum={topFive} />
           </div>
 

@@ -148,7 +148,7 @@ const AssetAllocation = () => {
       <div className="w-full grid mb-20">
         <div className="md:px-20 p-10 space-y-10 grid">
           <Header />
-          <div className="h-screen  ">
+          <div>
             <Overview
               topFive={topFive}
               totalCap={totalCap}
@@ -274,7 +274,7 @@ const AssetAllocation = () => {
             </Transition>
 
             <div className="pt-28 mb-12 flex justify-between">
-              <h1 className=" font-bold text-2xl rounded-md   ">
+              <h1 className="font-bold text-xl rounded-md">
                 Fund Managers
               </h1>
               <div className="flex items-center flex-col gap-8">
@@ -289,16 +289,16 @@ const AssetAllocation = () => {
             </div>
 
             {loading ? (
-              <div className="grid grid-cols-4 gap-12   m-auto">
+              <div className="grid grid-cols-4 gap-12 m-auto">
                 {[1, 2, 3, 4, 5, 6].map((num) => (
                   <div
                     key={num}
-                    className="animate-pulse bg-slate-200 w-72 h-52 rounded m-3 overflow-hidden border  cursor-pointer "
+                    className="animate-pulse bg-slate-100 opacity-60 h-20 rounded m-3 overflow-hidden cursor-pointer"
                   />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-4 gap-12   m-auto ">
+              <div className="grid grid-cols-4 gap-12 m-auto">
                 {assetManagers?.data?.map((assetManager) => {
                   return (
                     <Card
