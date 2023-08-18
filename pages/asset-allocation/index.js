@@ -108,7 +108,7 @@ const AssetAllocation = () => {
         const response = await axios.get(
           `${ASSETMANAGERS}/total-cap/total/alloc-size`
         );
-        console.log(response);
+
         setTopFive(response.data);
         setLoading(false);
       } catch (error) {
@@ -274,9 +274,7 @@ const AssetAllocation = () => {
             </Transition>
 
             <div className="pt-28 mb-12 flex justify-between">
-              <h1 className="font-bold text-xl rounded-md">
-                Fund Managers
-              </h1>
+              <h1 className="font-bold text-xl rounded-md">Fund Managers</h1>
               <div className="flex items-center flex-col gap-8">
                 <button
                   color="#2D7EC2"

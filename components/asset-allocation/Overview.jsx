@@ -14,7 +14,7 @@ const formatTotalCap = (number) => {
     currency: "NGN",
     notation: "compact",
   }).format(`${number}`);
-  console.log(result);
+  // console.log(result);
   return result;
 };
 
@@ -30,9 +30,7 @@ const Overview = ({ totalAssetManagers, totalCap, topFive }) => {
           </div>
           <div className="flex flex-col">
             <p className="text-gray-700">Total Cap</p>
-            <h2 className="text-4xl font-bold">
-              {formatTotalCap(totalCap)}
-            </h2>
+            <h2 className="text-4xl font-bold">{formatTotalCap(totalCap)}</h2>
           </div>
         </div>
 

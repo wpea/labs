@@ -18,11 +18,8 @@ export default function CreateRolloverButton() {
   const { transaction } = router.query;
 
   const [formData, setFormData] = useState({
-    amount: "",
     rate: "",
-    date: "",
-    description: "",
-    maturityDate: "",
+    days: "",
   });
 
   const submitForm = async (e) => {
@@ -33,10 +30,10 @@ export default function CreateRolloverButton() {
     try {
       const response = await axios.post(
         `${ASSETMANAGERS}/rollover/create/${transaction}`,
+        // `http://localhost:5001/rollover/create/${transaction}`,
         {
           rate: formData.rate,
-          date: formData.date,
-          maturityDate: formData.maturityDate,
+          days: formData.days,
           transactoinId: transaction,
         }
       );
@@ -145,8 +142,26 @@ export default function CreateRolloverButton() {
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         />
                       </div>
-
                       <div>
+                        <div className="mb-2 block">
+                          <label htmlFor="email1" value="Rate ">
+                            Rollover Duration
+                          </label>
+                        </div>
+                        <input
+                          id="day"
+                          name="days"
+                          onChange={handleChange}
+                          value={formData.days}
+                          placeholder="Rollover Duration"
+                          required
+                          type="number" //give it a min&max
+                          onFocus={(e) => e.stopPropagation()}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        />
+                      </div>
+
+                      {/* <div>
                         <div className="mb-2 block">
                           <label
                             htmlFor="InvestmentDate"
@@ -182,7 +197,7 @@ export default function CreateRolloverButton() {
                           name="maturityDate"
                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         />
-                      </div>
+                      </div> */}
                     </form>
 
                     <div className="mt-4">
