@@ -3,6 +3,8 @@ import { findMilestone, postMilestone } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth2, getToken } from "./../lib/hooks/useAuth2";
+import axios from "axios";
+import { get, apiAddress } from "../lib/api";
 
 export default function CreateMilestone({ toggle, projectId }) {
   const initialValues = {
@@ -22,7 +24,7 @@ export default function CreateMilestone({ toggle, projectId }) {
 
   useEffect(() => {
     if (Object.keys(errors).length === 0 && canSubmit) {
-      postMilestone(formValues, getToken());
+      // postMilestone(formValues, getToken());
 
       //
 
@@ -36,9 +38,22 @@ export default function CreateMilestone({ toggle, projectId }) {
     }
   }, [errors]);
 
+  const createMilestone = async () => {
+    try {
+      const res = await axios.post(`${apiAddress}/milestone`, formValues, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
+    console.log(formValues);
   };
 
   // get and set the global state
@@ -74,6 +89,7 @@ export default function CreateMilestone({ toggle, projectId }) {
   const handleSubmit = () => {
     setErrors(validate(formValues));
     setCanSubmit(true);
+    createMilestone();
   };
 
   return (
