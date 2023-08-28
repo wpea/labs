@@ -10,7 +10,7 @@ export default function handler(req, res) {
       function page(records, fetchNextPage) {
         // This function (`page`) will get called for each page of records.
         records.forEach(function (record) {
-          console.log("Retrieved", record.get("Client Account"));
+          // console.log("Retrieved", record.get("Client Account"));
         });
         // To fetch the next page of records, call `fetchNextPage`.
         // If there are more records, `page` will get called again.

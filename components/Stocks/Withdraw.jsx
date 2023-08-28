@@ -42,19 +42,19 @@ export default function Withdraw({ showDep, toggleAdd }) {
   /**
    * CONFIG
    */
-   const config2 = (method, url, jwt) => {
-     return {
-       method: method,
-       url: url,
-       headers: {
-         Accept: "application/json",
-         Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-       },
-       data: {
-        jwt: jwt
-       }
-     };
-   };
+  const config2 = (method, url, jwt) => {
+    return {
+      method: method,
+      url: url,
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+      data: {
+        jwt: jwt,
+      },
+    };
+  };
 
   /**
    *
@@ -68,13 +68,9 @@ export default function Withdraw({ showDep, toggleAdd }) {
 
     try {
       const res = await axios(
-        config2(
-          "post",
-          `${apiAddress}/stock/withdraw/methods`,
-          user.jwt
-        )
+        config2("post", `${apiAddress}/stock/withdraw/methods`, user.jwt)
       );
-      console.log(res);
+
       setWData(res.data.data);
       setLoading(false);
     } catch (e) {
@@ -85,8 +81,8 @@ export default function Withdraw({ showDep, toggleAdd }) {
 
   /**
    *
-   * STORE 
-   * ACCOUNT 
+   * STORE
+   * ACCOUNT
    * NUMBER
    *
    */
@@ -138,7 +134,7 @@ export default function Withdraw({ showDep, toggleAdd }) {
     // try catch to handle on success / on failure
     try {
       const res = await axios(config);
-      // console.log(res);
+
       toast.success("Bank account added sucessfully.");
     } catch (e) {
       // api error for storing the account number
@@ -251,7 +247,7 @@ export default function Withdraw({ showDep, toggleAdd }) {
       });
 
       console.log(res);
-      toast.success(e?.response?.data?.message ?? 'Withdrawal in progress.');
+      toast.success(e?.response?.data?.message ?? "Withdrawal in progress.");
       toggleAdd();
     } catch (e) {
       console.log(e);

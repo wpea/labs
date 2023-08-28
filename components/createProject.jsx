@@ -43,7 +43,6 @@ export default function CreateProject({ toggle }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
-    // console.log(formValues);
   };
 
   // get and set the global state
