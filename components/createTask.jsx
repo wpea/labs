@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { getTasks, postTask } from "../lib/api";
 import { useAppContext } from "../lib/contexts/globalState";
 import { getToken } from "../lib/hooks/useAuth2";
+import axios from "axios";
+import { get, apiAddress } from "../lib/api";
 
 export default function CreateTask({ toggle, milestoneId }) {
   const initialValues = {
@@ -22,11 +24,23 @@ export default function CreateTask({ toggle, milestoneId }) {
   // Send tasks to api endpoint
   useEffect(() => {
     if (Object.keys(errors).length === 0 && canSubmit) {
-      postTask(formValues, getToken());
+      // postTask(formValues, getToken());
       getData();
       toggle();
     }
   }, [errors]);
+
+  const createNewTask = async () => {
+    try {
+      const res = await axios.post(`${apiAddress}/task`, formValues, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,6 +78,7 @@ export default function CreateTask({ toggle, milestoneId }) {
   const handleSubmit = () => {
     setErrors(validate(formValues));
     setCanSubmit(true);
+    createNewTask();
   };
 
   return (

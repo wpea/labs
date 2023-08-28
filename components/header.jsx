@@ -17,7 +17,7 @@ export default function Header() {
           src="https://res.cloudinary.com/dtdavvoo3/image/upload/v1664449278/labs/wplabs_w17n4z.svg"
           alt="wplabs"
         />
-      </div>
+      </div>  
       <div className="text-xs self-center justify-self-end">
         Innovating the family office.
       </div>
