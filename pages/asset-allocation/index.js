@@ -58,7 +58,7 @@ const AssetAllocation = () => {
       );
 
       const data = await response.json();
-      console.log(data.secure_url);
+
       setCloudinaryUrl(data.secure_url); // Store the Cloudinary URL in the state variable
     } catch (error) {
       console.log("Error uploading image:", error);
@@ -75,7 +75,7 @@ const AssetAllocation = () => {
 
   const submitForm = async (e) => {
     e.preventDefault();
-    console.log("submiting");
+
     // Update the form data with the Cloudinary URL
     const updatedFormData = {
       ...formData,
@@ -86,12 +86,11 @@ const AssetAllocation = () => {
         `${ASSETMANAGERS}/fundmanager`,
         updatedFormData
       );
-      console.log(response.data);
+
       closeModal();
       router.reload();
     } catch (error) {
-      console.log("error submiting form,");
-      console.log(error);
+      console.log("error submiting form,", error);
     }
   };
 
@@ -130,9 +129,8 @@ const AssetAllocation = () => {
         setLoading(true);
         const response = await axios.get(`${ASSETMANAGERS}/fundmanager`);
 
-        // console.log(response);
         setAssetManagers(response.data);
-        // console.log(assetManagers);
+
         setLoading(false);
       } catch (error) {
         console.log(error);

@@ -53,7 +53,6 @@ export default function CreateMilestone({ toggle, projectId }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
-    console.log(formValues);
   };
 
   // get and set the global state

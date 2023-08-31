@@ -36,7 +36,6 @@ export default function AddStock({ toggleAdd, status, data, button }) {
       buy_price: "",
       shares: "",
     });
-    // console.log(stocks);
   };
 
   const removeStock = (symbol) => {
@@ -52,7 +51,7 @@ export default function AddStock({ toggleAdd, status, data, button }) {
       localStorage.getItem("token")
     );
     const data = await res.json();
-    // console.log(data);
+
     if (data?.errors?.length > 0) {
       toast.error("An error occured.");
       setLoading(false);

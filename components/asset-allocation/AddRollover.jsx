@@ -24,8 +24,6 @@ export default function CreateRolloverButton() {
 
   const submitForm = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    console.log("submiting");
 
     try {
       const response = await axios.post(
@@ -38,7 +36,6 @@ export default function CreateRolloverButton() {
         }
       );
 
-      console.log(response.data);
       closeModal();
       router.reload();
     } catch (error) {
@@ -64,7 +61,7 @@ export default function CreateRolloverButton() {
   //           },
   //         }
   //       );
-  //       console.log(response);
+  //
   //     } catch (error) {
   //       console.log(error);
   //     }

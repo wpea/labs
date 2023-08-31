@@ -37,10 +37,8 @@ export default function EditButton({ transactionId, previousInfo }) {
 
   const submitForm = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    console.log("submiting");
+
     try {
-      console.log(formData);
       const response = await axios.put(
         `${ASSETMANAGERS}/transactions/${transactionId}`,
         {
@@ -52,7 +50,6 @@ export default function EditButton({ transactionId, previousInfo }) {
           fundManagers: params.id,
         }
       );
-      console.log(response.data);
       onClose();
       router.refresh();
     } catch (error) {
@@ -69,9 +66,7 @@ export default function EditButton({ transactionId, previousInfo }) {
   };
 
   const [show, setShow] = useState(false);
-  const handleChanges = (selectedDate) => {
-    console.log(selectedDate);
-  };
+  const handleChanges = (selectedDate) => {};
   const handleClose = (state) => {
     setShow(state);
   };
