@@ -3,29 +3,26 @@
 import axios from "axios";
 import React, { useRef, useState, useEffect, Fragment } from "react";
 import { ASSETMANAGERS } from "../../lib/api";
+import { useRouter } from "next/router";
+import toast, { Toaster } from "react-hot-toast";
+const localhost = "http://localhost:5001";
 
 import { Dialog, Transition } from "@headlessui/react";
-// @ts-ignore
-// import { useParams, useRouter } from "next/navigation";
 
-export default function EditButton({ transactionId, previousInfo }) {
+export default function LiquidateButton({ transactionId, previousInfo }) {
+  const router = useRouter();
   let [isOpen, setIsOpen] = useState(false);
-
+  const [error, setError] = useState(null);
   function closeModal() {
     setIsOpen(false);
   }
-
   function openModal() {
     setIsOpen(true);
   }
 
-  // const [openModal, setOpenModal] = useState(false);
   const [formData, setFormData] = useState({
     amount: "",
-    rate: "",
     date: "",
-    description: "",
-    maturityDate: "",
   });
   const [previousFormData, setpreviousFormData] = useState({
     amount: previousInfo.amount,
@@ -41,22 +38,26 @@ export default function EditButton({ transactionId, previousInfo }) {
     console.log("submiting");
     try {
       console.log(formData);
-      const response = await axios.put(
-        `${ASSETMANAGERS}/transactions/${transactionId}`,
+      const response = await axios.post(
+        `${localhost}/transactions/${transactionId}/liquidate`,
         {
-          amount: formData.amount,
-          rate: formData.rate,
+          liquidationAmount: formData.amount,
           date: formData.date,
-          description: formData.description,
-          maturityDate: formData.maturityDate,
-          fundManagers: params.id,
+          //   fundManagers: params.id,
         }
       );
       console.log(response.data);
-      onClose();
-      router.refresh();
+      closeModal();
+      router.reload();
     } catch (error) {
       console.log("error submiting form,", error);
+      toast(error.message, {
+        style: {
+          border: "1px solid red text-red-600",
+          background: "red",
+        },
+      });
+      setError(error.message);
     }
   };
 
@@ -66,14 +67,6 @@ export default function EditButton({ transactionId, previousInfo }) {
       ...prevData,
       [name]: value,
     }));
-  };
-
-  const [show, setShow] = useState(false);
-  const handleChanges = (selectedDate) => {
-    console.log(selectedDate);
-  };
-  const handleClose = (state) => {
-    setShow(state);
   };
 
   //   useEffect(() => {
@@ -102,10 +95,11 @@ export default function EditButton({ transactionId, previousInfo }) {
   return (
     <>
       <button
-        className="flex items-end text-xs px-0  font-medium text-[#2D7EC2] bg-transparent hover:bg-transparent hover:underline"
+        className="flex items-end text-xs px-0  font-medium text-red-400 bg-transparent hover:bg-transparent hover:underline"
         type="submit"
+        onClick={openModal}
       >
-        Edit
+        Liquidate
       </button>
 
       <div className=" mb-2 flex mx-auto items-center">
@@ -138,7 +132,7 @@ export default function EditButton({ transactionId, previousInfo }) {
                       as="h3"
                       className="text-lg font-medium leading-6 text-gray-900 mb-2"
                     >
-                      Edit Transaction
+                      Liquidate Investment
                     </Dialog.Title>
                     <form className="flex flex-col gap-4">
                       <div>
@@ -156,50 +150,17 @@ export default function EditButton({ transactionId, previousInfo }) {
                           required
                           type="number"
                           onFocus={(e) => e.stopPropagation()}
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg "
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                         />
                       </div>
-                      <div>
-                        <div className="mb-2 block">
-                          <label htmlFor="email1" value="Rate ">
-                            Rate
-                          </label>
-                        </div>
-                        <input
-                          id="rate"
-                          name="rate"
-                          onChange={handleChange}
-                          placeholder={previousFormData.rate}
-                          defaultValue={previousFormData.rate}
-                          required
-                          type="number"
-                          onFocus={(e) => e.stopPropagation()}
-                        />
-                      </div>
-                      <div>
-                        <div className="mb-2 block">
-                          <label htmlFor="description" value="Description">
-                            Description
-                          </label>
-                        </div>
-                        <textarea
-                          id="description"
-                          name="description"
-                          required
-                          type="text"
-                          onChange={handleChange}
-                          onFocus={(e) => e.stopPropagation()}
-                          defaultValue={previousFormData.description}
-                          placeholder={previousFormData.description}
-                        />
-                      </div>
+
                       <div>
                         <div className="mb-2 block">
                           <label
                             htmlFor="InvestmentDate"
                             value="InvestmentDate"
                           >
-                            InvestmentDate
+                            Date
                           </label>
                         </div>
                         <input
@@ -210,25 +171,16 @@ export default function EditButton({ transactionId, previousInfo }) {
                           onClick={(e) => e.stopPropagation()}
                           defaultValue={previousFormData.date}
                           name="date"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full"
                         />
                       </div>
-                      <div>
-                        <div className="mb-2 block">
-                          <label htmlFor="MaturityDate" value="MaturityDate" />
-                        </div>
-                        <input
-                          id="MaturityDate"
-                          required
-                          type="date"
-                          onChange={handleChange}
-                          defaultValue={previousFormData.maturityDate}
-                          onClick={(e) => e.stopPropagation()}
-                          name="maturityDate"
-                        />
-                      </div>
+
+                      {error && (
+                        <div className="mt-2 text-xs text-red-600">{error}</div>
+                      )}
+
                       <button
-                        color={"#2D7EC2"}
-                        className="text-white bg-[#2D7EC2]"
+                        className="text-white w-1/4 bg-[#2D7EC2] items-end  inline-flex justify-center rounded-md border border-transparent bg-[#2D7EC2] px-4 py-2 text-sm font-medium text-white"
                         type="submit"
                         onClick={submitForm}
                       >

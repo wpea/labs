@@ -22,9 +22,10 @@ export default function Buttons() {
   const [formData, setFormData] = useState({
     amount: "",
     description: "",
-    // rate: "",
-    // date: "",
-    // maturityDate: "",
+    rate: "",
+    date: "",
+    tenure: "",
+    currency: "",
   });
 
   // function closeModal() {
@@ -42,18 +43,19 @@ export default function Buttons() {
       console.log(formData);
       const response = await axios.post(
         `${ASSETMANAGERS}/transactions/${fundmanagerId}`,
+        // `http://localhost:5001/transactions/${fundmanagerId}`,
         {
           amount: formData.amount,
-          // rate: formData.rate,
-          // date: formData.date,
-          // maturityDate: formData.maturityDate,
+          rate: formData.rate,
+          date: formData.date,
+          tenure: formData.tenure,
+          currency: formData.currency,
           description: formData.description,
           fundManagers: fundmanagerId,
         }
       );
-      createReminder(formData);
+      // createReminder(formData);
       console.log(response.data);
-      onClose();
       closeModal();
       router.reload();
     } catch (error) {
@@ -174,14 +176,77 @@ export default function Buttons() {
                       />
                     </div>
 
-                    {/* <Button
-                color={"#2D7EC2"}
-                className="text-white bg-[#2D7EC2]"
-                type="submit"
-                onClick={submitForm}
-              >
-                Submit
-              </Button> */}
+                    <div>
+                      <div className="mb-2 block">
+                        <label htmlFor="description" value="Description">
+                          Tenure
+                        </label>
+                      </div>
+                      <input
+                        id="tenure"
+                        name="tenure"
+                        required
+                        type="number"
+                        onChange={handleChange}
+                        onFocus={(e) => e.stopPropagation()}
+                        value={formData.tenure}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                      />
+                    </div>
+
+                    <div>
+                      <div className="mb-2 block">
+                        <label htmlFor="description" value="Description">
+                          Rate
+                        </label>
+                      </div>
+                      <input
+                        id="rate"
+                        name="rate"
+                        required
+                        type="text"
+                        onChange={handleChange}
+                        onFocus={(e) => e.stopPropagation()}
+                        value={formData.rate}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                      />
+                    </div>
+
+                    <div>
+                      <div className="mb-2 block">
+                        <label htmlFor="description" value="Description">
+                          Currency
+                        </label>
+                      </div>
+                      <select
+                        name="currency"
+                        value={formData.currency}
+                        onChange={handleChange}
+                        onFocus={(e) => e.stopPropagation()}
+                        className="form-select  mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                      >
+                        <option value="NGN">NGN</option>
+                        <option value="USD">USD</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <div className="mb-2 block">
+                        <label htmlFor="description" value="Description">
+                          Investment Date
+                        </label>
+                      </div>
+                      <input
+                        id="date"
+                        name="date"
+                        required
+                        type="date"
+                        onChange={handleChange}
+                        onFocus={(e) => e.stopPropagation()}
+                        value={formData.date}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                      />
+                    </div>
                   </form>
                   <div className="mt-4">
                     <button

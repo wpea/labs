@@ -45,37 +45,26 @@ const RolloverTable = ({ transactions }) => {
           <div className=" flex items-center justify-between">
             <div className="flex flex-col">
               <p className="text-2xl">History</p>
-              <p className="font-light">May include data for this Investment</p>
+              <p className="font-light">
+                {" "}
+                Includes Rollover data for this Investment
+              </p>
             </div>
 
             <div>
-              {/* <Buttons /> */}
               <CreateRolloverButton />
             </div>
-            {/* <Button
-              className="flex items-end bg-[#2D7EC2] text-white"
-              onClick={clickMe}
-            >
-              Add Transaction
-            </Button> */}
           </div>
         </caption>
         {transactions.length > 1 && (
           <thead className="text-xs text-gray-500 uppercase">
             <tr>
               <th scope="col" className="px-6 py-3">
-                Investment Date
+                Rollover Date
               </th>
 
               <th scope="col" className="px-6 py-3">
                 Rate (%)
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Maturity Date
-              </th>
-
-              <th scope="col" className="px-6 py-3">
-                <span className="sr-only">Edit</span>
               </th>
             </tr>
           </thead>
@@ -106,9 +95,9 @@ const RolloverTable = ({ transactions }) => {
                 <td className="px-6 py-4">{getDate(transaction.date)}</td>
 
                 <td className="px-6 py-4">{transaction.rate}%</td>
-                <td className="px-6 py-4">
+                {/* <td className="px-6 py-4">
                   {getDate(transaction.maturityDate)}
-                </td>
+                </td> */}
               </tr>
             </tbody>
           );

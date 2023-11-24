@@ -8,8 +8,6 @@ import Header from "../../../components/header";
 import { ASSETMANAGERS } from "../../../lib/api";
 
 const formatCompact = (number) => {
-
-  
   const formatter = new Intl.NumberFormat("en", {
     notation: "standard",
   });
@@ -35,7 +33,6 @@ const FundManager = () => {
     };
 
     getFundManager();
-    console.log(data);
   }, [fundmanagerId, data]);
 
   if (!data) {
