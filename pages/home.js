@@ -245,6 +245,31 @@ export default function HomeCards() {
                 </div>
               </div>
             </div>
+
+            <div
+              onClick={() => router.push("/hisab")}
+              className="bg-gray-50 hover:border-gray-400 border  border-gray-200 cursor-pointer rounded-md p-8 space-y-4 grid"
+            >
+              <div className="flex items-center justify-between">
+                <div className="bg-blue-200 rounded-full place-self-start justify-self-start p-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="fill-current text-blue-500 p-1 w-8"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M15.787 7.531c-5.107 2.785-12.72 9.177-15.787 15.469h2.939c.819-2.021 2.522-4.536 3.851-5.902 8.386 3.747 17.21-2.775 17.21-11.343 0-1.535-.302-3.136-.92-4.755-2.347 3.119-5.647 1.052-10.851 1.625-7.657.844-11.162 6.797-8.764 11.54 3.506-3.415 9.523-6.38 12.322-6.634z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-xl tracking-tight font-bold text-gray-700">
+                  Hisab
+                </div>
+                <div className="text-2xs tracking-tight">
+                  Manage users, view stats and more
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

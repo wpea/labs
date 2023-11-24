@@ -306,7 +306,7 @@ export default function Deposit({ showDep, toggleAdd }) {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel
-                className={`w-1/4 flex flex-col justify-between transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all`}
+                className={`md:w-1/4 mx-10 md:mx-0WS flex flex-col justify-between transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all`}
               >
                 <div className="space-y-6">
                   <div className="grid grid-cols-2">
