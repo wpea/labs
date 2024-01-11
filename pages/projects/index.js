@@ -15,9 +15,13 @@ export default function AllProjects() {
   useEffect(() => {
     // get and sort
     const sortedProjects = _.orderBy(sharedState.projects, "end_date", "asc");
+    const groupedProjects = _.groupBy(sharedState.projects, (project) =>
+      new Date(project.start_date).getFullYear()
+    );
 
+    console.log(groupedProjects);
     // set
-    setProds(sortedProjects);
+    setProds(groupedProjects);
   }, [sharedState.projects]);
 
   const completed = "bg-green-600 hover:bg-green-800";
@@ -40,31 +44,52 @@ export default function AllProjects() {
               </div>
             </div>
           ) : (
-            prods.map((project) => (
-              <div
-                key={project.id}
-                onClick={() => router.push(`projects/${project.id}`)}
-                className={`${defaultStyle} ${
-                  project.status === "completed" ? completed : ongoing
-                }`}
-              >
-                <div className="text-white tracking-tight font-medium">
-                  {project.title}
+            // prods.map((project) => (
+            //   <div
+            //     key={project.id}
+            //     onClick={() => router.push(`projects/${project.id}`)}
+            //     className={`${defaultStyle} ${
+            //       project.status === "completed" ? completed : ongoing
+            //     }`}
+            //   >
+            //     <div className="text-white tracking-tight font-medium">
+            //       {project.title}
+            //     </div>
+            //     <svg
+            //       xmlns="http://www.w3.org/2000/svg"
+            //       className="h-5 w-5 fill-current text-white justify-self-end self-center transform -rotate-45"
+            //       viewBox="0 0 20 20"
+            //       fill="currentColor"
+            //     >
+            //       <path
+            //         fillRule="evenodd"
+            //         d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+            //         clipRule="evenodd"
+            //       />
+            //     </svg>
+            //   </div>
+            // ))
+            Object.entries(prods)
+              .reverse()
+              .map(([year, projects]) => (
+                <div key={year} className="mb-2">
+                  <div className="font-bold mb-1">{year}</div>
+                  {projects.map((project) => (
+                    <div
+                      key={project.id}
+                      onClick={() => router.push(`projects/${project.id}`)}
+                      className={` ${defaultStyle} ${
+                        project.status === "completed" ? completed : ongoing
+                      } mb-4`}
+                    >
+                      <div className="text-white tracking-tight font-medium ">
+                        {project.title}
+                      </div>
+                      {/* Add other project details or SVG as needed */}
+                    </div>
+                  ))}
                 </div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 fill-current text-white justify-self-end self-center transform -rotate-45"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-            ))
+              ))
           )}
 
           {!prods.length === 0 && (
