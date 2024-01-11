@@ -85,7 +85,6 @@ export default function AllProjects() {
                       <div className="text-white tracking-tight font-medium ">
                         {project.title}
                       </div>
-                      {/* Add other project details or SVG as needed */}
                     </div>
                   ))}
                 </div>
