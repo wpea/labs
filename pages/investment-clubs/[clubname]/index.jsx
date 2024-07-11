@@ -1,6 +1,9 @@
 import React from "react";
-import DashboardLayout from "../../../../components/investment-club/DashboardLayout";
+
 import { Tab } from "@headlessui/react";
+
+import DashboardLayout from "../../../components/investment-club/DashboardLayout";
+// import Table from "../../../components/Clubs/table";
 import {
   Table,
   TableBody,
@@ -8,8 +11,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../../components/investment-club/Table";
-import { Badge } from "../../../../components/investment-club/Badge";
+} from "../../../components/investment-club/Table";
+import { Badge } from "../../../components/investment-club/Badge";
 
 const tableData = [
   {
@@ -31,7 +34,7 @@ const tableData = [
   // Add more data as needed
 ];
 
-const index = () => {
+const Overview = () => {
   return (
     <DashboardLayout>
       <h1 className="text-[#2D2D2D] text-2xl font-semibold mb-8">Overview</h1>
@@ -55,7 +58,7 @@ const index = () => {
           </div>
 
           <div className="flex border-b-[0.5px] items-center p-4 justify-between">
-            <p className="text-[10px]  ">Registered</p>
+            <p className="text-[10px]  ">Approved</p>
             <p className=" text-[#DC9936]">0</p>
           </div>
         </div>
@@ -79,7 +82,7 @@ const index = () => {
   );
 };
 
-export default index;
+export default Overview;
 
 const TableDiv = () => {
   return (

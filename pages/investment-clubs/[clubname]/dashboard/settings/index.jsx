@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import DashboardLayout from "../../../../components/investment-club/DashboardLayout";
+
 import { Switch } from "@headlessui/react";
+import DashboardLayout from "../../../../../components/investment-club/DashboardLayout";
 
 const Index = () => {
   const [enabled, setEnabled] = useState(false);

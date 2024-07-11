@@ -1,13 +1,28 @@
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export const Sidebar = () => {
+  const router = useRouter();
+  const pathname = router.pathname;
+  const { clubname } = router.query;
+  console.log(router.asPath);
   return (
     <aside className=" p-5 w-1/6 h-full rounded-md bg-white ">
-      <Link passHref href={"/investment-clubs/dashboard/overview"} className="">
-        <div className="flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white">
+      <Link
+        passHref
+        href={`/investment-clubs/${clubname}/dashboard/overview`}
+        className=""
+      >
+        <div
+          className={`flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white ${
+            pathname === "/investment-clubs/[clubname]/dashboard/overview"
+              ? "bg-[#2D2D2D] text-white"
+              : "bg-none"
+          }`}
+        >
           <p>Overview</p>
-          <svg
+          {/* <svg
             className="stroke-black hover:stroke-white"
             width="12"
             height="12"
@@ -31,18 +46,24 @@ export const Sidebar = () => {
               d="M7.00003 3C7.00003 2.22978 7.00003 1.84467 7.1734 1.56177C7.2704 1.40347 7.4035 1.27037 7.5618 1.17336C7.8447 1 8.22981 1 9.00003 1C9.77025 1 10.1554 1 10.4383 1.17336C10.5966 1.27037 10.7297 1.40347 10.8267 1.56177C11 1.84467 11 2.22978 11 3C11 3.77022 11 4.15533 10.8267 4.43823C10.7297 4.59653 10.5966 4.72963 10.4383 4.82664C10.1554 5 9.77025 5 9.00003 5C8.22981 5 7.8447 5 7.5618 4.82664C7.4035 4.72963 7.2704 4.59653 7.1734 4.43823C7.00003 4.15533 7.00003 3.77022 7.00003 3Z"
               stroke="#404040"
             />
-          </svg>
+          </svg> */}
         </div>
       </Link>
 
       <Link
         passHref
-        href={"/investment-clubs/dashboard/transactions"}
+        href={`/investment-clubs/${clubname}/dashboard/transactions`}
         className=""
       >
-        <div className="flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white">
+        <div
+          className={`flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white ${
+            pathname === "/investment-clubs/[clubname]/dashboard/transactions"
+              ? "bg-[#2D2D2D] text-white"
+              : "bg-none"
+          }`}
+        >
           <p>Transactions</p>
-          <svg
+          {/* <svg
             width="14"
             height="14"
             viewBox="0 0 14 14"
@@ -57,18 +78,24 @@ export const Sidebar = () => {
               d="M7.94997 5.87667C7.94997 6.15282 8.17383 6.37667 8.44997 6.37667C8.72611 6.37667 8.94997 6.15282 8.94997 5.87667H7.94997ZM5.49997 8.12359C5.49997 7.84744 5.27611 7.62359 4.99997 7.62359C4.72383 7.62359 4.49997 7.84744 4.49997 8.12359H5.49997ZM7.29997 4C7.29997 3.72386 7.07611 3.5 6.79997 3.5C6.52383 3.5 6.29997 3.72386 6.29997 4L7.29997 4ZM6.29997 10C6.29997 10.2761 6.52383 10.5 6.79997 10.5C7.07611 10.5 7.29997 10.2761 7.29997 10H6.29997ZM6.79997 6.41371C6.23185 6.41371 5.94117 6.3227 5.80312 6.23028C5.70789 6.16652 5.64997 6.08162 5.64997 5.87667H4.64997C4.64997 6.33992 4.81705 6.77354 5.24681 7.06125C5.63377 7.3203 6.16809 7.41371 6.79997 7.41371V6.41371ZM5.64997 5.87667C5.64997 5.74015 5.72439 5.57434 5.92891 5.42438C6.13312 5.27464 6.43946 5.1668 6.79997 5.1668V4.1668C6.24921 4.1668 5.73055 4.3298 5.33758 4.61794C4.94491 4.90587 4.64997 5.345 4.64997 5.87667H5.64997ZM6.79997 5.1668C7.16048 5.1668 7.46682 5.27464 7.67103 5.42438C7.87555 5.57434 7.94997 5.74015 7.94997 5.87667H8.94997C8.94997 5.345 8.65503 4.90587 8.26236 4.61794C7.86939 4.3298 7.35073 4.1668 6.79997 4.1668V5.1668ZM8.09997 8.12359C8.09997 8.36608 8.00309 8.51188 7.81648 8.62327C7.59951 8.75279 7.25196 8.83346 6.79997 8.83346V9.83346C7.34209 9.83346 7.89454 9.7413 8.32904 9.48193C8.7939 9.20443 9.09997 8.74529 9.09997 8.12359H8.09997ZM6.79997 8.83346C6.38869 8.83346 6.03878 8.72052 5.8061 8.56413C5.57029 8.40563 5.49997 8.24041 5.49997 8.12359H4.49997C4.49997 8.67496 4.83259 9.11468 5.24825 9.39407C5.66705 9.67556 6.21714 9.83346 6.79997 9.83346V8.83346ZM6.79997 7.41371C7.37209 7.41371 7.70193 7.50002 7.87802 7.61415C8.00865 7.69882 8.09997 7.82583 8.09997 8.12359H9.09997C9.09997 7.55715 8.89129 7.07922 8.42192 6.775C7.99801 6.50024 7.42785 6.41371 6.79997 6.41371V7.41371ZM7.29997 4.6668L7.29997 4L6.29997 4L6.29997 4.6668L7.29997 4.6668ZM6.29997 9.33346V10H7.29997V9.33346H6.29997Z"
               fill="#404040"
             />
-          </svg>
+          </svg> */}
         </div>
       </Link>
 
       <Link
         passHref
-        href={"/investment-clubs/dashboard/resources"}
+        href={`/investment-clubs/${clubname}/dashboard/resources`}
         className=""
       >
-        <div className="flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white">
+        <div
+          className={`flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white ${
+            pathname === "/investment-clubs/[clubname]/dashboard/resources"
+              ? "bg-[#2D2D2D] text-white"
+              : "bg-none"
+          }`}
+        >
           <p>Resources</p>
-          <svg
+          {/* <svg
             width="12"
             height="11"
             viewBox="0 0 12 11"
@@ -80,14 +107,24 @@ export const Sidebar = () => {
               stroke="#404040"
               strokeLinecap="round"
             />
-          </svg>
+          </svg> */}
         </div>
       </Link>
 
-      <Link passHref href={"/investment-clubs/dashboard/settings"} className="">
-        <div className="flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white">
+      <Link
+        passHref
+        href={`/investment-clubs/${clubname}/dashboard/settings`}
+        className=""
+      >
+        <div
+          className={`flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white ${
+            pathname === "/investment-clubs/[clubname]/dashboard/settings"
+              ? "bg-[#2D2D2D] text-white"
+              : "bg-none"
+          }`}
+        >
           <p>Settings</p>
-          <svg
+          {/* <svg
             width="12"
             height="13"
             viewBox="0 0 12 13"
@@ -103,7 +140,7 @@ export const Sidebar = () => {
               d="M8.11143 6.3807C8.11143 7.42153 7.26766 8.2653 6.22683 8.2653C5.18599 8.2653 4.34222 7.42153 4.34222 6.3807C4.34222 5.33986 5.18599 4.49609 6.22683 4.49609C7.26766 4.49609 8.11143 5.33986 8.11143 6.3807Z"
               stroke="#404040"
             />
-          </svg>
+          </svg> */}
         </div>
       </Link>
     </aside>

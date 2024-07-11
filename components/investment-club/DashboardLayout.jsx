@@ -1,8 +1,10 @@
 import React from "react";
 import { Sidebar } from "./Sidebar";
 import Header from "../header";
+import { useRouter } from "next/router";
 
 const DashboardLayout = ({ children }) => {
+  const router = useRouter();
   return (
     <div className="bg-[#F5F5F5] min-h-screen">
       <div className="md:px-20 p-10 border-b-[0.5px] space-y-10 grid ">
@@ -10,7 +12,12 @@ const DashboardLayout = ({ children }) => {
       </div>
       <div className="px-56 pt-7">
         <div className="flex justify-between">
-          <button className="w-8 h-8 mb-14">
+          <button
+            className="w-8 h-8 mb-14"
+            onClick={() => {
+              router.push("/investment-clubs");
+            }}
+          >
             <svg
               width="35"
               height="35"

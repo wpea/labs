@@ -1,10 +1,12 @@
+/* eslint-disable react/jsx-no-target-blank */
 import React, { useState, Fragment, useEffect } from "react";
 
 import { Transition, Dialog } from "@headlessui/react";
-import DashboardLayout from "../../../../components/investment-club/DashboardLayout";
-import { getToken } from "../../../../lib/hooks/useAuth2";
+
+// import { getToken } from "../../../../lib/hooks/useAuth2";
 import toast from "react-hot-toast";
 import axios from "axios";
+import DashboardLayout from "../../../../../components/investment-club/DashboardLayout";
 
 function formatDateTime(dateTimeStr) {
   const months = [
@@ -102,7 +104,7 @@ const Index = () => {
     const getResources = async () => {
       try {
         const res = await axios.get(
-          `https://client.wealthparadigm.org/api/club/resources/${6660400293477}`,
+          `https://client.wealthparadigm.org/api/club/resources`,
           {
             headers: {
               Authorization: `Bearer 437|ar5lO1dTV1tyKRyjUTucKIB6Kioj6G6yg2oLGpSG`,
@@ -121,6 +123,19 @@ const Index = () => {
 
     getResources();
   }, []);
+
+  const groupResourcesByYear = (resources) => {
+    return resources.reduce((groups, resource) => {
+      const year = new Date(resource.created_at).getFullYear();
+      if (!groups[year]) {
+        groups[year] = [];
+      }
+      groups[year].push(resource);
+      return groups;
+    }, {});
+  };
+
+  const groupedResources = groupResourcesByYear(resources);
 
   return (
     <DashboardLayout>
@@ -227,7 +242,7 @@ const Index = () => {
         </div>
       </div> */}
 
-      <div className="items-start gap-x-14 mt-8 flex">
+      {/* <div className="items-start gap-x-14 mt-8 flex">
         <p className="text-[8px] font-semibold">2024</p>
         <div className="flex gap-x-7">
           {resources.map((resource, index) => (
@@ -240,13 +255,50 @@ const Index = () => {
                 <p className="text-[8px] text-[#969696]">
                   {formatDateTime(resource.created_at)}
                 </p>
-                <button className="text-[#2D7EC2] text-[8px]">View</button>
+                <a
+                  target="_blank"
+                  rel="nonreferer"
+                  href={resource.file}
+                  className="text-[#2D7EC2] text-[8px]"
+                >
+                  View
+                </a>
                 <button className="text-[#FF0000] text-[8px]">Delete</button>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
+
+      {Object.entries(groupedResources).map(([year, resources]) => (
+        <div key={year} className="items-start gap-x-14 mt-8 flex">
+          <p className="text-[8px] font-semibold">{year}</p>
+          <div className="flex gap-x-7">
+            {resources.map((resource, index) => (
+              <div
+                key={index}
+                className="flex flex-col bg-white px-3 py-[10px] rounded-md"
+              >
+                <h3 className="text-xs font-semibold">{resource.title}</h3>
+                <div className="flex gap-x-4">
+                  <p className="text-[8px] text-[#969696]">
+                    {formatDateTime(resource.created_at)}
+                  </p>
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={resource.file}
+                    className="text-[#2D7EC2] text-[8px]"
+                  >
+                    View
+                  </a>
+                  <button className="text-[#FF0000] text-[8px]">Delete</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
