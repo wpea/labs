@@ -7,6 +7,8 @@ import { Transition, Dialog } from "@headlessui/react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import DashboardLayout from "../../../../../components/investment-club/DashboardLayout";
+import { getToken } from "../../../../../lib/hooks/useAuth2";
+import { useRouter } from "next/router";
 
 function formatDateTime(dateTimeStr) {
   const months = [
@@ -47,6 +49,9 @@ function formatDateTime(dateTimeStr) {
 }
 
 const Index = () => {
+  const router = useRouter();
+  const { uniqueClubId } = router.query;
+  console.log(uniqueClubId);
   const [isOpen, setIsOpen] = useState(false);
   const [resources, setResources] = useState([]);
   const [formData, setFormData] = useState({
@@ -67,7 +72,7 @@ const Index = () => {
     e.preventDefault();
     console.log(formData);
     const values = {
-      club_unique_id: "6660400293477", //get Club unique_id
+      club_unique_id: uniqueClubId,
       title: formData.title,
       date: formData.date,
       file: formData.file,
@@ -81,7 +86,7 @@ const Index = () => {
         values,
         {
           headers: {
-            Authorization: `Bearer 437|ar5lO1dTV1tyKRyjUTucKIB6Kioj6G6yg2oLGpSG`,
+            Authorization: `Bearer 437|ar5lO1dTV1tyKRyjUTucKIB6Kioj6G6yg2oLGpSG`, //CHANEG
             "Content-Type": "multipart/form-data",
           },
         }
@@ -100,14 +105,36 @@ const Index = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(
+        `https://client.wealthparadigm.org/api/labs/clubs/resource/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      toast.success("Resource Deleted Successfully");
+
+      // Update state to remove deleted resource
+      setResources((prevResources) =>
+        prevResources.filter((resource) => resource.id !== id)
+      );
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to delete resource");
+    }
+  };
+
   useEffect(() => {
     const getResources = async () => {
       try {
         const res = await axios.get(
-          `https://client.wealthparadigm.org/api/club/resources`,
+          `https://client.wealthparadigm.org/api/labs/clubs/resources/${uniqueClubId}`,
           {
             headers: {
-              Authorization: `Bearer 437|ar5lO1dTV1tyKRyjUTucKIB6Kioj6G6yg2oLGpSG`,
+              Authorization: `Bearer ${getToken()}`,
               "Content-Type": "multipart/form-data",
             },
           }
@@ -122,7 +149,7 @@ const Index = () => {
     };
 
     getResources();
-  }, []);
+  }, [uniqueClubId]);
 
   const groupResourcesByYear = (resources) => {
     return resources.reduce((groups, resource) => {
@@ -163,113 +190,6 @@ const Index = () => {
         </button>
       </div>
 
-      {/* <div className="items-start gap-x-14 mt-8 flex">
-        <p className="text-[8px] font-semibold">2024</p>
-        <div className="flex gap-x-7">
-          <div className="flex flex-col bg-white px-3 py-[10px] rounded-md">
-            <h3 className="text-xs font-semibold">
-              TUFN Conservative Investments Factsheet
-            </h3>
-            <div className="flex gap-x-4">
-              <p className="text-[8px] text-[#969696]">12th July, 2024</p>
-              <button className="text-[#2D7EC2] text-[8px]">View</button>
-              <button className="text-[#FF0000] text-[8px]">Delete</button>
-            </div>
-          </div>
-
-          <div className="flex flex-col bg-white px-3 py-[10px] rounded-md">
-            <h3 className="text-xs font-semibold">
-              TUFN Conservative Investments Factsheet
-            </h3>
-            <div className="flex gap-x-4">
-              <p className="text-[8px] text-[#969696]">12th July, 2024</p>
-              <button className="text-[#2D7EC2] text-[8px]">View</button>
-              <button className="text-[#FF0000] text-[8px]">Delete</button>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
-      {/* <div className="items-start gap-x-14 mt-8 flex">
-        <p className="text-[8px] font-semibold">2023</p>
-        <div className="flex gap-7 flex-wrap">
-          <div className="flex gap-x-7">
-            <div className="flex flex-col bg-white px-3 py-[10px] rounded-md">
-              <h3 className="text-xs font-semibold">
-                TUFN Conservative Investments Factsheet
-              </h3>
-              <div className="flex gap-x-4">
-                <p className="text-[8px] text-[#969696]">12th July, 2024</p>
-                <button className="text-[#2D7EC2] text-[8px]">View</button>
-                <button className="text-[#FF0000] text-[8px]">Delete</button>
-              </div>
-            </div>
-
-            <div className="flex flex-col bg-white px-3 py-[10px] rounded-md">
-              <h3 className="text-xs font-semibold">
-                TUFN Conservative Investments Factsheet
-              </h3>
-              <div className="flex gap-x-4">
-                <p className="text-[8px] text-[#969696]">12th July, 2024</p>
-                <button className="text-[#2D7EC2] text-[8px]">View</button>
-                <button className="text-[#FF0000] text-[8px]">Delete</button>
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-x-7">
-            <div className="flex flex-col bg-white px-3 py-[10px] rounded-md">
-              <h3 className="text-xs font-semibold">
-                TUFN Conservative Investments Factsheet
-              </h3>
-              <div className="flex gap-x-4">
-                <p className="text-[8px] text-[#969696]">12th July, 2024</p>
-                <button className="text-[#2D7EC2] text-[8px]">View</button>
-                <button className="text-[#FF0000] text-[8px]">Delete</button>
-              </div>
-            </div>
-
-            <div className="flex flex-col bg-white px-3 py-[10px] rounded-md">
-              <h3 className="text-xs font-semibold">
-                TUFN Conservative Investments Factsheet
-              </h3>
-              <div className="flex gap-x-4">
-                <p className="text-[8px] text-[#969696]">12th July, 2024</p>
-                <button className="text-[#2D7EC2] text-[8px]">View</button>
-                <button className="text-[#FF0000] text-[8px]">Delete</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
-      {/* <div className="items-start gap-x-14 mt-8 flex">
-        <p className="text-[8px] font-semibold">2024</p>
-        <div className="flex gap-x-7">
-          {resources.map((resource, index) => (
-            <div
-              key={index}
-              className="flex flex-col bg-white px-3 py-[10px] rounded-md"
-            >
-              <h3 className="text-xs font-semibold">{resource.title}</h3>
-              <div className="flex gap-x-4">
-                <p className="text-[8px] text-[#969696]">
-                  {formatDateTime(resource.created_at)}
-                </p>
-                <a
-                  target="_blank"
-                  rel="nonreferer"
-                  href={resource.file}
-                  className="text-[#2D7EC2] text-[8px]"
-                >
-                  View
-                </a>
-                <button className="text-[#FF0000] text-[8px]">Delete</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div> */}
-
       {Object.entries(groupedResources).map(([year, resources]) => (
         <div key={year} className="items-start gap-x-14 mt-8 flex">
           <p className="text-[8px] font-semibold">{year}</p>
@@ -292,7 +212,14 @@ const Index = () => {
                   >
                     View
                   </a>
-                  <button className="text-[#FF0000] text-[8px]">Delete</button>
+                  <button
+                    className="text-[#FF0000] text-[8px]"
+                    onClick={() => {
+                      handleDelete(resource.id);
+                    }}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             ))}

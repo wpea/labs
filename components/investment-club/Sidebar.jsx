@@ -5,18 +5,14 @@ import { useRouter } from "next/router";
 export const Sidebar = () => {
   const router = useRouter();
   const pathname = router.pathname;
-  const { clubname } = router.query;
+  const { uniqueClubId } = router.query;
   console.log(router.asPath);
   return (
     <aside className=" p-5 w-1/6 h-full rounded-md bg-white ">
-      <Link
-        passHref
-        href={`/investment-clubs/${clubname}/dashboard/overview`}
-        className=""
-      >
+      <Link passHref href={`/investment-clubs/${uniqueClubId}`} className="">
         <div
           className={`flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white ${
-            pathname === "/investment-clubs/[clubname]/dashboard/overview"
+            pathname === "/investment-clubs/[uniqueClubId]"
               ? "bg-[#2D2D2D] text-white"
               : "bg-none"
           }`}
@@ -52,12 +48,13 @@ export const Sidebar = () => {
 
       <Link
         passHref
-        href={`/investment-clubs/${clubname}/dashboard/transactions`}
+        href={`/investment-clubs/${uniqueClubId}/dashboard/transactions`}
         className=""
       >
         <div
           className={`flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white ${
-            pathname === "/investment-clubs/[clubname]/dashboard/transactions"
+            pathname ===
+            "/investment-clubs/[uniqueClubId]/dashboard/transactions"
               ? "bg-[#2D2D2D] text-white"
               : "bg-none"
           }`}
@@ -84,12 +81,12 @@ export const Sidebar = () => {
 
       <Link
         passHref
-        href={`/investment-clubs/${clubname}/dashboard/resources`}
+        href={`/investment-clubs/${uniqueClubId}/dashboard/resources`}
         className=""
       >
         <div
           className={`flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white ${
-            pathname === "/investment-clubs/[clubname]/dashboard/resources"
+            pathname === "/investment-clubs/[uniqueClubId]/dashboard/resources"
               ? "bg-[#2D2D2D] text-white"
               : "bg-none"
           }`}
@@ -113,12 +110,12 @@ export const Sidebar = () => {
 
       <Link
         passHref
-        href={`/investment-clubs/${clubname}/dashboard/settings`}
+        href={`/investment-clubs/${uniqueClubId}/dashboard/settings`}
         className=""
       >
         <div
           className={`flex items-center justify-between py-2 px-3  cursor-pointer rounded-md hover:bg-[#2D2D2D] hover:text-white ${
-            pathname === "/investment-clubs/[clubname]/dashboard/settings"
+            pathname === "/investment-clubs/[uniqueClubId]/dashboard/settings"
               ? "bg-[#2D2D2D] text-white"
               : "bg-none"
           }`}

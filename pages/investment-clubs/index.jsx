@@ -6,9 +6,11 @@ import Layout from "../../components/investment-club/layout";
 import Link from "next/link";
 import axios from "axios";
 import { getToken } from "../../lib/hooks/useAuth2";
+import { useRouter } from "next/router";
 
 const Index = () => {
   const [clubs, setClubs] = useState([]);
+
   const getClubs = async () => {
     try {
       const res = await axios.get(
@@ -69,6 +71,7 @@ const Index = () => {
             <InvestmentClub
               key={club.id}
               name={club.name}
+              id={club.unique_id}
               unitCap={club.unit_cap}
             />
           ))}
@@ -82,13 +85,12 @@ const Index = () => {
 
 export default Index;
 
-const InvestmentClub = ({ name, unitCap }) => {
+const InvestmentClub = ({ name, unitCap, id }) => {
   console.log(name);
   const stringWithoutWhitespace = name.replace(/\s+/g, "");
+
   return (
-    <Link
-      href={`/investment-clubs/${stringWithoutWhitespace}/dashboard/overview`}
-    >
+    <Link href={`/investment-clubs/${id}`}>
       <div className="w-[302px] cursor-pointer h-[155px] bg-[#2D2D2D] rounded-lg m-12">
         <div className="h-[104px] border-b-[0.2px] flex items-center px-7">
           <p className="text-white text-2xl">{name}</p>

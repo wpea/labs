@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import KYC from "./kyc";
+import KYC from "./kyc/[id]";
 import DashboardLayout from "../../../../../components/investment-club/DashboardLayout";
 import {
   Table,
@@ -13,15 +13,62 @@ import {
 import { Badge } from "../../../../../components/investment-club/Badge";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import axios from "axios";
+import { getToken } from "../../../../../lib/hooks/useAuth2";
 
 const Transactions = () => {
   const router = useRouter();
-  const { clubname } = router.query;
+  const { uniqueClubId } = router.query;
+  const [transactions, setTransactions] = useState([]);
+
+  const getAllTransactions = async () => {
+    try {
+      const res = await axios.get(
+        `https://client.wealthparadigm.org/api/labs/clubs/transactions/${uniqueClubId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      // console.log(res.data);
+      setTransactions(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const approveTransaction = async (transactionId) => {
+    try {
+      const res = await axios.post(
+        `https://client.wealthparadigm.org/api/labs/clubs/transaction/approve/${transactionId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      console.log(res.data);
+      getAllTransactions(); // Refresh the transaction list after approval
+    } catch (error) {
+      console.error("Error approving transaction:", error);
+    }
+  };
+
+  useEffect(() => {
+    getAllTransactions();
+  }, [uniqueClubId]);
+
   return (
     <DashboardLayout>
       <h1 className="text-[#2D2D2D] text-2xl font-semibold">Transactions</h1>
 
-      <TableDiv clubname={clubname} />
+      <TableDiv
+        data={transactions}
+        uniqueClubId={uniqueClubId}
+        approveTransaction={approveTransaction}
+      />
       {/* <KYC /> */}
     </DashboardLayout>
   );
@@ -29,7 +76,7 @@ const Transactions = () => {
 
 export default Transactions;
 
-const TableDiv = ({ clubname }) => {
+const TableDiv = ({ uniqueClubId, data, approveTransaction }) => {
   return (
     <div className="h-[320px] w-full mt-14 ">
       <div className="flex justify-between items-center">
@@ -128,45 +175,66 @@ const TableDiv = ({ clubname }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>Abigail Trujillo</TableCell>
-              <TableCell>test@wealthparadigm.org</TableCell>
-              <TableCell>
-                {" "}
-                <Link
-                  passHref
-                  href={`/investment-clubs/${clubname}/dashboard/transactions/kyc`}
-                >
-                  <Badge variant="approved">KYC</Badge>
-                </Link>
-              </TableCell>
-              <TableCell>6,249.99</TableCell>
-              <TableCell>3,093,745.05</TableCell>
-              <TableCell>July 12, 2024</TableCell>
-              <TableCell>
-                <Badge variant="approved">Approved</Badge>
-              </TableCell>
-              <TableCell>
-                <svg
-                  width="15"
-                  height="15"
-                  viewBox="0 0 15 15"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M15 7.5C15 3.35786 11.6421 0 7.5 0C3.35786 0 0 3.35786 0 7.5C0 11.6421 3.35786 15 7.5 15C11.6421 15 15 11.6421 15 7.5Z"
-                    fill="#55B346"
-                  />
-                  <path
-                    d="M4.5 7.875L6.375 9.75L10.5 5.25"
-                    stroke="#F6F8FC"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </TableCell>
-            </TableRow>
+            {data.map((transaction) => {
+              return (
+                <TableRow key={transaction.id}>
+                  <TableCell>
+                    {transaction.user_details.first_name}{" "}
+                    {transaction.user_details.last_name}
+                  </TableCell>
+                  <TableCell>{transaction.user_details.email}</TableCell>
+                  <TableCell>
+                    {" "}
+                    <Link
+                      passHref
+                      href={`/investment-clubs/${uniqueClubId}/dashboard/transactions/kyc/${transaction.user_id}`}
+                    >
+                      <button>
+                        <Badge variant="approved">KYC</Badge>
+                      </button>
+                    </Link>
+                  </TableCell>
+                  <TableCell>{transaction.amount}</TableCell>
+                  <TableCell>{transaction.amount * 1500}</TableCell>
+                  <TableCell>{transaction.created_at}</TableCell>
+                  <TableCell>
+                    {transaction.status === false ? (
+                      <Badge variant="pending">Pending</Badge>
+                    ) : (
+                      <Badge variant="approved">Approved</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {!transaction.status && (
+                      <button
+                        onClick={() => {
+                          approveTransaction(transaction.id);
+                        }}
+                      >
+                        <svg
+                          width="15"
+                          height="15"
+                          viewBox="0 0 15 15"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M15 7.5C15 3.35786 11.6421 0 7.5 0C3.35786 0 0 3.35786 0 7.5C0 11.6421 3.35786 15 7.5 15C11.6421 15 15 11.6421 15 7.5Z"
+                            fill="#55B346"
+                          />
+                          <path
+                            d="M4.5 7.875L6.375 9.75L10.5 5.25"
+                            stroke="#F6F8FC"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

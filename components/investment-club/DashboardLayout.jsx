@@ -3,7 +3,7 @@ import { Sidebar } from "./Sidebar";
 import Header from "../header";
 import { useRouter } from "next/router";
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = ({ children, clubName }) => {
   const router = useRouter();
   return (
     <div className="bg-[#F5F5F5] min-h-screen">
@@ -42,7 +42,7 @@ const DashboardLayout = ({ children }) => {
             </svg>
           </button>
 
-          <button className="py-2 px-3 mb-14 bg-[#55B246] flex items-center rounded-md">
+          <button className="py-2 px-3 mb-14 bg-[#55B246] gap-3 flex items-center rounded-md">
             <svg
               width="15"
               height="15"
@@ -59,7 +59,7 @@ const DashboardLayout = ({ children }) => {
                 fill="white"
               />
             </svg>
-            <p className="text-white">The Umm Fariha Network</p>
+            <p className="text-white">{clubName}</p>
           </button>
         </div>
         <div className="flex gap-x-11">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Tab } from "@headlessui/react";
 
@@ -13,6 +13,9 @@ import {
   TableRow,
 } from "../../../components/investment-club/Table";
 import { Badge } from "../../../components/investment-club/Badge";
+import { useRouter } from "next/router";
+import { getToken } from "../../../lib/hooks/useAuth2";
+import axios from "axios";
 
 const tableData = [
   {
@@ -35,8 +38,63 @@ const tableData = [
 ];
 
 const Overview = () => {
+  const router = useRouter();
+  const { uniqueClubId } = router.query;
+  const [id, setId] = useState("");
+  const [overviewDetails, SetOverviewDetails] = useState({
+    club: null,
+    club_value: 0,
+    date: null,
+    members_registered: 0,
+    members_approved: 0,
+    units_puchased: 0,
+    units_value: 0,
+  });
+  const [clubMembers, setClubMembers] = useState([]);
+  console.log(uniqueClubId);
+
+  const getStats = async () => {
+    try {
+      const res = await axios.get(
+        `https://client.wealthparadigm.org/api/labs/clubs/stats/${uniqueClubId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      console.log(res.data);
+      SetOverviewDetails(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getClubMembers = async () => {
+    try {
+      const res = await axios.get(
+        `https://client.wealthparadigm.org/api/labs/clubs/members/${uniqueClubId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      console.log(res.data);
+      setClubMembers(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getStats();
+    getClubMembers();
+  }, [uniqueClubId]);
+
   return (
-    <DashboardLayout>
+    <DashboardLayout clubName={overviewDetails.club}>
+      <p>ID: {uniqueClubId}</p>
       <h1 className="text-[#2D2D2D] text-2xl font-semibold mb-8">Overview</h1>
       <div className="flex items-center justify-between">
         <div className="bg-[#2D2D2D] p-5 flex  flex-col gap-y-11 rounded-lg w-[207px] h-full">
@@ -44,7 +102,9 @@ const Overview = () => {
             Current Club Value
           </h2>
           <div>
-            <p className="text-2xl font-semibold text-[#F6F8FC]">$0.00</p>
+            <p className="text-2xl font-semibold text-[#F6F8FC]">
+              ${overviewDetails.club_value}
+            </p>
             <p className="text-[10px] text-[#F6F8FC]">as at July 12th, 2024</p>
           </div>
         </div>
@@ -54,12 +114,16 @@ const Overview = () => {
 
           <div className="flex border-b-[0.5px] items-center p-4 justify-between">
             <p className="text-[10px]  ">Registered</p>
-            <p className=" text-[#DC9936]">0</p>
+            <p className=" text-[#DC9936]">
+              {overviewDetails.members_registered}
+            </p>
           </div>
 
           <div className="flex border-b-[0.5px] items-center p-4 justify-between">
             <p className="text-[10px]  ">Approved</p>
-            <p className=" text-[#DC9936]">0</p>
+            <p className=" text-[#DC9936]">
+              {overviewDetails.members_approved}
+            </p>
           </div>
         </div>
 
@@ -68,23 +132,25 @@ const Overview = () => {
 
           <div className="flex border-b-[0.5px] items-center p-4 justify-between">
             <p className="text-[10px]  ">Purchased</p>
-            <p className="  text-xl">0</p>
+            <p className="  text-xl">{overviewDetails.units_puchased}</p>
           </div>
 
           <div className="flex border-b-[0.5px] items-center p-4  justify-between">
             <p className="text-[10px]  ">Value</p>
-            <p className=" text-base font-semibold">$0.00</p>
+            <p className=" text-base font-semibold">
+              ${overviewDetails.units_value}
+            </p>
           </div>
         </div>
       </div>
-      <TableDiv />
+      <TableDiv data={clubMembers} />
     </DashboardLayout>
   );
 };
 
 export default Overview;
 
-const TableDiv = () => {
+const TableDiv = ({ data }) => {
   return (
     <div className="h-[320px] w-full mt-14 ">
       <div className="flex justify-between items-center">
@@ -151,101 +217,29 @@ const TableDiv = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>
-                Abigail Trujillo
-                <Badge variant="approved">Approved</Badge>
-              </TableCell>
-              <TableCell>40</TableCell>
-              <TableCell>Conservative</TableCell>
-              <TableCell>$1,000.00</TableCell>
-              <TableCell>Low</TableCell>
-              <TableCell>
-                Passive Preserver
-                {/* <CheckIcon className="text-green-500" /> */}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Raheemah Odusote
-                <Badge variant="pending">Pending</Badge>
-              </TableCell>
-              <TableCell>40</TableCell>
-              <TableCell>Conservative</TableCell>
-              <TableCell>$1,000.00</TableCell>
-              <TableCell>Low</TableCell>
-              <TableCell>Passive Preserver</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Tasleem Umar
-                <Badge variant="approved">Approved</Badge>
-              </TableCell>
-              <TableCell>40</TableCell>
-              <TableCell>Conservative</TableCell>
-              <TableCell>$1,000.00</TableCell>
-              <TableCell>Low</TableCell>
-              <TableCell>
-                Passive Preserver
-                {/* <CheckIcon className="text-green-500" /> */}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Tasleem Umar
-                <Badge variant="approved">Approved</Badge>
-              </TableCell>
-              <TableCell>40</TableCell>
-              <TableCell>Conservative</TableCell>
-              <TableCell>$1,000.00</TableCell>
-              <TableCell>Low</TableCell>
-              <TableCell>
-                Passive Preserver
-                {/* <CheckIcon className="text-green-500" /> */}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Tasleem Umar
-                <Badge variant="approved">Approved</Badge>
-              </TableCell>
-              <TableCell>40</TableCell>
-              <TableCell>Conservative</TableCell>
-              <TableCell>$1,000.00</TableCell>
-              <TableCell>Low</TableCell>
-              <TableCell>
-                Passive Preserver
-                {/* <CheckIcon className="text-green-500" /> */}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Tasleem Umar
-                <Badge variant="approved">Approved</Badge>
-              </TableCell>
-              <TableCell>40</TableCell>
-              <TableCell>Conservative</TableCell>
-              <TableCell>$1,000.00</TableCell>
-              <TableCell>Low</TableCell>
-              <TableCell>
-                Passive Preserver
-                {/* <CheckIcon className="text-green-500" /> */}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Tasleem Umar
-                <Badge variant="approved">Approved</Badge>
-              </TableCell>
-              <TableCell>40</TableCell>
-              <TableCell>Conservative</TableCell>
-              <TableCell>$1,000.00</TableCell>
-              <TableCell>Low</TableCell>
-              <TableCell>
-                Passive Preserver
-                {/* <CheckIcon className="text-green-500" /> */}
-              </TableCell>
-            </TableRow>
+            {data.map((tableData) => {
+              return (
+                <TableRow key={tableData.id}>
+                  <TableCell className="flex justify-between">
+                    {tableData.name}
+
+                    {tableData.approve ? (
+                      <Badge variant="approved">Approved</Badge>
+                    ) : (
+                      <Badge variant="pending">Pending</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>{tableData.age}</TableCell>
+                  <TableCell>{tableData.investment_style}</TableCell>
+                  <TableCell>{tableData.investable_cash}</TableCell>
+                  <TableCell> {tableData.risk_tolerance}</TableCell>
+                  <TableCell>
+                    {tableData.investor_type}
+                    {/* <CheckIcon className="text-green-500" /> */}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
