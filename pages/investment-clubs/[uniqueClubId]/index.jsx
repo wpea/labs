@@ -104,7 +104,8 @@ const Overview = () => {
       toast.success("User Approved successfully.");
       getClubMembers(); // Refresh the Member list after approval
     } catch (error) {
-      console.error("Error approving transaction:", error);
+      console.error("Error approving Club Memeber:", error);
+      toast.error("Error approving Club Memeber");
     }
   };
 

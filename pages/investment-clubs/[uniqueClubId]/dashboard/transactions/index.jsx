@@ -55,6 +55,7 @@ const Transactions = () => {
       getAllTransactions(); // Refresh the transaction list after approval
     } catch (error) {
       console.error("Error approving transaction:", error);
+      toast.error("Error approving transaction");
     }
   };
 
