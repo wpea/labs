@@ -16,6 +16,8 @@ import { Badge } from "../../../components/investment-club/Badge";
 import { useRouter } from "next/router";
 import { getToken } from "../../../lib/hooks/useAuth2";
 import axios from "axios";
+import { CheckIcon } from "@heroicons/react/solid";
+import toast from "react-hot-toast";
 
 const tableData = [
   {
@@ -87,6 +89,25 @@ const Overview = () => {
     }
   };
 
+  const approveMember = async (memberId) => {
+    try {
+      const res = await axios.post(
+        `https://client.wealthparadigm.org/api/labs/clubs/member/approve/${memberId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      console.log(res.data);
+      toast.success("User Approved successfully.");
+      getClubMembers(); // Refresh the Member list after approval
+    } catch (error) {
+      console.error("Error approving transaction:", error);
+    }
+  };
+
   useEffect(() => {
     getStats();
     getClubMembers();
@@ -143,14 +164,14 @@ const Overview = () => {
           </div>
         </div>
       </div>
-      <TableDiv data={clubMembers} />
+      <TableDiv data={clubMembers} approveMember={approveMember} />
     </DashboardLayout>
   );
 };
 
 export default Overview;
 
-const TableDiv = ({ data }) => {
+const TableDiv = ({ data, approveMember }) => {
   return (
     <div className="h-[320px] w-full mt-14 ">
       <div className="flex justify-between items-center">
@@ -214,6 +235,37 @@ const TableDiv = ({ data }) => {
               <TableHead>Investable Cash</TableHead>
               <TableHead>Risk tolerance</TableHead>
               <TableHead>Investor Type</TableHead>
+              <TableHead>
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 13 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="6.5"
+                    cy="6.5"
+                    r="5.5"
+                    stroke="#141B34"
+                    strokeWidth="0.825"
+                  />
+                  <path
+                    d="M6.49562 8.14844H6.50056"
+                    stroke="#141B34"
+                    strokeWidth="1.1"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M6.5 6.5L6.5 4.3"
+                    stroke="#141B34"
+                    strokeWidth="0.825"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -233,9 +285,35 @@ const TableDiv = ({ data }) => {
                   <TableCell>{tableData.investment_style}</TableCell>
                   <TableCell>{tableData.investable_cash}</TableCell>
                   <TableCell> {tableData.risk_tolerance}</TableCell>
+                  <TableCell>{tableData.investor_type}</TableCell>
                   <TableCell>
-                    {tableData.investor_type}
-                    {/* <CheckIcon className="text-green-500" /> */}
+                    {!tableData.approve && (
+                      <button
+                        onClick={() => {
+                          approveMember(tableData.id);
+                        }}
+                      >
+                        <svg
+                          width="15"
+                          height="15"
+                          viewBox="0 0 15 15"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M15 7.5C15 3.35786 11.6421 0 7.5 0C3.35786 0 0 3.35786 0 7.5C0 11.6421 3.35786 15 7.5 15C11.6421 15 15 11.6421 15 7.5Z"
+                            fill="#55B346"
+                          />
+                          <path
+                            d="M4.5 7.875L6.375 9.75L10.5 5.25"
+                            stroke="#F6F8FC"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    )}
+                    {/*  */}
                   </TableCell>
                 </TableRow>
               );

@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { getToken } from "../../../../../lib/hooks/useAuth2";
+import toast from "react-hot-toast";
 
 const Transactions = () => {
   const router = useRouter();
@@ -50,6 +51,7 @@ const Transactions = () => {
         }
       );
       console.log(res.data);
+      toast.success("Transaction approved successfully.");
       getAllTransactions(); // Refresh the transaction list after approval
     } catch (error) {
       console.error("Error approving transaction:", error);

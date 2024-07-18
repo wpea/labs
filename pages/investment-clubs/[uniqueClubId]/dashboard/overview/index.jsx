@@ -146,6 +146,37 @@ const TableDiv = () => {
               <TableHead>Investable Cash</TableHead>
               <TableHead>Risk tolerance</TableHead>
               <TableHead>Investor Type</TableHead>
+              <TableHead>
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 13 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="6.5"
+                    cy="6.5"
+                    r="5.5"
+                    stroke="#141B34"
+                    strokeWidth="0.825"
+                  />
+                  <path
+                    d="M6.49562 8.14844H6.50056"
+                    stroke="#141B34"
+                    strokeWidth="1.1"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M6.5 6.5L6.5 4.3"
+                    stroke="#141B34"
+                    strokeWidth="0.825"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
