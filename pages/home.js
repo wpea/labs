@@ -270,6 +270,31 @@ export default function HomeCards() {
                 </div>
               </div>
             </div>
+
+            <div
+              onClick={() => router.push("/reports")}
+              className="bg-gray-50 hover:border-gray-400 border  border-gray-200 cursor-pointer rounded-md p-8 space-y-4 grid"
+            >
+              <div className="flex items-center justify-between">
+                <div className="bg-blue-200 rounded-full place-self-start justify-self-start p-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="fill-current text-blue-500 p-1 w-8"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M14.568.075c2.202 1.174 5.938 4.883 7.432 6.881-1.286-.9-4.044-1.657-6.091-1.179.222-1.468-.185-4.534-1.341-5.702zm7.432 10.925v13h-20v-24h8.409c4.857 0 3.335 8 3.335 8 3.009-.745 8.256-.419 8.256 3zm-16 5h5v-4h-5v4zm12 2h-12v1h12v-1zm0-3h-5v1h5v-1zm0-3h-5v1h5v-1z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-xl tracking-tight font-bold text-gray-700">
+                  Reports
+                </div>
+                <div className="text-2xs tracking-tight">
+                  Upload csv client reports.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
