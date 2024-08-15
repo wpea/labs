@@ -42,7 +42,7 @@ const Transactions = () => {
   const approveTransaction = async (transactionId) => {
     try {
       const res = await axios.post(
-        `https://client.wealthparadigm.org/api/labs/clubs/transaction/approve/${transactionId}`,
+        `${process.env.NEXT_PUBLIC_HOSTNAME}/labs/clubs/transaction/approve/${transactionId}`,
         {},
         {
           headers: {

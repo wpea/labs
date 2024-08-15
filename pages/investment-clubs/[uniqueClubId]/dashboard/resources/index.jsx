@@ -82,7 +82,7 @@ const Index = () => {
     console.log(values);
     try {
       const res = await axios.post(
-        "https://client.wealthparadigm.org/api/club/resources",
+        `${process.env.NEXT_PUBLIC_HOSTNAME}/club/resources`,
         values,
         {
           headers: {

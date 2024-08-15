@@ -23,7 +23,7 @@ const Index = () => {
   const createClub = async () => {
     try {
       const response = await axios.post(
-        "https://client.wealthparadigm.org/api/labs/clubs/create",
+        `${process.env.NEXT_PUBLIC_HOSTNAME}/labs/clubs/create`,
         {
           name: formData.clubName,
           risk_profile: formData.riskProfile,

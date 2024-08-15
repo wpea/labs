@@ -58,7 +58,7 @@ const Index = () => {
 
     try {
       const response = await axios.post(
-        `https://client.wealthparadigm.org/api/labs/clubs/details/${uniqueClubId}`,
+        `${process.env.NEXT_PUBLIC_HOSTNAME}/labs/clubs/details/${uniqueClubId}`,
         {
           headers: {
             Authorization: `Bearer ${getToken()}`,

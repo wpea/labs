@@ -14,7 +14,7 @@ const Index = () => {
   const getClubs = async () => {
     try {
       const res = await axios.get(
-        "https://client.wealthparadigm.org/api/labs/clubs",
+        `${process.env.NEXT_PUBLIC_HOSTNAME}/labs/clubs`,
         {
           headers: {
             Authorization: `Bearer ${getToken()}`,

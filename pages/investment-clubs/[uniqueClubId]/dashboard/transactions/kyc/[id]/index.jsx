@@ -14,7 +14,7 @@ const KYC = () => {
     const getKYC = async () => {
       try {
         const res = await axios.get(
-          `https://client.wealthparadigm.org/api/labs/clubs/kyc/${2}`,
+          `${process.env.NEXT_PUBLIC_HOSTNAME}/labs/clubs/kyc/${2}`,
           {
             headers: {
               Authorization: `Bearer ${getToken()}`,

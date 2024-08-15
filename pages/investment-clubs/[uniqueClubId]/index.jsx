@@ -92,7 +92,7 @@ const Overview = () => {
   const approveMember = async (memberId) => {
     try {
       const res = await axios.post(
-        `https://client.wealthparadigm.org/api/labs/clubs/member/approve/${memberId}`,
+        `${process.env.NEXT_PUBLIC_HOSTNAME}/labs/clubs/member/approve/${memberId}`,
         {},
         {
           headers: {
@@ -116,7 +116,6 @@ const Overview = () => {
 
   return (
     <DashboardLayout clubName={overviewDetails.club}>
-      <p>ID: {uniqueClubId}</p>
       <h1 className="text-[#2D2D2D] text-2xl font-semibold mb-8">Overview</h1>
       <div className="flex items-center justify-between">
         <div className="bg-[#2D2D2D] p-5 flex  flex-col gap-y-11 rounded-lg w-[207px] h-full">
