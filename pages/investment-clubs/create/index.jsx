@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AppLayout from "../../../components/Layouts/AppLayout";
-import Layout from "../../../components/investment-club/layout";
+// import Layout from "../../../components/investment-club/layout";
 import axios from "axios";
 import { getToken } from "../../../lib/hooks/useAuth2";
 import toast, { Toaster } from "react-hot-toast";

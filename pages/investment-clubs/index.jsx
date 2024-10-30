@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import AppLayout from "../../components/Layouts/AppLayout";
 import Header from "../../components/header";
-import Layout from "../../components/investment-club/layout";
+// import Layout from "../../components/investment-club/layout";
 import Link from "next/link";
 import axios from "axios";
 import { getToken } from "../../lib/hooks/useAuth2";
