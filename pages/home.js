@@ -19,7 +19,7 @@ export default function HomeCards() {
       </Head>
 
       <div className="w-full grid">
-        <div className="md:px-20 p-10 space-y-10 grid">
+        <div className="lg:px-20 px-10 p-10 space-y-10 grid">
           <Header />
 
           <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-8">
