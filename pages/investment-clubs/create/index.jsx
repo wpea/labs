@@ -55,7 +55,7 @@ const Index = () => {
 
   return (
     <AppLayout>
-      <Layout>
+      {/* <Layout> */}
         <div className="h-96 w-1/3 flex flex-col">
           <button className="w-8 h-8 mb-14">
             <svg
@@ -192,7 +192,7 @@ const Index = () => {
             </button>
           </form>
         </div>
-      </Layout>
+      {/* </Layout> */}
     </AppLayout>
   );
 };

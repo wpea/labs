@@ -66,7 +66,7 @@ const Index = () => {
             Create an investment club.
           </div>
         </div> */}
-        <Layout>
+        {/* <Layout> */}
           {clubs.map((club) => (
             <InvestmentClub
               key={club.id}
@@ -75,7 +75,7 @@ const Index = () => {
               unitCap={club.unit_cap}
             />
           ))}
-        </Layout>
+        {/* </Layout> */}
 
         {/* </Layout> */}
       </div>
