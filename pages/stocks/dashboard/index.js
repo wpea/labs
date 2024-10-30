@@ -66,7 +66,7 @@ export default function Dashboard() {
       </div>
 
       {accounts.length > 0 ? (
-        <div className="p-10 md:px-20 space-y-10">
+        <div className="p-10 lg:px-20 space-y-10">
           <div className="flex items-center justify-between">
             <div className="text-xl font-bold tracking-normal">
               Stock accounts

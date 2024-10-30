@@ -247,11 +247,11 @@ export default function Stocks() {
         </Head>
 
         <div className="w-full grid">
-          <div className="md:px-20 p-10 space-y-10 grid">
+          <div className="lg:px-20 p-10 space-y-10 grid">
             <Header />
 
-            <div className="flex items-center justify-between border-t pt-10">
-              <div className="flex items-center">
+            <div className="md:flex items-center justify-between border-t pt-10 space-y-10 md:space-y-0">
+              <div className="md:flex items-center space-y-6 md:space-y-0">
                 <button
                   onClick={toggleAdd}
                   className="focus:ring-none inline-flex w-full justify-center rounded-md border border-transparent bg-cyan-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-cyan-700 focus:outline-none focus:ring-0 sm:ml-3 sm:w-auto sm:text-sm"
@@ -276,7 +276,7 @@ export default function Stocks() {
                 {loading && <Spin />}
               </div>
 
-              <div>
+              <div className="flex md:block items-center justify-between">
                 <div className="text-xs uppercase text-gray-400">
                   All Stocks
                 </div>
@@ -287,7 +287,7 @@ export default function Stocks() {
             </div>
 
             <div className="border-t pt-10">
-              <div className="grid grid-cols-5 gap-4">
+              <div className="grid lg:grid-cols-5 md:grid-cols-2 gap-4">
                 {stocks?.length > 0 ? (
                   stocks.map((s) => (
                     <div
@@ -344,7 +344,7 @@ export default function Stocks() {
             </div>
 
             {purchased.length > 0 ? (
-              <div className="border">
+              <div className="border lg:block hidden">
                 <div className="grid grid-cols-12 gap-3 px-2 overflow-x-auto w-full border-b bg-gray-100 text-gray-500">
                   {/* <!-- Head --> */}
                   <Th

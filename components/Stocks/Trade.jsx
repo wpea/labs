@@ -7,7 +7,8 @@ import { config } from "../../lib/adapter";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { bambooLive, apiAddress } from "../../lib/api";
-import _ from "lodash";
+import _, { set } from "lodash";
+import Spinner from './../spinner';
 
 export default function Deposit({ showDep, toggleAdd }) {
   const [query, setQuery] = useState("");
@@ -30,7 +31,7 @@ export default function Deposit({ showDep, toggleAdd }) {
   const [toggle, setToggle] = useState(true);
 
   useEffect(() => {
-    getStocks();
+    // getStocks();
     /** */
     getSubAccounts();
     /** */
@@ -148,6 +149,32 @@ export default function Deposit({ showDep, toggleAdd }) {
       data: data,
     };
   };
+
+  const [searchStockLoading, setSearchStockLoading] = useState(false);
+
+  const handleStockQuery = (e) => {
+    setSearchStockLoading(true);
+
+    setTimeout(() => {
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      axios(config3(`post`, `${apiAddress}/stock/search`, {'jwt': user.jwt, 'symbol': e.target.value}))
+      .then(function (response) {
+        if (response.data.status === 200) {
+          setStocks(response.data.data);
+          setQuery(e.target.value);
+          setSearchStockLoading(false);
+          console.log(response.data.data)
+        } else {
+          setSearchStockLoading(false);
+        }
+      })
+      .catch(function (error) {
+          console.log(error);
+          setSearchStockLoading(false);
+        });
+    }, 1000);
+  }
 
   /**
    * GET STOCKS
@@ -306,7 +333,7 @@ export default function Deposit({ showDep, toggleAdd }) {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel
-                className={`md:w-1/4 mx-10 md:mx-0WS flex flex-col justify-between transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all`}
+                className={`lg:w-1/4 md:w-1/2 w-full mx-10 md:mx-0 flex flex-col justify-between transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all`}
               >
                 <div className="space-y-6">
                   <div className="grid grid-cols-2">
@@ -336,10 +363,10 @@ export default function Deposit({ showDep, toggleAdd }) {
                   <div className="px-6 space-y-6">
                     <div className="mt-3 flex justify-between text-center sm:mt-1 sm:text-left">
                       <h3
-                        className="text-sm font-bold capitalize leading-6 text-gray-900"
+                        className="text-sm font-bold leading-6 text-gray-900"
                         id="modal-title"
                       >
-                        Select a stock
+                        Search for a stock
                       </h3>
                       <svg
                         onClick={toggleAdd}
@@ -383,11 +410,12 @@ export default function Deposit({ showDep, toggleAdd }) {
                             <div className="flex w-full items-center justify-between space-x-3">
                               <input
                                 type="text"
-                                onChange={(e) => setQuery(e.target.value)}
+                                onChange={handleStockQuery}
                                 placeholder="SYMBOL (ex. TSLA)"
                                 className="text-md w-full bg-transparent ring-0 outline-none ring-0 border-none focus:outline-none focus:ring-0 placeholder:text-gray-300"
                               />
                             </div>
+                            {searchStockLoading && <Spin w={20} h={20} />}
                           </div>
                         </div>
 

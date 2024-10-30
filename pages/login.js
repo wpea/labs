@@ -89,7 +89,7 @@ export default function Login() {
       >
         <form
           onSubmit={handleSubmit}
-          className="bg-gray-50 shadow-lg border lg:w-1/4 border-gray-200 rounded-md p-8 space-y-6 grid"
+          className="bg-gray-50 shadow-lg border lg:w-1/3 border-gray-200 rounded-md p-8 space-y-6 grid"
         >
           <div className="flex justify-between items-center">
             <img
@@ -124,7 +124,7 @@ export default function Login() {
 
           <div className="space-y-2.5">
             <div className="tracking-tight font-medium">
-              Email <span className="text-red-600">*</span>
+              Emails <span className="text-red-600">*</span>
             </div>
             <input
               type="email"

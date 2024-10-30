@@ -22,7 +22,7 @@ export default function HomeCards() {
         <div className="md:px-20 p-10 space-y-10 grid">
           <Header />
 
-          <div className="grid grid-cols-4 gap-8">
+          <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-8">
             <div
               onClick={() => {
                 router.push("/projects");

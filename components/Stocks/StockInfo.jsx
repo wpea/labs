@@ -22,7 +22,7 @@ export default function StockInfo({
       }
       className="cursor-pointer border-t bg-gray-50 py-6 hover:bg-gray-100"
     >
-      <div className="ml-20 grid grid-cols-8">
+      <div className="lg:ml-20 ml-10 grid lg:grid-cols-8 md:grid-cols-4 grid-cols-2 md:gap-10 gap-5 lg:gap-0">
         <div
           className={`grid h-16 w-16 place-items-center self-center rounded-full bg-gray-200 p-2`}
         >
@@ -49,14 +49,14 @@ export default function StockInfo({
           <div className="self-center font-ibm text-xl">{equity}</div>
         </div>
 
-        <div className="self-center">
+        <div className="self-center pt-10 lg:pt-0">
           <div className="text-[10px] uppercase tracking-widest text-gray-500">
             market price
           </div>
           <div className="self-center font-ibm text-xl">${price}</div>
         </div>
 
-        <div className="self-center">
+        <div className="self-center pt-10 lg:pt-0">
           <div className="text-[10px] uppercase tracking-widest text-gray-500">
             change
           </div>
@@ -69,7 +69,7 @@ export default function StockInfo({
           </div>
         </div>
 
-        <div className="self-center">
+        <div className="self-center pt-10 lg:pt-0">
           <div className="text-[10px] uppercase tracking-widest text-gray-500">
             value change ($)
           </div>
@@ -82,7 +82,7 @@ export default function StockInfo({
           </div>
         </div>
 
-        <div className="self-center">
+        <div className="self-center pt-10 lg:pt-0">
           <div className="text-[10px] uppercase tracking-widest text-gray-500">
             total return ($)
           </div>

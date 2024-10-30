@@ -4,7 +4,7 @@ export default function PendingOrder({key, name, symbol, fee, status, side, pric
         key={key}
         className="cursor-pointer border-t bg-gray-50 py-6 hover:bg-gray-100"
       >
-        <div className="ml-20 grid grid-cols-8">
+        <div className="lg:ml-20 ml-10 grid lg:grid-cols-8 md:grid-cols-4 grid-cols-2 md:gap-10 gap-5 lg:gap-0">
           <div
             className={`grid h-16 w-16 place-items-center self-center rounded-full bg-gray-200 p-2`}
           >
