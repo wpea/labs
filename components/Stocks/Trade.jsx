@@ -18,6 +18,10 @@ export default function Deposit({ showDep, toggleAdd }) {
   const [selected, setSelected] = useState({});
   const [symbol, setSymbol] = useState("");
   const [s_amount, setAmount] = useState(0);
+  const [qty, setQty] = useState("");
+  const [orderType, setOrderType] = useState("MARKET");
+  const [limitPrice, setLimitPrice] = useState("");
+  const [extendedHours, setExtendedHours] = useState(false);
   const [calcData, setCalcData] = useState({});
   const [stopPrice, setStopPrice] = useState(0);
   const [error, setError] = useState(false);
@@ -41,8 +45,29 @@ export default function Deposit({ showDep, toggleAdd }) {
     getStockPrice(selStock.symbol)
   }, [selStock]);
 
+  const getUser = () => {
+    const raw = localStorage.getItem("user");
+    if (!raw) return null;
+    try {
+      const u = JSON.parse(raw);
+      return u?.jwt ? u : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const requireUser = () => {
+    const u = getUser();
+    if (!u) {
+      toast.error("Session not ready. Open the account from the dashboard first.");
+      return null;
+    }
+    return u;
+  };
+
   const getStockPrice = async (symb) => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = getUser();
+    if (!user) return;
     try {
       // Check if symbol, before making the request to check the price
           if (symb) {
@@ -153,11 +178,11 @@ export default function Deposit({ showDep, toggleAdd }) {
   const [searchStockLoading, setSearchStockLoading] = useState(false);
 
   const handleStockQuery = (e) => {
+    const user = requireUser();
+    if (!user) return;
     setSearchStockLoading(true);
 
     setTimeout(() => {
-      const user = JSON.parse(localStorage.getItem("user"));
-
       axios(config3(`post`, `${apiAddress}/stock/search`, {'jwt': user.jwt, 'symbol': e.target.value}))
       .then(function (response) {
         if (response.data.status === 200) {
@@ -180,8 +205,8 @@ export default function Deposit({ showDep, toggleAdd }) {
    * GET STOCKS
    */
   const getStocks = async () => {
-    // setLoading(true);
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = getUser();
+    if (!user) return;
 
     /**
      * GET STOCKS
@@ -202,38 +227,74 @@ export default function Deposit({ showDep, toggleAdd }) {
    *
    */
   const calculateOrder = async () => {
+    setError(false);
     if (Object.keys(selected).length === 0) return setError(true);
-    if (s_amount === 0 && stopPrice === 0) return setError(true);
 
-    setLoading(false);
+    const priceNum = parseFloat(currentStockData.price) || 0;
+    const qtyNum = parseFloat(qty) || 0;
+    const amountNum = parseFloat(s_amount) || 0;
+    const limitPriceNum = parseFloat(limitPrice) || 0;
 
-    const user = JSON.parse(localStorage.getItem("user"));
+    let data;
 
-    const data = {
-      symbol: selected.symbol,
-      side: "BUY",
-      price: JSON.parse(currentStockData.price),
-      order_type: "MARKET",
-      amount: JSON.parse(s_amount),
-      jwt: user.jwt,
-    };
+    if (orderType === "LIMIT") {
+      if (qtyNum <= 0 || limitPriceNum <= 0) return setError(true);
+      if (extendedHours && !Number.isInteger(qtyNum)) {
+        toast.error("Extended hours requires whole-unit quantities (no fractional shares).");
+        return;
+      }
+
+      const user = requireUser();
+      if (!user) return;
+      setLoading(true);
+
+      data = {
+        symbol: selected.symbol,
+        side: toggle ? "BUY" : "SELL",
+        order_type: "LIMIT",
+        price_per_share: priceNum,
+        price: limitPriceNum,
+        quantity: qtyNum,
+        jwt: user.jwt,
+      };
+    } else {
+      const finalAmount = qtyNum > 0 ? qtyNum * priceNum : amountNum;
+      if (finalAmount <= 0) return setError(true);
+
+      const user = requireUser();
+      if (!user) return;
+      setLoading(true);
+
+      data = {
+        symbol: selected.symbol,
+        side: toggle ? "BUY" : "SELL",
+        price: priceNum,
+        order_type: "MARKET",
+        amount: finalAmount,
+        jwt: user.jwt,
+      };
+    }
 
     axios(config3(`post`, `${apiAddress}/stock/calculate/order`, data))
       .then(function (response) {
         if (response.data.status === 200) {
           setCalcData(response.data.data);
           setCompleteButton(true);
-          setLoading(false);
+        } else {
+          toast.error(response.data.message ?? "Calculation failed.");
         }
+        setLoading(false);
       })
       .catch(function (error) {
+        toast.error("Calculation failed. Please try again.");
         setLoading(false);
       });
   };
 
   const completeOrder = async () => {
+    const user = requireUser();
+    if (!user) return;
     setLoadingC(true);
-    const user = JSON.parse(localStorage.getItem("user"));
 
     const data = {
       total_price: calcData.total_price,
@@ -241,9 +302,11 @@ export default function Deposit({ showDep, toggleAdd }) {
       side: toggle ? "BUY" : "SELL",
       quantity: calcData.quantity,
       order_price: calcData.order_price,
-      order_type: "MARKET",
+      order_type: orderType,
       price_per_share: calcData.price_per_share,
+      ...(orderType === "LIMIT" && { price: parseFloat(limitPrice) || 0 }),
       fee: calcData.fee,
+      extended_hours_order: extendedHours,
       jwt: user.jwt,
       data: allocData,
     };
@@ -523,48 +586,171 @@ export default function Deposit({ showDep, toggleAdd }) {
                       </div>
                     )}
 
-                    <div className="space-y-2">
-                      <div className="text-xs">Price</div>
-                      <CurrencyInput
-                        name="stopPrice"
-                        // defaultValue={amount}
-                        placeholder="$"
-                        decimalsLimit={2}
-                        onValueChange={(value, name) => setStopPrice(value)}
-                        required
-                        value={currentStockData?.price}
-                        className="mt-1 uppercase block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
-                      />
-                      <div className="flex items-center justify-between">
-                        {currentStockData?.symbol?.length > 0 && (
-                          <div className="text-2xs">
-                            Current {currentStockData?.symbol} price &rarr;{" "}
-                            <span className="font-bold">
-                              {currentStockData?.price}
-                            </span>
-                          </div>
-                        )}
-
-                        {loadingCurrentStock && (
-                          <div>
-                            <Spin w={14} h={14} />
-                          </div>
-                        )}
+                    <div className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2">
+                      <div className="text-xs text-gray-500">
+                        {currentStockData?.symbol
+                          ? `${currentStockData.symbol} market price`
+                          : "Market price"}
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="font-ibm text-sm font-bold">
+                          {currentStockData?.price
+                            ? `$${parseFloat(currentStockData.price).toFixed(2)}`
+                            : "—"}
+                        </div>
+                        {loadingCurrentStock && <Spin w={14} h={14} />}
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <div className="text-xs">Amount</div>
-                      <CurrencyInput
-                        name="s_amount"
-                        // defaultValue={amount}
-                        placeholder="$"
-                        decimalsLimit={2}
-                        onValueChange={(value, name) => setAmount(value)}
-                        required
-                        className="mt-1 uppercase block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
-                      />
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs">Amount</div>
+                          {parseFloat(qty) > 0 && (
+                            <div className="text-2xs text-gray-400">
+                              Overridden
+                            </div>
+                          )}
+                        </div>
+                        <CurrencyInput
+                          name="s_amount"
+                          placeholder="$"
+                          decimalsLimit={2}
+                          onValueChange={(value, name) => setAmount(value)}
+                          disabled={parseFloat(qty) > 0}
+                          className="mt-1 uppercase block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm disabled:bg-gray-100"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="text-xs">Qty (shares)</div>
+                        <input
+                          type="number"
+                          min="0"
+                          step="any"
+                          value={qty}
+                          onChange={(e) => setQty(e.target.value)}
+                          placeholder="e.g. 5"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
+                        />
+                      </div>
                     </div>
+
+                    {qty && parseFloat(qty) > 0 && currentStockData?.price > 0 && (
+                      <div className="-mt-1 text-2xs text-gray-500">
+                        ≈ ${(parseFloat(qty) * parseFloat(currentStockData.price)).toFixed(2)} at current price
+                      </div>
+                    )}
+
+                    <div className="space-y-2 pt-2 border-t">
+                      <div className="text-xs font-medium">Order type</div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOrderType("MARKET");
+                            setExtendedHours(false);
+                            setCalcData({});
+                            setCompleteButton(false);
+                          }}
+                          className={`${
+                            orderType === "MARKET"
+                              ? "bg-[#2D7EC2] text-white border-[#2D7EC2]"
+                              : "bg-white text-gray-700 border-gray-300"
+                          } rounded-md border px-3 py-1.5 text-xs font-medium`}
+                        >
+                          Market
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOrderType("LIMIT");
+                            setCalcData({});
+                            setCompleteButton(false);
+                          }}
+                          className={`${
+                            orderType === "LIMIT"
+                              ? "bg-[#2D7EC2] text-white border-[#2D7EC2]"
+                              : "bg-white text-gray-700 border-gray-300"
+                          } rounded-md border px-3 py-1.5 text-xs font-medium`}
+                        >
+                          Limit
+                        </button>
+                      </div>
+                    </div>
+
+                    {orderType === "LIMIT" && (
+                      <div className="space-y-2">
+                        <div className="text-xs">Limit price</div>
+                        <CurrencyInput
+                          name="limitPrice"
+                          placeholder="$"
+                          decimalsLimit={2}
+                          value={limitPrice}
+                          onValueChange={(value) => setLimitPrice(value ?? "")}
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
+                        />
+                        <div className="text-2xs text-gray-500 leading-snug">
+                          Order executes only when the market reaches this
+                          price. Limit orders are <b>Good Till Cancelled</b>{" "}
+                          (default 90 days).
+                        </div>
+                      </div>
+                    )}
+
+                    {orderType === "LIMIT" && (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-1.5">
+                            <div className="text-xs font-medium">
+                              Extended hours
+                            </div>
+                            <div className="relative group">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                className="w-4 h-4 text-gray-400 cursor-help"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              <div className="pointer-events-none absolute bottom-full left-0 z-10 mb-2 w-64 rounded-md bg-gray-900 px-3 py-2 text-2xs text-white leading-snug opacity-0 transition-opacity group-hover:opacity-100 shadow-lg">
+                                Bamboo only supports extended-hours trading on{" "}
+                                <b>LIMIT orders</b> with <b>whole-unit</b>{" "}
+                                (non-fractional) quantities. Market and stop
+                                orders, and fractional shares, aren&apos;t
+                                allowed outside regular hours.
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setExtendedHours(!extendedHours)}
+                            className={`${
+                              extendedHours ? "bg-[#2D7EC2]" : "bg-gray-300"
+                            } relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none`}
+                            aria-pressed={extendedHours}
+                          >
+                            <span
+                              className={`${
+                                extendedHours
+                                  ? "translate-x-5"
+                                  : "translate-x-1"
+                              } inline-block h-3 w-3 transform rounded-full bg-white transition-transform`}
+                            />
+                          </button>
+                        </div>
+                        <div className="text-2xs text-gray-500 leading-snug">
+                          Trade during pre-market (9:00 AM–2:30 PM WAT) or
+                          post-market (9:00 PM–1:00 AM WAT). Add 1 hour during
+                          US winter (Nov–Mar).
+                        </div>
+                      </div>
+                    )}
 
                     {/**
                      * Allocate
