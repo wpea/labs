@@ -208,92 +208,174 @@ export default function Trade({
     }
   }
   const expired = quote && quote.expires_at * 1000 <= now;
-  const field = "block w-full rounded border-gray-300 mt-1 p-2";
+  const field =
+    "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm disabled:bg-gray-100";
   return (
     <ActionDialog
-      title="Trade stocks"
+      title="Search for a stock"
       open={showDep}
       onClose={toggleAdd}
       busy={busy}
+      tabs={
+        <div className="grid grid-cols-2">
+          {["BUY", "SELL"].map((value) => (
+            <button
+              type="button"
+              key={value}
+              disabled={busy}
+              onClick={() => setSide(value)}
+              aria-pressed={side === value}
+              className={`${side !== value ? "opacity-20" : ""} ${
+                value === "BUY"
+                  ? "bg-blue-50 border-[#2D7EC2] text-[#2D7EC2]"
+                  : "bg-red-50 border-red-600 text-red-600"
+              } border-b-2 py-6 text-xl font-semibold`}
+            >
+              {value === "BUY" ? "Buy" : "Sell"}
+            </button>
+          ))}
+        </div>
+      }
     >
-      <form onSubmit={calculate} className="space-y-5">
-        <fieldset disabled={busy} className="space-y-5">
-          <div className="flex gap-2">
-            {["BUY", "SELL"].map((value) => (
-              <button
-                type="button"
-                key={value}
-                onClick={() => setSide(value)}
-                aria-pressed={side === value}
-                className={`btn flex-1 ${
-                  side === value ? "bg-wp-blue border-none" : "btn-outline"
-                }`}
-              >
-                {value}
-              </button>
-            ))}
-          </div>
-          {selected ? (
-            <div className="flex justify-between p-4 bg-gray-50 rounded">
-              <span>
-                {selected.name} · {selected.symbol}
-                <span className="block text-sm">
-                  {details
-                    ? `Market price: $${details.price}`
-                    : "Loading price…"}
-                </span>
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelected(null);
-                  setQuery("");
-                }}
-              >
-                Change
-              </button>
+      <form onSubmit={calculate} className="space-y-6">
+        <fieldset disabled={busy} className="space-y-6">
+          <div>
+            <div
+              className={`${
+                !selected && query ? "rounded-t-lg" : "rounded-lg"
+              } border border-gray-300 px-3`}
+            >
+              <div className="flex items-center space-x-3">
+                <svg
+                  className="w-6 h-6 flex-shrink-0 text-wp-blue"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M17 17L22 22M19.5 10.75C19.5 15.5825 15.5825 19.5 10.75 19.5C5.91751 19.5 2 15.5825 2 10.75C2 5.91751 5.91751 2 10.75 2C15.5825 2 19.5 5.91751 19.5 10.75Z"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                {selected ? (
+                  <div className="flex w-full items-center justify-between space-x-3 py-2">
+                    <div className="flex items-center space-x-3">
+                      <div
+                        className="bg-contain bg-center bg-no-repeat bg-gray-200 rounded p-4"
+                        style={{ backgroundImage: `url(${selected.logo})` }}
+                      />
+                      <span className="text-xs">
+                        {selected.name} ({selected.symbol})
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      aria-label="Change stock"
+                      className="text-red-400"
+                      onClick={() => {
+                        setSelected(null);
+                        setQuery("");
+                      }}
+                    >
+                      <svg
+                        className="w-6 h-6"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        aria-hidden="true"
+                      >
+                        <path d="M16 8L8 16M8 8L16 16" />
+                        <circle cx="12" cy="12" r="10" />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <input
+                    aria-label="Search for a stock"
+                    className="text-md w-full bg-transparent border-none focus:outline-none focus:ring-0 placeholder:text-gray-300"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="SYMBOL (ex. TSLA)"
+                  />
+                )}
+              </div>
             </div>
-          ) : (
-            <label className="block text-sm">
-              Find a stock
-              <input
-                className={field}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Company name or symbol"
-              />
-              {searching && <span>Searching…</span>}
-              <div className="max-h-48 overflow-auto">
+            {!selected && query && (
+              <div className="border-gray-300 max-h-48 overflow-auto rounded-b-xl border-b border-r border-l">
+                {searching && (
+                  <p role="status" className="p-4 text-xs text-gray-500">
+                    Searching…
+                  </p>
+                )}
+                {!searching && query.trim().length >= 2 && !matches.length && (
+                  <p className="p-4 text-xs text-gray-500">No stocks found.</p>
+                )}
                 {matches.map((stock) => (
                   <button
                     type="button"
                     key={stock.symbol}
-                    className="block text-left w-full p-3 border-b"
+                    className="flex w-full text-left items-center justify-between space-x-3 p-4 hover:bg-gray-50"
                     onClick={() => setSelected(stock)}
                   >
-                    {stock.name} · {stock.symbol}
+                    <span className="flex items-center space-x-3">
+                      <span
+                        className="bg-contain bg-center bg-no-repeat p-4 bg-gray-200 rounded"
+                        style={{ backgroundImage: `url(${stock.logo})` }}
+                      />
+                      <span className="text-xs">
+                        {stock.name} ({stock.symbol})
+                      </span>
+                    </span>
+                    <span
+                      className="h-6 w-6 flex-shrink-0 rounded-full border border-gray-300 bg-gray-100"
+                      aria-hidden="true"
+                    />
                   </button>
                 ))}
               </div>
-            </label>
-          )}
-          <label className="block text-sm">
-            Order type
-            <select
-              className={field}
-              value={type}
-              onChange={(e) => {
-                setType(e.target.value);
-                if (e.target.value === "STOP") setExtended(false);
-              }}
-            >
-              {["MARKET", "LIMIT", "STOP"].map((t) => (
-                <option key={t}>{t}</option>
+            )}
+          </div>
+          <div className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2">
+            <div className="text-xs text-gray-500">
+              {selected ? `${selected.symbol} market price` : "Market price"}
+            </div>
+            <div className="font-ibm text-sm font-bold">
+              {details?.price != null
+                ? `$${Number(details.price).toFixed(2)}`
+                : selected
+                ? "Loading…"
+                : "—"}
+            </div>
+          </div>
+          <div className="space-y-2 pt-2 border-t">
+            <div className="text-xs font-medium">Order type</div>
+            <div className="grid grid-cols-3 gap-2">
+              {["MARKET", "LIMIT", "STOP"].map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={type === value}
+                  onClick={() => {
+                    setType(value);
+                    if (value === "STOP") setExtended(false);
+                  }}
+                  className={`${
+                    type === value
+                      ? "bg-[#2D7EC2] text-white border-[#2D7EC2]"
+                      : "bg-white text-gray-700 border-gray-300"
+                  } rounded-md border px-3 py-1.5 text-xs font-medium capitalize`}
+                >
+                  {value.toLowerCase()}
+                </button>
               ))}
-            </select>
-          </label>
+            </div>
+          </div>
           {type === "MARKET" ? (
-            <label className="block text-sm">
+            <label className="block text-xs space-y-2">
               Amount (USD)
               <input
                 required
@@ -307,7 +389,7 @@ export default function Trade({
             </label>
           ) : (
             <div className="grid grid-cols-2 gap-4">
-              <label className="text-sm">
+              <label className="text-xs">
                 Quantity
                 <input
                   required
@@ -319,7 +401,7 @@ export default function Trade({
                   onChange={(e) => setQuantity(e.target.value)}
                 />
               </label>
-              <label className="text-sm">
+              <label className="text-xs">
                 {type === "STOP" ? "Stop" : "Limit"} price (USD)
                 <input
                   required
@@ -331,7 +413,7 @@ export default function Trade({
                   onChange={(e) => setPrice(e.target.value)}
                 />
               </label>
-              <label className="text-sm col-span-2">
+              <label className="text-xs col-span-2">
                 Expiry (optional)
                 <input
                   type="date"
@@ -343,7 +425,7 @@ export default function Trade({
             </div>
           )}
           {side === "SELL" && (
-            <label className="flex gap-2 text-sm">
+            <label className="flex gap-2 text-xs">
               <input
                 type="checkbox"
                 checked={sellAll}
@@ -353,7 +435,7 @@ export default function Trade({
             </label>
           )}
           {type !== "STOP" && (
-            <div className="text-sm">
+            <div className="text-xs">
               {enabled ? (
                 <label className="flex gap-2">
                   <input
@@ -378,7 +460,7 @@ export default function Trade({
           )}
           {side === "BUY" && subAccounts.length > 0 && (
             <details>
-              <summary className="cursor-pointer text-sm">
+              <summary className="cursor-pointer text-xs font-bold text-wp-blue">
                 Allocate this purchase (optional)
               </summary>
               <div className="space-y-2 mt-3">
@@ -416,12 +498,26 @@ export default function Trade({
           </p>
         )}
         {quote && (
-          <div className="p-4 bg-blue-50 rounded text-sm space-y-1">
-            <p>Shares: {quote.quantity}</p>
-            <p>Order value: ${quote.order_price}</p>
-            <p>Fee: ${quote.fee}</p>
-            <p>Total: ${quote.total_price}</p>
-            <p>
+          <div className="space-y-3">
+            <dl className="grid grid-cols-3 gap-3 text-2xs">
+              <div>
+                <dt className="font-semibold uppercase">Fee</dt>
+                <dd>${quote.fee}</dd>
+              </div>
+              <div>
+                <dt className="font-semibold uppercase">Order price</dt>
+                <dd>${quote.order_price}</dd>
+              </div>
+              <div>
+                <dt className="font-semibold uppercase">Shares</dt>
+                <dd>{quote.quantity}</dd>
+              </div>
+              <div>
+                <dt className="font-semibold uppercase">Total</dt>
+                <dd>${quote.total_price}</dd>
+              </div>
+            </dl>
+            <p className="text-2xs text-gray-500">
               {expired
                 ? "Calculation expired. Calculate again."
                 : `Valid for ${Math.max(
@@ -431,21 +527,49 @@ export default function Trade({
             </p>
           </div>
         )}
-        <div className="flex gap-3">
+        <div className="flex justify-between gap-3 pt-6">
           <button
-            className="btn btn-outline flex-1"
+            className="btn flex w-36 justify-between border-none bg-gray-600 hover:bg-gray-700 capitalize"
             disabled={busy || !selected || !details}
             type="submit"
           >
             {busy ? "Working…" : "Calculate"}
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="1"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.871 4A17.926 17.926 0 003 12c0 2.874.673 5.59 1.871 8m14.13 0a17.926 17.926 0 001.87-8c0-2.874-.673-5.59-1.87-8M9 9h1.246a1 1 0 01.961.725l1.586 5.55a1 1 0 00.961.725H15m1-7h-.08a2 2 0 00-1.519.698L9.6 15.302A2 2 0 018.08 16H8"
+              />
+            </svg>
           </button>
           <button
-            className="btn bg-wp-blue border-none flex-1"
+            className="btn flex w-36 justify-between border-none bg-green-600 hover:bg-green-700 capitalize"
             type="button"
             onClick={place}
             disabled={busy || !quote || expired}
           >
-            Place order
+            Complete
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="1"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
           </button>
         </div>
       </form>

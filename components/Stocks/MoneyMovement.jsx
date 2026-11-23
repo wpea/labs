@@ -49,7 +49,7 @@ export default function MoneyMovement({
       toast.success(
         deposit
           ? "Deposit submitted for verification."
-          : "Withdrawal requested. Track it in transaction activity."
+          : "Withdrawal requested. Track it in Withdrawals."
       );
       onSuccess();
       toggleAdd();
@@ -70,12 +70,12 @@ export default function MoneyMovement({
   }
   return (
     <ActionDialog
-      title={deposit ? "Record received deposit" : "Withdraw funds"}
+      title={deposit ? "Record received deposit" : "Withdraw Funds"}
       open={showDep}
       onClose={toggleAdd}
       busy={busy}
     >
-      <form onSubmit={submit} className="space-y-5">
+      <form onSubmit={submit} className="space-y-6">
         <fieldset disabled={busy || unknown || rejected} className="space-y-4">
           {deposit && (
             <p className="text-sm text-gray-600">
@@ -84,11 +84,11 @@ export default function MoneyMovement({
               a payment.
             </p>
           )}
-          <label className="block text-sm">
+          <label className="block text-xs space-y-3">
             Amount
             <input
               required
-              className="block w-full mt-1 rounded border-gray-300"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
               type="number"
               min={deposit ? "0.01" : "1"}
               step={deposit ? "0.01" : "1"}
@@ -97,14 +97,12 @@ export default function MoneyMovement({
             />
           </label>
           {!deposit && (
-            <p className="text-xs text-gray-600">
-              Use whole currency units; decimals are not rounded or truncated.
-            </p>
+            <p className="text-xs text-gray-600">Enter a whole-unit amount.</p>
           )}
-          <label className="block text-sm">
+          <label className="block text-xs space-y-3">
             Currency
             <select
-              className="block w-full mt-1 rounded border-gray-300"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
             >
@@ -114,22 +112,22 @@ export default function MoneyMovement({
           </label>
           {deposit && (
             <>
-              <label className="block text-sm">
+              <label className="block text-xs space-y-3">
                 Payment reference
                 <input
                   required
-                  className="block w-full mt-1 rounded border-gray-300"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
                   value={reference}
                   onChange={(e) => setReference(e.target.value)}
                   pattern="[A-Za-z0-9_-]+"
                 />
               </label>
-              <label className="block text-sm">
+              <label className="block text-xs space-y-3">
                 Date received
                 <input
                   required
                   type="date"
-                  className="block w-full mt-1 rounded border-gray-300"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-0 sm:text-sm"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                 />
@@ -154,8 +152,8 @@ export default function MoneyMovement({
         )}
         {unknown && (
           <p className="text-sm">
-            Reference: {reference}. Check transaction activity before creating
-            another request.
+            Reference: {reference}. Check Withdrawals before creating another
+            request.
           </p>
         )}
         {rejected && (
@@ -172,14 +170,14 @@ export default function MoneyMovement({
           </button>
         )}
         <button
-          className="btn bg-wp-blue border-none w-full"
+          className="btn flex w-36 justify-between border-none bg-green-600 capitalize hover:bg-green-700"
           disabled={busy || unknown || rejected}
         >
           {busy
             ? "Submitting…"
             : deposit
             ? "Submit verified deposit"
-            : "Request withdrawal"}
+            : "Complete"}
         </button>
       </form>
     </ActionDialog>

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import AppLayout from "../../../../components/Layouts/AppLayout";
 import Trade from "../../../../components/Stocks/Trade";
-import Deposit from "../../../../components/Stocks/Deposit";
 import Withdraw from "../../../../components/Stocks/Withdraw";
 import StockInfo from "../../../../components/Stocks/StockInfo";
 import PendingOrder from "../../../../components/Stocks/PendingOrder";
@@ -37,7 +36,6 @@ function AccountView({ accountId }) {
     loadMore,
   } = useBambooAccount(accountId);
   const [activeTab, setActiveTab] = useState("stocks");
-  const [showDep, setShowDep] = useState(false);
   const [showTr, setShowTr] = useState(false);
   const [showWd, setShowWd] = useState(false);
   const ready = account?.bamboo_status === "active" && !loading;
@@ -53,36 +51,6 @@ function AccountView({ accountId }) {
   return (
     <AppLayout>
       <div className="grid w-full">
-        <div className="px-10 lg:px-20 py-4 flex flex-wrap items-center gap-4 border-b">
-          <span className="font-bold">
-            {account
-              ? `${account.firstname} ${account.surname}`
-              : "Stock account"}
-          </span>
-          <span className="text-xs uppercase">
-            {account?.bamboo_status || "Loading"}
-          </span>
-          <button
-            className="btn btn-sm"
-            disabled={loading || !accountId}
-            onClick={refresh}
-          >
-            {loading ? "Loading account…" : "Refresh"}
-          </button>
-          <button
-            className="btn btn-sm"
-            disabled={!ready}
-            onClick={() => setShowDep(true)}
-          >
-            Record deposit
-          </button>
-          <button
-            className="btn btn-sm"
-            onClick={() => setActiveTab("activity")}
-          >
-            Transaction activity
-          </button>
-        </div>
         {!accountId && (
           <p role="alert" className="p-10">
             Select an account from the accounts page.
@@ -105,19 +73,16 @@ function AccountView({ accountId }) {
         )}
         {account?.bamboo_status === "pending" && (
           <p className="px-10 py-4 bg-blue-50">
-            Brokerage activation is pending. Refresh to check its status.
+            Brokerage activation is pending.
+            <button
+              className="ml-2 underline"
+              disabled={loading}
+              onClick={refresh}
+            >
+              Check status
+            </button>
           </p>
         )}
-        {activeTab === "activity" && (
-          <Operations
-            accountId={accountId}
-            operations={operations}
-            onUpdated={refresh}
-            nextPage={operationNext}
-            loadMore={() => loadMore("operations")}
-          />
-        )}
-
         <div className="grid space-y-10">
           <div
             style={{
@@ -619,16 +584,35 @@ function AccountView({ accountId }) {
           </div>
         )}
 
+        {["orders", "withdrawals"].includes(activeTab) &&
+          operations.some((op) =>
+            activeTab === "orders"
+              ? op.kind === "order"
+              : op.kind === "withdrawal"
+          ) && (
+            <Operations
+              accountId={accountId}
+              operations={operations.filter((op) =>
+                activeTab === "orders"
+                  ? op.kind === "order"
+                  : op.kind === "withdrawal"
+              )}
+              onUpdated={refresh}
+              nextPage={operationNext}
+              loadMore={() => loadMore("operations")}
+            />
+          )}
+        {activeTab === "withdrawals" && withdrawalNext !== null && (
+          <button className="btn m-6" onClick={() => loadMore("withdrawals")}>
+            Load more withdrawals
+          </button>
+        )}
         <div className="text-xs py-20 lg:px-20 px-10">
           <div className="self-center flex items-center justify-between text-xs">
             <div>&copy; 2022 - {new Date().getFullYear()} WPEA Labs</div>
           </div>
         </div>
       </div>
-
-      {/* <>
-        {showDep && <Deposit accountId={accountId} showDep={showDep} toggleAdd={() => setShowDep(false)} onSuccess={refresh} />}
-      </> */}
 
       <>
         {showTr && (
@@ -652,11 +636,6 @@ function AccountView({ accountId }) {
           />
         )}
       </>
-      {activeTab === "withdrawals" && withdrawalNext !== null && (
-        <button className="btn m-6" onClick={() => loadMore("withdrawals")}>
-          Load more withdrawals
-        </button>
-      )}
     </AppLayout>
   );
 }
