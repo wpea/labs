@@ -41,6 +41,8 @@ function AccountView({ accountId }) {
   const [showTr, setShowTr] = useState(false);
   const [showWd, setShowWd] = useState(false);
   const ready = account?.bamboo_status === "active" && !loading;
+  const rounded = (value, digits = 2) =>
+    value == null ? "—" : Number(Number(value).toFixed(digits));
   const currVal = (value) =>
     value == null
       ? "—"
@@ -164,7 +166,7 @@ function AccountView({ accountId }) {
               <div className="grid grid-cols-2">
                 <div className="space-y-1 self-center">
                   <div className="text-4xl font-ibm">
-                    {currVal(portTwo?.total_aum ?? null)}
+                    {currVal(portTwo?.value ?? portOne?.value ?? null)}
                   </div>
                   <div className="text-2xs uppercase tracking-widest">
                     total Value
@@ -533,12 +535,12 @@ function AccountView({ accountId }) {
                 bg={s?.background_color}
                 name={s?.name}
                 symbol={s?.symbol}
-                perc_change={Math.ceil(s?.percent_change * 100) / 100}
-                price={Math.ceil(s?.price * 100) / 100}
-                quantity={Math.ceil(s?.quantity * 100) / 100}
-                total_return={Math.ceil(s?.total_return * 100) / 100}
-                value_change={Math.ceil(s?.value_change * 100) / 100}
-                equity={Math.ceil(s?.user_equity * 100) / 100}
+                perc_change={rounded(s?.percent_change)}
+                price={rounded(s?.price)}
+                quantity={rounded(s?.quantity, 8)}
+                total_return={rounded(s?.total_return)}
+                value_change={rounded(s?.value_change)}
+                equity={rounded(s?.user_equity)}
                 logo={s?.logo}
                 s_data={s}
               />
@@ -565,10 +567,10 @@ function AccountView({ accountId }) {
                   symbol={p?.symbol}
                   status={p?.status}
                   side={p?.side}
-                  fee={Math.ceil(p?.fee * 100) / 100}
-                  pps={Math.ceil(p?.price_per_share * 100) / 100}
-                  price={Math.ceil(p?.order_price * 100) / 100}
-                  quantity={Math.ceil(p?.quantity * 100) / 100}
+                  fee={rounded(p?.fee)}
+                  pps={rounded(p?.price_per_share)}
+                  price={rounded(p?.order_price)}
+                  quantity={rounded(p?.quantity, 8)}
                   logo={p?.logo}
                 />
               ))

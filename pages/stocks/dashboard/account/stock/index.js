@@ -175,7 +175,7 @@ export default function Stock() {
                       quantity
                     </div>
                     <div className="font-ibm text-2xl font-medium">
-                      {parseInt(data?.quantity).toFixed(3)}
+                      {data?.quantity == null ? "—" : Number(data.quantity).toLocaleString("en-US", { maximumFractionDigits: 8 })}
                     </div>
                   </div>
 
@@ -184,7 +184,7 @@ export default function Stock() {
                       equity value
                     </div>
                     <div className="font-ibm text-2xl font-medium">
-                      {parseInt(data?.user_equity).toFixed(3)}
+                      {data?.user_equity == null ? "—" : Number(data.user_equity).toFixed(2)}
                     </div>
                   </div>
 
