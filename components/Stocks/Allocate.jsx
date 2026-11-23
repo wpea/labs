@@ -1,12 +1,12 @@
 import { Fragment, useState, useEffect } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 import CurrencyInput from "react-currency-input-field";
-import { config } from "../../lib/adapter";
+
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import Spin from "../Misc/Spin";
 import { useRouter } from "next/router";
-import { apiAddress, bambooLive } from "../../lib/api";
+import { apiAddress } from "../../lib/api";
 
 export default function Allocate({ show, toggle, stockValues }) {
   const [subAccounts, setSubAccounts] = useState([]);

@@ -1,230 +1,121 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { apiAddress, bambooLive } from "../../../../lib/api";
-import Deposit from "../../../../components/Stocks/Deposit";
-import Spin from "./../../../../components/Misc/Spin";
+import { useState } from "react";
 import { useRouter } from "next/router";
-import Trade from "./../../../../components/Stocks/Trade";
+import AppLayout from "../../../../components/Layouts/AppLayout";
+import Trade from "../../../../components/Stocks/Trade";
+import Deposit from "../../../../components/Stocks/Deposit";
+import Withdraw from "../../../../components/Stocks/Withdraw";
 import StockInfo from "../../../../components/Stocks/StockInfo";
 import PendingOrder from "../../../../components/Stocks/PendingOrder";
-import Withdraw from "../../../../components/Stocks/Withdraw";
-import toast from "react-hot-toast";
-
-import AppLayout from './../../../../components/Layouts/AppLayout';
+import WithdrawalItem from "../../../../components/Stocks/WithdrawalItem";
+import Operations from "../../../../components/Stocks/Operations";
+import AccountLink from "../../../../components/Stocks/AccountLink";
+import useBambooAccount from "../../../../lib/hooks/useBambooAccount";
+import { readJson } from "../../../../lib/bamboo";
 
 export default function Account() {
-  const [account, setAccount] = useState({});
-  const [portOne, setPortOne] = useState({});
-  const [portTwo, setPortTwo] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [stocks, setStocks] = useState([]);
-  const [pendingOrders, setPendingOrders] = useState([]);
-
-  const [checkOrder, setCheckOrder] = useState(false);
-
   const router = useRouter();
-
+  const accountId = router.isReady
+    ? Number(router.query.account_id || readJson("account")?.id)
+    : null;
+  return <AccountView key={accountId || "none"} accountId={accountId} />;
+}
+function AccountView({ accountId }) {
+  const router = useRouter();
+  const {
+    account,
+    portfolio: portOne,
+    breakdown: portTwo,
+    stocks,
+    pendingOrders,
+    withdrawals,
+    operations,
+    withdrawalNext,
+    operationNext,
+    loading,
+    errors,
+    refresh,
+    loadMore,
+  } = useBambooAccount(accountId);
+  const [activeTab, setActiveTab] = useState("stocks");
   const [showDep, setShowDep] = useState(false);
   const [showTr, setShowTr] = useState(false);
   const [showWd, setShowWd] = useState(false);
-
-  const config = (method, url, auth) => {
-    return {
-      method: method,
-      url: url,
-      headers: {
-        "x-subject-type": "standard",
-        authorization: `Bearer ${auth}`,
-        "x-client-token": localStorage.getItem("x-client-token"),
-      },
-    };
-  };
-
-  const config2 = (method, url, jwt) => {
-    return {
-      method: method,
-      url: url,
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-      },
-      data: { jwt: jwt},
-    };
-  }
-
-  const currVal = (val) => {
-    // return formatValue({
-    //   value: `${val}`,
-    //   groupSeparator: ",",
-    //   decimalSeparator: ".",
-    //   prefix: "$",
-    // });
-
-    var formatter = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
-
-    return formatter.format(val);
-  };
-
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-  useEffect(async () => {
-    /**
-     *
-     * CALL TO GET THE JWT
-     *
-     */
-    const account = JSON.parse(localStorage.getItem("account"));
-    getJwt(account);
-    /** wait for 3 seconds, why? I don't know for sure yet! but its better so it
-     *  fail.
-     */
-    setLoading(true);
-    await sleep(3000);
-    getPortfolioBreakdown();
-    await sleep(3000);
-    getPortfolio();
-    await sleep(3000);
-    getAccountStocks();
-    getPendingOrders();
-    setLoading(false);
-  }, [showTr, showWd]);
-  // When trades and deposits are complete
-  // showTr, showDep;
-
-  /**
-   *
-   * GET AND STORE JWT TO LOCALSTORAGE
-   *
-   */
-  const getJwt = async (a) => {
-    const res = await axios.get(`${apiAddress}/user/jwt/${a.id}`, {
-      headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-      },
-    });
-
-    // console.log(res);
-    setAccount(res.data.user);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-    localStorage.setItem("x-client-token", res.data.admin);
-  };
-
-  /**
-   *
-   * GET USER ACCOUNT DETAILS (PORTFOLIO)
-   *
-   */
-  const getPortfolio = async () => {
-    setLoading(true);
-    const user = JSON.parse(localStorage.getItem("user"));
-    axios(config2(`post`, `${apiAddress}/stock/account/portfolio`, user.jwt))
-      .then(function (response) {
-        // return console.log(response.data.status);
-        if (response.data.status !== 200) {
-          toast.error(
-            response.data.message ?? "An error occured. Kindly refresh this page."
-          );
-          console.log(response);
-          return setLoading(false);
-        }
-        if (response.data.status === 200) {
-          console.log(response);
-          setPortOne(response.data.data);
-          setLoading(false);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        return setLoading(false);
-      });
-  };
-
-  const getPortfolioBreakdown = async () => {
-    setLoading(true);
-    const user = JSON.parse(localStorage.getItem("user"));
-    axios(config2(`post`, `${apiAddress}/stock/account/portfolio/breakdown`, user.jwt))
-      .then(function (response) {
-        if (response.data.status !== 200) {
-          toast.error(
-            response.data.message ??
-              "An error occured. Kindly refresh this page."
-          );
-          console.log(response);
-          return setLoading(false);
-        }
-        if (response.data.status === 200) {
-          console.log(response);
-          setPortTwo(response.data.data);
-          setLoading(false);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        return setLoading(false);
-      });
-  };
-
-  const getAccountStocks = async () => {
-    setLoading(true);
-    const user = JSON.parse(localStorage.getItem("user"));
-    axios(config2(`post`, `${apiAddress}/stock/account/stocks`, user.jwt))
-      .then(function (response) {
-        // return console.log(response.data.status);
-        if (response.data.status !== 200) {
-          toast.error(
-            response.data.message ??
-              "An error occured. Kindly refresh this page."
-          );
-          console.log(response);
-          return setLoading(false);
-        }
-        if (response.data.status === 200) {
-          console.log(response);
-          // setPortOne(response.data.data);
-          setStocks(response.data.data.stocks);
-          setLoading(false);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        return setLoading(false);
-      });
-  };
-
-  const getPendingOrders = async () => {
-    setLoading(true);
-    const user = JSON.parse(localStorage.getItem("user"));
-    axios(
-      config2(`post`, `${apiAddress}/stock/account/pending_orders`, user.jwt)
-    )
-      .then(function (response) {
-        // return console.log(response.data.status);
-        if (response.data.status !== 200) {
-          toast.error(
-            response.data.message ??
-              "An error occured. Kindly refresh this page."
-          );
-          console.log(response);
-          return setLoading(false);
-        }
-        if (response.data.status === 200) {
-          console.log(response);
-          setPendingOrders(response.data.data.pending_orders);
-          setLoading(false);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        return setLoading(false);
-      });
-  };
-
+  const ready = account?.bamboo_status === "active" && !loading;
+  const currVal = (value) =>
+    value == null
+      ? "—"
+      : new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(Number(value));
   return (
     <AppLayout>
       <div className="grid w-full">
+        <div className="px-10 lg:px-20 py-4 flex flex-wrap items-center gap-4 border-b">
+          <span className="font-bold">
+            {account
+              ? `${account.firstname} ${account.surname}`
+              : "Stock account"}
+          </span>
+          <span className="text-xs uppercase">
+            {account?.bamboo_status || "Loading"}
+          </span>
+          <button
+            className="btn btn-sm"
+            disabled={loading || !accountId}
+            onClick={refresh}
+          >
+            {loading ? "Loading account…" : "Refresh"}
+          </button>
+          <button
+            className="btn btn-sm"
+            disabled={!ready}
+            onClick={() => setShowDep(true)}
+          >
+            Record deposit
+          </button>
+          <button
+            className="btn btn-sm"
+            onClick={() => setActiveTab("activity")}
+          >
+            Transaction activity
+          </button>
+        </div>
+        {!accountId && (
+          <p role="alert" className="p-10">
+            Select an account from the accounts page.
+          </p>
+        )}
+        {Object.keys(errors).length > 0 && (
+          <div role="alert" className="p-6 bg-red-50 text-red-800">
+            {Object.entries(errors).map(([key, message]) => (
+              <p key={key}>
+                {key}: {message}
+              </p>
+            ))}
+            <button className="underline" onClick={refresh}>
+              Retry loading
+            </button>
+          </div>
+        )}
+        {account && !account.bamboo_user_id && (
+          <AccountLink account={account} onLinked={refresh} />
+        )}
+        {account?.bamboo_status === "pending" && (
+          <p className="px-10 py-4 bg-blue-50">
+            Brokerage activation is pending. Refresh to check its status.
+          </p>
+        )}
+        {activeTab === "activity" && (
+          <Operations
+            accountId={accountId}
+            operations={operations}
+            onUpdated={refresh}
+            nextPage={operationNext}
+            loadMore={() => loadMore("operations")}
+          />
+        )}
+
         <div className="grid space-y-10">
           <div
             style={{
@@ -273,7 +164,7 @@ export default function Account() {
               <div className="grid grid-cols-2">
                 <div className="space-y-1 self-center">
                   <div className="text-4xl font-ibm">
-                    {currVal(portTwo?.total_aum ?? 0)}
+                    {currVal(portTwo?.total_aum ?? null)}
                   </div>
                   <div className="text-2xs uppercase tracking-widest">
                     total Value
@@ -338,7 +229,7 @@ export default function Account() {
                   total invested
                 </div>
                 <div className="text-2xl font-ibm font-medium">
-                  {currVal(portTwo?.total_invested ?? 0)}
+                  {currVal(portTwo?.total_invested ?? null)}
                 </div>
 
                 <div className="flex items-center space-x-1">
@@ -388,7 +279,9 @@ export default function Account() {
                         : `text-red-600`
                     }`}
                   >
-                    {portTwo?.total_percent_change}%
+                    {portTwo?.total_percent_change == null
+                      ? "—"
+                      : `${portTwo.total_percent_change}%`}
                   </div>
                 </div>
               </div>
@@ -404,7 +297,7 @@ export default function Account() {
                       : `text-red-600`
                   } text-2xl font-ibm font-medium`}
                 >
-                  {currVal(portTwo?.total_return ?? 0)}
+                  {currVal(portTwo?.total_return ?? null)}
                 </div>
               </div>
 
@@ -413,7 +306,7 @@ export default function Account() {
                   equity value
                 </div>
                 <div className="text-2xl font-ibm font-medium">
-                  {currVal(portTwo?.equity_value ?? 0)}
+                  {currVal(portTwo?.equity_value ?? null)}
                 </div>
               </div>
 
@@ -422,7 +315,7 @@ export default function Account() {
                   available to invest
                 </div>
                 <div className="text-2xl font-ibm font-medium">
-                  {currVal(portTwo?.available_to_invest ?? 0)}
+                  {currVal(portTwo?.available_to_invest ?? null)}
                 </div>
               </div>
 
@@ -431,7 +324,7 @@ export default function Account() {
                   pending deposit
                 </div>
                 <div className="text-2xl font-ibm font-medium">
-                  {currVal(portOne?.pending_deposit ?? 0)}
+                  {currVal(portOne?.pending_deposit ?? null)}
                 </div>
               </div>
 
@@ -440,7 +333,7 @@ export default function Account() {
                   usd to ngn
                 </div>
                 <div className="text-2xl font-ibm text-gray-400 font-medium">
-                  {currVal(portOne?.usd_to_naira ?? 0)}
+                  {currVal(portOne?.usd_to_naira ?? null)}
                 </div>
               </div>
 
@@ -449,14 +342,15 @@ export default function Account() {
                   withdrawable
                 </div>
                 <div className="text-2xl font-ibm font-medium">
-                  {currVal(portTwo?.withdrawal_cash ?? 0)}
+                  {currVal(portTwo?.withdrawable_cash ?? null)}
                 </div>
               </div>
             </div>
 
             <div className="flex space-x-4 place-self-start justify-self-end">
               <button
-                onClick={() => setShowTr(!showTr)}
+                disabled={!ready}
+                onClick={() => setShowTr(true)}
                 className="btn flex w-36 justify-between place-self-end border-none bg-[#2D7EC2] capitalize hover:bg-[#27669B]"
               >
                 <div>Trade</div>
@@ -476,63 +370,10 @@ export default function Account() {
                 </svg>
               </button>
 
-              {/* <button
-                onClick={() => setShowDep(!showDep)}
-                className="btn flex w-36 justify-between place-self-end border-none bg-green-600 capitalize hover:bg-green-700"
-              >
-                <div>Deposit</div>
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 rotate-180 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  viewBox="0 0 173.49 146.93"
-                >
-                  <path
-                    className="cls-1"
-                    d="M134.4,61.21h23.32A12.77,12.77,0,0,1,170.49,74v57.19a12.76,12.76,0,0,1-12.77,12.76h-142A12.76,12.76,0,0,1,3,131.17V74A12.76,12.76,0,0,1,15.76,61.21H39.08"
-                  />
-                  <path
-                    className="cls-1"
-                    d="M134.4,112.28H39.09V9.37A6.37,6.37,0,0,1,45.46,3H128a6.37,6.37,0,0,1,6.37,6.37Z"
-                  />
-                  <line
-                    className="cls-1"
-                    x1="134.23"
-                    y1="13.21"
-                    x2="39.26"
-                    y2="13.21"
-                  />
-                  <line
-                    className="cls-1"
-                    x1="134.23"
-                    y1="25.3"
-                    x2="39.26"
-                    y2="25.3"
-                  />
-                  <polyline
-                    className="cls-1"
-                    points="134.41 91.68 146.75 91.68 146.75 112.62 26.75 112.62 26.75 91.68 39.09 91.68"
-                  />
-                  <polyline
-                    className="cls-1"
-                    points="65.23 63.6 86.94 41.89 108.26 63.21"
-                  />
-                  <line
-                    className="cls-1"
-                    x1="86.74"
-                    y1="41.89"
-                    x2="86.74"
-                    y2="99.34"
-                  />
-                </svg>
-              </button>
-
               <button
-                onClick={() => setShowWd(!showWd)}
-                type="submit"
+                disabled={!ready}
+                onClick={() => setShowWd(true)}
+                type="button"
                 className="btn flex w-36 justify-between place-self-end border-none bg-gray-700 capitalize hover:bg-gray-900"
               >
                 <div>Withdraw</div>
@@ -582,17 +423,17 @@ export default function Account() {
                     y2="99.34"
                   />
                 </svg>
-              </button> */}
+              </button>
             </div>
           </div>
         </div>
 
-        {/** Select active stocks or pending orders. */}
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 lg:px-20 md:px-10 px-0 pt-16">
+        {/** Select active stocks, pending orders, or withdrawals. */}
+        <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 lg:px-20 md:px-10 px-0 pt-16">
           <div
-            onClick={() => setCheckOrder(false)}
+            onClick={() => setActiveTab("stocks")}
             className={`${
-              !checkOrder && `bg-gray-800 text-white`
+              activeTab === "stocks" && `bg-gray-800 text-white`
             } flex cursor-pointer items-center justify-between md:rounded-tl-2xl border-t border-r border-l bg-gray-50 py-4 px-7 pt-5`}
           >
             <div className="flex items-center space-x-2 text-xs font-bold uppercase">
@@ -624,10 +465,10 @@ export default function Account() {
           </div>
 
           <div
-            onClick={() => setCheckOrder(true)}
+            onClick={() => setActiveTab("orders")}
             className={`${
-              checkOrder && `bg-gray-800 text-white`
-            } flex cursor-pointer items-center justify-between md:rounded-tr-2xl border-t border-r border-l bg-gray-50 py-4 px-7 pt-5`}
+              activeTab === "orders" && `bg-gray-800 text-white`
+            } flex cursor-pointer items-center justify-between border-t border-r border-l bg-gray-50 py-4 px-7 pt-5`}
           >
             <div className="flex items-center space-x-2 text-xs font-bold uppercase">
               <svg
@@ -652,30 +493,69 @@ export default function Account() {
               {pendingOrders.length}
             </div>
           </div>
+
+          <div
+            onClick={() => setActiveTab("withdrawals")}
+            className={`${
+              activeTab === "withdrawals" && `bg-gray-800 text-white`
+            } flex cursor-pointer items-center justify-between md:rounded-tr-2xl border-t border-r border-l bg-gray-50 py-4 px-7 pt-5`}
+          >
+            <div className="flex items-center space-x-2 text-xs font-bold uppercase">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1}
+                stroke="currentColor"
+                className="h-6 w-6 text-blue-400"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"
+                />
+              </svg>
+
+              <div>withdrawals</div>
+            </div>
+
+            <div className="font-ibm text-xl font-normal text-blue-400">
+              {withdrawals.length}
+            </div>
+          </div>
         </div>
 
-        {!checkOrder ? (
-          stocks.length > 0 && (
-            <>
-              {stocks.map((s) => (
-                <StockInfo
-                  key={s?.symbol}
-                  bg={s?.background_color}
-                  name={s?.name}
-                  symbol={s?.symbol}
-                  perc_change={Math.ceil(s?.percent_change * 100) / 100}
-                  price={Math.ceil(s?.price * 100) / 100}
-                  quantity={Math.ceil(s?.quantity * 100) / 100}
-                  total_return={Math.ceil(s?.total_return * 100) / 100}
-                  value_change={Math.ceil(s?.value_change * 100) / 100}
-                  equity={Math.ceil(s?.user_equity * 100) / 100}
-                  logo={s?.logo}
-                  s_data={s}
-                />
-              ))}
-            </>
-          )
-        ) : (
+        {activeTab === "stocks" &&
+          (stocks.length > 0 ? (
+            stocks.map((s) => (
+              <StockInfo
+                key={s?.symbol}
+                bg={s?.background_color}
+                name={s?.name}
+                symbol={s?.symbol}
+                perc_change={Math.ceil(s?.percent_change * 100) / 100}
+                price={Math.ceil(s?.price * 100) / 100}
+                quantity={Math.ceil(s?.quantity * 100) / 100}
+                total_return={Math.ceil(s?.total_return * 100) / 100}
+                value_change={Math.ceil(s?.value_change * 100) / 100}
+                equity={Math.ceil(s?.user_equity * 100) / 100}
+                logo={s?.logo}
+                s_data={s}
+              />
+            ))
+          ) : (
+            <div className="grid place-items-center border-t text-gray-400 uppercase text-xs font-medium tracking-wide py-12">
+              <div>
+                {loading
+                  ? "Loading holdings…"
+                  : errors.stocks
+                  ? "Holdings could not be loaded."
+                  : "No stocks yet."}
+              </div>
+            </div>
+          ))}
+
+        {activeTab === "orders" && (
           <div>
             {pendingOrders.length > 0 ? (
               pendingOrders.map((p) => (
@@ -694,7 +574,44 @@ export default function Account() {
               ))
             ) : (
               <div className="grid place-items-center border-t text-gray-400 uppercase text-xs font-medium tracking-wide py-12">
-                <div> No pending orders.</div>
+                <div>
+                  {loading
+                    ? "Loading orders…"
+                    : errors.pendingOrders
+                    ? "Orders could not be loaded."
+                    : "No pending orders."}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === "withdrawals" && (
+          <div>
+            {withdrawals.length > 0 ? (
+              withdrawals.map((w) => (
+                <WithdrawalItem
+                  key={w?.reference ?? w?.id}
+                  amount={w?.amount}
+                  dollar_amount={w?.dollar_amount}
+                  currency={w?.currency}
+                  status={w?.status}
+                  reference={w?.reference}
+                  bank_name={w?.bank_name}
+                  account_number={w?.account_number}
+                  created_at={w?.created_at}
+                  fees={w?.fees ?? w?.dollar_fees}
+                />
+              ))
+            ) : (
+              <div className="grid place-items-center border-t text-gray-400 uppercase text-xs font-medium tracking-wide py-12">
+                <div>
+                  {loading
+                    ? "Loading withdrawals…"
+                    : errors.withdrawals
+                    ? "Withdrawals could not be loaded."
+                    : "No withdrawals yet."}
+                </div>
               </div>
             )}
           </div>
@@ -708,16 +625,36 @@ export default function Account() {
       </div>
 
       {/* <>
-        <Deposit showDep={showDep} toggleAdd={() => setShowDep(!showDep)} />
+        {showDep && <Deposit accountId={accountId} showDep={showDep} toggleAdd={() => setShowDep(false)} onSuccess={refresh} />}
       </> */}
 
       <>
-        <Trade showDep={showTr} toggleAdd={() => setShowTr(!showTr)} />
+        {showTr && (
+          <Trade
+            accountId={accountId}
+            account={account}
+            showDep={showTr}
+            toggleAdd={() => setShowTr(false)}
+            onSuccess={refresh}
+          />
+        )}
       </>
 
       <>
-        {/* <Withdraw showDep={showWd} toggleAdd={() => setShowWd(!showWd)} /> */}
+        {showWd && (
+          <Withdraw
+            accountId={accountId}
+            showDep={showWd}
+            toggleAdd={() => setShowWd(false)}
+            onSuccess={refresh}
+          />
+        )}
       </>
+      {activeTab === "withdrawals" && withdrawalNext !== null && (
+        <button className="btn m-6" onClick={() => loadMore("withdrawals")}>
+          Load more withdrawals
+        </button>
+      )}
     </AppLayout>
   );
 }

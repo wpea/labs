@@ -2,33 +2,26 @@ import AppLayout from "../../../components/Layouts/AppLayout";
 import Head from "next/head";
 import Header from "./../../../components/header";
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { apiAddress } from "../../../lib/api";
-import CryptoJS from "crypto-js";
+import { bamboo, clearLegacyBambooSession } from "../../../lib/bamboo";
 import { useRouter } from "next/router";
 
 export default function Dashboard() {
   const [accounts, setAccounts] = useState([]);
   const router = useRouter();
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
+    clearLegacyBambooSession();
     getStockAccounts();
   }, []);
 
-  const encrypt = (text) => {
-    const passphrase = "wplabs";
-    return CryptoJS.AES.encrypt(text, passphrase).toString();
-  };
-
   const getStockAccounts = async () => {
-    const res = await axios.get(`${apiAddress}/stocks/account`, {
-      headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-        Accept: "application/json",
-      },
-    });
-
-    setAccounts(res.data.data);
+    setLoadError("");
+    try {
+      setAccounts(await bamboo("/accounts"));
+    } catch (error) {
+      setLoadError(error.message);
+    }
     // console.log(accounts);
   };
 
@@ -43,9 +36,9 @@ export default function Dashboard() {
         id: account[0].id,
       })
     );
-    
+
     // pass param as a push to the dashboard page
-    router.push("/stocks/dashboard/account");
+    router.push(`/stocks/dashboard/account?account_id=${id}`);
   };
 
   return (
@@ -65,6 +58,14 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {loadError && (
+        <div role="alert" className="p-10 text-red-700">
+          {loadError}
+          <button onClick={getStockAccounts} className="btn ml-4">
+            Retry
+          </button>
+        </div>
+      )}
       {accounts.length > 0 ? (
         <div className="p-10 lg:px-20 space-y-10">
           <div className="flex items-center justify-between">
