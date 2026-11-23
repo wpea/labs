@@ -1,96 +1,64 @@
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import { bamboo } from "../../lib/bamboo";
-export default function Operations({
-  accountId,
-  operations,
-  onUpdated,
-  nextPage,
-  loadMore,
-}) {
+import Spin from "../Misc/Spin";
+
+// Rows for orders/withdrawals whose outcome Bamboo has not confirmed yet.
+// Styled like PendingOrder rows; "Check status" reconciles with Bamboo.
+export default function Operations({ accountId, operations, onUpdated }) {
   const [busy, setBusy] = useState(null);
-  const [error, setError] = useState("");
-  async function act(op, action) {
+
+  async function check(op) {
     if (busy) return;
     setBusy(op.id);
-    setError("");
     try {
-      await bamboo(`/operations/${op.id}/${action}`, {
+      await bamboo(`/operations/${op.id}/refresh`, {
         method: "POST",
         accountId,
       });
       await onUpdated();
     } catch (e) {
-      setError(e.message);
+      toast.error(e.message);
     } finally {
       setBusy(null);
     }
   }
-  return (
-    <div className="p-6 lg:px-20 border-b space-y-4">
-      <h2 className="text-xl font-bold">Transaction activity</h2>
-      {error && (
-        <p role="alert" className="text-red-700">
-          {error}
-        </p>
-      )}
-      {!operations.length && (
-        <p className="text-gray-600">
-          No transactions recorded by this integration yet.
-        </p>
-      )}
-      {operations.map((op) => (
-        <div
-          key={op.id}
-          className="border rounded p-4 flex flex-wrap items-center gap-4"
-        >
-          <div className="flex-1">
-            <p className="font-bold capitalize">
-              {op.kind} · {op.status}
-            </p>
-            <p className="text-xs text-gray-500 break-all">{op.reference}</p>
-            {op.upstream_id && (
-              <p className="text-xs">Bamboo ID: {op.upstream_id}</p>
-            )}
-            {["unknown", "submitting"].includes(op.status) && (
-              <p className="text-sm text-amber-800">
-                Outcome needs reconciliation. Do not submit this transaction
-                again.
-              </p>
-            )}
+
+  return operations.map((op) => (
+    <div key={op.id} className="border-t bg-gray-50 py-6">
+      <div className="lg:ml-20 ml-10 grid lg:grid-cols-8 md:grid-cols-4 grid-cols-2 md:gap-10 gap-5 lg:gap-0">
+        <div className="self-center">
+          <div className="text-[10px] uppercase tracking-widest text-gray-500">
+            {op.kind}
           </div>
-          <button
-            disabled={!!busy}
-            className="btn btn-sm btn-outline"
-            onClick={() => act(op, "refresh")}
-          >
-            Check status
-          </button>
-          {op.kind === "order" &&
-            op.upstream_id &&
-            ![
-              "filled",
-              "rejected",
-              "cancelled",
-              "canceled",
-              "cancel_requested",
-              "cancel_submitting",
-              "cancel_unknown",
-            ].includes(op.status) && (
-              <button
-                disabled={!!busy}
-                className="btn btn-sm btn-outline"
-                onClick={() => act(op, "cancel")}
-              >
-                Cancel order
-              </button>
-            )}
+          <div className="self-center font-ibm text-xl uppercase text-yellow-600">
+            {op.status}
+          </div>
         </div>
-      ))}
-      {nextPage && (
-        <button className="btn btn-sm" onClick={loadMore}>
-          Load more activity
-        </button>
-      )}
+
+        <div className="self-center lg:col-span-5 md:col-span-2">
+          <div className="text-[10px] uppercase tracking-widest text-gray-500">
+            reference
+          </div>
+          <div className="self-center font-ibm text-sm break-all">
+            {op.reference}
+          </div>
+          <div className="text-2xs text-gray-500">
+            Outcome not yet confirmed by Bamboo. Do not submit this again.
+          </div>
+        </div>
+
+        <div className="self-center">
+          <button
+            type="button"
+            disabled={!!busy}
+            onClick={() => check(op)}
+            className="btn btn-sm btn-outline capitalize"
+          >
+            {busy === op.id ? <Spin /> : "Check status"}
+          </button>
+        </div>
+      </div>
     </div>
-  );
+  ));
 }

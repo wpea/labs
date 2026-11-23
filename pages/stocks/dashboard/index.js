@@ -4,11 +4,11 @@ import Header from "./../../../components/header";
 import { useState, useEffect } from "react";
 import { bamboo, clearLegacyBambooSession } from "../../../lib/bamboo";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 export default function Dashboard() {
   const [accounts, setAccounts] = useState([]);
   const router = useRouter();
-  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
     clearLegacyBambooSession();
@@ -16,11 +16,10 @@ export default function Dashboard() {
   }, []);
 
   const getStockAccounts = async () => {
-    setLoadError("");
     try {
       setAccounts(await bamboo("/accounts"));
     } catch (error) {
-      setLoadError(error.message);
+      toast.error(error.message);
     }
     // console.log(accounts);
   };
@@ -58,14 +57,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {loadError && (
-        <div role="alert" className="p-10 text-red-700">
-          {loadError}
-          <button onClick={getStockAccounts} className="btn ml-4">
-            Retry
-          </button>
-        </div>
-      )}
       {accounts.length > 0 ? (
         <div className="p-10 lg:px-20 space-y-10">
           <div className="flex items-center justify-between">
